@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="144"
+   height="168"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="tz-face.svg"
+   inkscape:export-filename="/home/phardy/digital-display.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.3214286"
+     inkscape:cx="72"
+     inkscape:cy="81.442445"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-global="false"
+     inkscape:window-width="750"
+     inkscape:window-height="757"
+     inkscape:window-x="15"
+     inkscape:window-y="217"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-884.36218)">
+    <rect
+       style="fill:#000000"
+       id="rect2987"
+       width="144"
+       height="168"
+       x="0"
+       y="884.36218" />
+    <rect
+       style="fill:#ffffff"
+       id="rect2991"
+       width="144"
+       height="40"
+       x="-1.2305473e-07"
+       y="1012.3622"
+       rx="8"
+       ry="5.3333335" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Ticking Timebomb BB;-inkscape-font-specification:Ticking Timebomb BB Italic"
+       x="25.652079"
+       y="1060.1929"
+       id="text2992"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085134,0.99155846)"><tspan
+         sodipodi:role="line"
+         id="tspan2994"
+         x="25.652079"
+         y="1060.1929">14:28</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Ticking Timebomb BB;-inkscape-font-specification:Ticking Timebomb BB Italic"
+       x="98.385529"
+       y="1050.8237"
+       id="text2996"
+       sodipodi:linespacing="125%"
+       transform="scale(0.99954491,1.0004553)"><tspan
+         sodipodi:role="line"
+         id="tspan2998"
+         x="98.385529"
+         y="1050.8237">45</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Segment14;-inkscape-font-specification:Segment14"
+       x="2.3477933"
+       y="981.55029"
+       id="text3000"
+       sodipodi:linespacing="125%"
+       transform="scale(0.95914263,1.0425978)"><tspan
+         sodipodi:role="line"
+         id="tspan3002"
+         x="2.3477933"
+         y="981.55029">time zone label</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Segment14;-inkscape-font-specification:Segment14"
+       x="117.58646"
+       y="1037.0648"
+       id="text3004"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0133898,0.98678712)"><tspan
+         sodipodi:role="line"
+         id="tspan3006"
+         x="117.58646"
+         y="1037.0648">+TZ</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,31 @@
+
+{"friendlyVersion": "prototype",
+ "versionDefName": "APP_RESOURCES",
+ "media": [
+     {
+	 "type":"font",
+	 "defName":"FONT_SEGMENT_12",
+	 "file":"fonts/Segment14.ttf"
+     },
+     {
+	 "type":"font",
+	 "defName":"FONT_TICK_40",
+	 "file":"fonts/TickingTimebombBB_ital.ttf"
+     },
+     {
+	 "type":"font",
+	 "defName":"FONT_TICK_20",
+	 "file":"fonts/TickingTimebombBB_ital.ttf"
+     },
+     {
+	 "type":"png",
+	 "defName":"IMAGE_DIGITAL_BG",
+	 "file":"images/digital-display.png"
+     },
+     {
+	 "type":"raw",
+	 "defName":"DUMMY",
+	 "file":"resource_map.json"
+     }
+ ]
+}
