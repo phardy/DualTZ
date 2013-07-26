@@ -4,18 +4,18 @@
  "media": [
      {
 	 "type":"font",
-	 "defName":"FONT_SEGMENT_12",
-	 "file":"fonts/Segment14.ttf"
+	 "defName":"FONT_DIGITAL_12",
+	 "file":"fonts/digital-7.ttf"
      },
      {
 	 "type":"font",
-	 "defName":"FONT_TICK_40",
-	 "file":"fonts/TickingTimebombBB_ital.ttf"
+	 "defName":"FONT_DIGITAL_20",
+	 "file":"fonts/digital-7.ttf"
      },
      {
 	 "type":"font",
-	 "defName":"FONT_TICK_20",
-	 "file":"fonts/TickingTimebombBB_ital.ttf"
+	 "defName":"FONT_DIGITAL_40",
+	 "file":"fonts/digital-7.ttf"
      },
      {
 	 "type":"png",

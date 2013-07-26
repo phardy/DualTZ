@@ -40,9 +40,9 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
 void handle_init(AppContextRef ctx) {
   // init resources
   resource_init_current_app(&APP_RESOURCES);
-  TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SEGMENT_12));
-  TimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TICK_40));
-  TimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TICK_20));
+  TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_12));
+  TimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
+  TimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
 
   // init root window
   window_init(&window, "Root window");
@@ -53,7 +53,10 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window.layer, &DigitalWindow.layer.layer);
 
   // main time display
-  text_layer_init(&TZTime, GRect(13, 127, 90, 40));
+  // TODO: This box currently overlaps the top of the white
+  // display background. Either shrink the box, or draw the black
+  // bits transparent over the top.
+  text_layer_init(&TZTime, GRect(17, 127, 90, 40)); // sizing hacky as hell
   text_layer_set_text_alignment(&TZTime, GTextAlignmentRight);
   text_layer_set_text_color(&TZTime, GColorBlack);
   text_layer_set_font(&TZTime, TimeFont);
@@ -61,7 +64,7 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window.layer, &TZTime.layer);
 
   // seconds display
-  text_layer_init(&TZTimeS, GRect(105, 147, 20, 20));
+  text_layer_init(&TZTimeS, GRect(109, 147, 20, 20)); // sizing made me cry
   text_layer_set_text_alignment(&TZTimeS, GTextAlignmentLeft);
   text_layer_set_text_color(&TZTimeS, GColorBlack);
   text_layer_set_font(&TZTimeS, TimeSFont);
@@ -74,7 +77,7 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text_color(&TZName, GColorBlack);
   text_layer_set_font(&TZName, TZFont);
   text_layer_set_text(&TZName, TZNameText);
-  layer_add_child(&window.layer, &TZName.layer);
+  // layer_add_child(&window.layer, &TZName.layer);
 
   // timezone offset display
   text_layer_init(&TZOffset, GRect(120, 127, 24, 15));
@@ -82,7 +85,7 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text_color(&TZOffset, GColorBlack);
   text_layer_set_font(&TZOffset, TZFont);
   text_layer_set_text(&TZOffset, TZOffsetText);
-  layer_add_child(&window.layer, &TZOffset.layer);
+  // layer_add_child(&window.layer, &TZOffset.layer);
 
   if (clock_is_24h_style()) {
     TZFormat = "%H:%M";

@@ -28,16 +28,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.3214286"
-     inkscape:cx="72"
-     inkscape:cy="81.442445"
+     inkscape:cx="69.123611"
+     inkscape:cy="76.552796"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="false"
      inkscape:window-width="750"
-     inkscape:window-height="757"
-     inkscape:window-x="15"
-     inkscape:window-y="217"
+     inkscape:window-height="708"
+     inkscape:window-x="29"
+     inkscape:window-y="27"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -74,51 +74,51 @@
        ry="5.3333335" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Ticking Timebomb BB;-inkscape-font-specification:Ticking Timebomb BB Italic"
-       x="25.652079"
-       y="1060.1929"
+       style="font-size:39.99996948px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Digital-7 Mono;-inkscape-font-specification:Digital-7 Mono"
+       x="15.401961"
+       y="1060.312"
        id="text2992"
        sodipodi:linespacing="125%"
-       transform="scale(1.0085134,0.99155846)"><tspan
+       transform="scale(1.0085127,0.99155918)"><tspan
          sodipodi:role="line"
          id="tspan2994"
-         x="25.652079"
-         y="1060.1929">14:28</tspan></text>
+         x="15.401961"
+         y="1060.312">24:01</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:20px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Ticking Timebomb BB;-inkscape-font-specification:Ticking Timebomb BB Italic"
-       x="98.385529"
-       y="1050.8237"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Digital-7 Mono;-inkscape-font-specification:Digital-7 Mono"
+       x="108.32236"
+       y="1050.8837"
        id="text2996"
        sodipodi:linespacing="125%"
        transform="scale(0.99954491,1.0004553)"><tspan
          sodipodi:role="line"
          id="tspan2998"
-         x="98.385529"
-         y="1050.8237">45</tspan></text>
+         x="108.32236"
+         y="1050.8837">45</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Segment14;-inkscape-font-specification:Segment14"
-       x="2.3477933"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Digital-7 Mono;-inkscape-font-specification:Digital-7 Mono"
+       x="23.532476"
        y="981.55029"
        id="text3000"
        sodipodi:linespacing="125%"
        transform="scale(0.95914263,1.0425978)"><tspan
          sodipodi:role="line"
          id="tspan3002"
-         x="2.3477933"
+         x="23.532476"
          y="981.55029">time zone label</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Segment14;-inkscape-font-specification:Segment14"
-       x="117.58646"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Digital-7 Mono;-inkscape-font-specification:Digital-7 Mono"
+       x="107.67386"
        y="1037.0648"
        id="text3004"
        sodipodi:linespacing="125%"
        transform="scale(1.0133898,0.98678712)"><tspan
          sodipodi:role="line"
          id="tspan3006"
-         x="117.58646"
+         x="107.67386"
          y="1037.0648">+TZ</tspan></text>
   </g>
 </svg>
