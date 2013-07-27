@@ -12,6 +12,7 @@ PBL_APP_INFO(MY_UUID,
 
 Window window;
 BmpContainer DigitalWindow;
+GRect AnalogueGRect;
 Layer AnalogueHourLayer, AnalogueMinuteLayer;
 GPath AnalogueHourPath, AnalogueMinutePath;
 TextLayer TZName;
@@ -47,7 +48,7 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
 void initLayerPathAndCenter (Layer *layer, GPath *path,
 			     const GPathInfo *pathInfo,
 			     const void *updateProc) {
-  layer_init(layer, GRect(8, 0, 128, 128));
+  layer_init(layer, AnalogueGRect);
   layer->update_proc = updateProc;
   gpath_init(path, pathInfo);
   gpath_move_to(path, grect_center_point(&layer->frame));
@@ -155,6 +156,7 @@ void display_init() {
 }
 
 void handle_init(AppContextRef ctx) {
+  AnalogueGRect = GRect(8, 0, 128, 128);
   display_init();
 
   if (clock_is_24h_style()) {
