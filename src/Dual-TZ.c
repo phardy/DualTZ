@@ -10,6 +10,7 @@ PBL_APP_INFO(MY_UUID,
              DEFAULT_MENU_ICON,
              APP_INFO_WATCH_FACE);
 
+// Layout stuff
 Window window;
 BmpContainer DigitalWindow;
 GRect AnalogueGRect;
@@ -22,6 +23,13 @@ TextLayer TZTimeS;
 static GFont TZFont;
 static GFont TimeFont;
 static GFont TimeSFont;
+
+// Time rememberating stuff.
+char TZNameText[] = "Time zone label"; // max 15 characters (arbitrary)
+char TZOffsetText[] = "+10";
+static char TZTimeText[] = "00:00";
+static char TZTimeSText[] = "00";
+static char *TZFormat;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -84,15 +92,6 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   gpath_draw_outline(ctx, &AnalogueMinutePath);
 }
 
-// These are generic vars
-// char TZNameText[] = "xxxxxxxxxxxxxxx"; // 15 characters
-// char TZOffsetText[] = "+xx";
-char TZNameText[] = "Time zone label";
-char TZOffsetText[] = "+10";
-static char TZTimeText[] = "00:00";
-static char TZTimeSText[] = "00";
-static char *TZFormat;
-
 void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
   string_format_time(TZTimeSText, sizeof(TZTimeSText), "%S", t->tick_time);
   text_layer_set_text(&TZTimeS, TZTimeSText);
@@ -119,9 +118,6 @@ void display_init() {
   window_stack_push(&window, true /* Animated */);
 
   // main time display
-  // TODO: This box currently overlaps the top of the white
-  // display background. Either shrink the box, or draw the black
-  // bits transparent over the top.
   text_layer_init(&TZTime, GRect(17, 127, 90, 40)); // sizing hacky as hell
   text_layer_set_text_alignment(&TZTime, GTextAlignmentRight);
   text_layer_set_text_color(&TZTime, GColorBlack);
