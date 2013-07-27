@@ -4,7 +4,7 @@
  "media": [
      {
 	 "type":"font",
-	 "defName":"FONT_DIGITAL_12",
+	 "defName":"FONT_DIGITAL_14",
 	 "file":"fonts/digital-7.ttf"
      },
      {

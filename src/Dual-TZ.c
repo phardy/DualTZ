@@ -25,6 +25,7 @@ static GFont TimeFont;
 static GFont TimeSFont;
 
 // Time rememberating stuff.
+// Currently hardcoded. Sorry.
 char TZNameText[] = "Time zone label"; // max 15 characters (arbitrary)
 char TZOffsetText[] = "+10";
 static char TZTimeText[] = "00:00";
@@ -119,7 +120,7 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
 void display_init(AppContextRef *ctx) {
   // load resources
   resource_init_current_app(&APP_RESOURCES);
-  TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_12));
+  TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));
   TimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
   TimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
 
@@ -142,14 +143,14 @@ void display_init(AppContextRef *ctx) {
   layer_add_child(&window.layer, &TZTimeS.layer);
 
   // timezone name display
-  text_layer_init(&TZName, GRect(24, 127, 75, 13));
+  text_layer_init(&TZName, GRect(14, 125, 95, 15));
   text_layer_set_text_alignment(&TZName, GTextAlignmentCenter);
   text_layer_set_text_color(&TZName, GColorBlack);
   text_layer_set_font(&TZName, TZFont);
   layer_add_child(&window.layer, &TZName.layer);
 
   // timezone offset display
-  text_layer_init(&TZOffset, GRect(110, 127, 17, 13));
+  text_layer_init(&TZOffset, GRect(110, 125, 20, 15));
   text_layer_set_text_alignment(&TZOffset, GTextAlignmentLeft);
   text_layer_set_text_color(&TZOffset, GColorBlack);
   text_layer_set_font(&TZOffset, TZFont);
