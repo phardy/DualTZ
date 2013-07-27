@@ -172,7 +172,9 @@ void display_init(AppContextRef *ctx) {
 }
 
 void handle_init(AppContextRef ctx) {
-  AnalogueGRect = GRect(8, 0, 128, 128);
+  // Math says a 128px box should be offset 8 pixels to be centred
+  // in a 144px display. Pebble seems to say otherwise, though.
+  AnalogueGRect = GRect(4, 0, 128, 128);
   display_init(&ctx);
 
   if (clock_is_24h_style()) {
