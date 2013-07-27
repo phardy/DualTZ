@@ -12,6 +12,8 @@ PBL_APP_INFO(MY_UUID,
 
 Window window;
 BmpContainer DigitalWindow;
+Layer AnalogueHourLayer, AnalogueMinuteLayer;
+GPath AnalogueHourPath, AnalogueMinutePath;
 TextLayer TZName;
 TextLayer TZOffset;
 TextLayer TZTime;
@@ -19,6 +21,65 @@ TextLayer TZTimeS;
 static GFont TZFont;
 static GFont TimeFont;
 static GFont TimeSFont;
+
+const GPathInfo HOUR_HAND_PATH_POINTS = {
+  4,
+  (GPoint[]) {
+    {-3, 2},
+    {3, 2},
+    {3, -25},
+    {-3, -25}
+  }
+};
+
+const GPathInfo MINUTE_HAND_PATH_POINTS = {
+  4,
+  (GPoint []) {
+    {-3, 2},
+    {3, 2},
+    {3, -50},
+    {-3, -50}
+  }
+};
+
+void initLayerPathAndCenter (Layer *layer, GPath *path,
+			     const GPathInfo *pathInfo,
+			     const void *updateProc) {
+  layer_init(layer, GRect(0, 0, 144, 128));
+  layer->update_proc = updateProc;
+  gpath_init(path, pathInfo);
+  gpath_move_to(path, grect_center_point(&layer->frame));
+}
+
+void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
+  (void)me;
+
+  PblTm t;
+  get_time(&t);
+
+  unsigned int angle = (t.tm_hour * 30) + (t.tm_min / 2);
+  gpath_rotate_to(&AnalogueHourPath, (TRIG_MAX_ANGLE / 360) * angle);
+
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  gpath_draw_filled(ctx, &AnalogueHourPath);
+  gpath_draw_outline(ctx, &AnalogueHourPath);
+}
+
+void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
+  (void)me;
+
+  PblTm t;
+  get_time(&t);
+
+  unsigned int angle = (t.tm_min * 6) + (t.tm_sec / 10);
+  gpath_rotate_to(&AnalogueMinutePath, (TRIG_MAX_ANGLE / 360) * angle);
+
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  gpath_draw_filled(ctx, &AnalogueMinutePath);
+  gpath_draw_outline(ctx, &AnalogueMinutePath);
+}
 
 // These are generic vars
 // char TZNameText[] = "xxxxxxxxxxxxxxx"; // 15 characters
@@ -34,6 +95,10 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
   text_layer_set_text(&TZTimeS, TZTimeSText);
 
   if (t->tick_time->tm_sec == 0) {
+    layer_mark_dirty(&AnalogueMinuteLayer);
+    if (t->tick_time->tm_min % 2 == 0) {
+      layer_mark_dirty(&AnalogueHourLayer);
+    }
     string_format_time(TZTimeText, sizeof(TZTimeText), TZFormat, t->tick_time);
     text_layer_set_text(&TZTime, TZTimeText);
   }
@@ -49,10 +114,6 @@ void display_init() {
   // init root window
   window_init(&window, "Root window");
   window_stack_push(&window, true /* Animated */);
-
-  // load background image
-  bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
-  layer_add_child(&window.layer, &DigitalWindow.layer.layer);
 
   // main time display
   // TODO: This box currently overlaps the top of the white
@@ -84,6 +145,11 @@ void display_init() {
   text_layer_set_text_color(&TZOffset, GColorBlack);
   text_layer_set_font(&TZOffset, TZFont);
   layer_add_child(&window.layer, &TZOffset.layer);
+
+  // load background image
+  bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
+  bitmap_layer_set_compositing_mode(&DigitalWindow.layer, GCompOpAnd);
+  layer_add_child(&window.layer, &DigitalWindow.layer.layer);
 }
 
 void handle_init(AppContextRef ctx) {
@@ -95,6 +161,16 @@ void handle_init(AppContextRef ctx) {
     TZFormat = "%I:%M";
   }
 
+  // init analogue hands
+  initLayerPathAndCenter(&AnalogueMinuteLayer, &AnalogueMinutePath,
+			 &MINUTE_HAND_PATH_POINTS,
+			 &minute_display_layer_update_callback);
+  initLayerPathAndCenter(&AnalogueHourLayer, &AnalogueHourPath,
+			 &HOUR_HAND_PATH_POINTS,
+			 &hour_display_layer_update_callback);
+  layer_add_child(&window.layer, &AnalogueMinuteLayer);
+  layer_add_child(&window.layer, &AnalogueHourLayer);
+
   // write current time to display
   PblTm curTime;
   get_time(&curTime);
@@ -104,6 +180,10 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text(&TZTimeS, TZTimeSText);
   text_layer_set_text(&TZName, TZNameText);
   text_layer_set_text(&TZOffset, TZOffsetText);
+
+  // draw analogue hands
+  layer_mark_dirty(&AnalogueMinuteLayer);
+  layer_mark_dirty(&AnalogueHourLayer);
 }
 
 void handle_deinit(AppContextRef ctx) {
