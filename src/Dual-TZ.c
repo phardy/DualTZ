@@ -31,10 +31,12 @@ static char *TZFormat;
 
 void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
   string_format_time(TZTimeSText, sizeof(TZTimeSText), "%S", t->tick_time);
-  string_format_time(TZTimeText, sizeof(TZTimeText), TZFormat, t->tick_time);
-
-  text_layer_set_text(&TZTime, TZTimeText);
   text_layer_set_text(&TZTimeS, TZTimeSText);
+
+  if (t->tick_time->tm_sec == 0) {
+    string_format_time(TZTimeText, sizeof(TZTimeText), TZFormat, t->tick_time);
+    text_layer_set_text(&TZTime, TZTimeText);
+  }
 }
 
 void display_init() {
