@@ -72,15 +72,15 @@ void display_init() {
   layer_add_child(&window.layer, &TZTimeS.layer);
 
   // timezone name display
-  text_layer_init(&TZName, GRect(1, 127, 120, 13));
-  text_layer_set_text_alignment(&TZName, GTextAlignmentRight);
+  text_layer_init(&TZName, GRect(24, 127, 75, 13));
+  text_layer_set_text_alignment(&TZName, GTextAlignmentCenter);
   text_layer_set_text_color(&TZName, GColorBlack);
   text_layer_set_font(&TZName, TZFont);
   layer_add_child(&window.layer, &TZName.layer);
 
   // timezone offset display
-  text_layer_init(&TZOffset, GRect(120, 127, 24, 13));
-  text_layer_set_text_alignment(&TZOffset, GTextAlignmentRight);
+  text_layer_init(&TZOffset, GRect(110, 127, 17, 13));
+  text_layer_set_text_alignment(&TZOffset, GTextAlignmentLeft);
   text_layer_set_text_color(&TZOffset, GColorBlack);
   text_layer_set_font(&TZOffset, TZFont);
   layer_add_child(&window.layer, &TZOffset.layer);
