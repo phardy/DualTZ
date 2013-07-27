@@ -27,8 +27,8 @@ const GPathInfo HOUR_HAND_PATH_POINTS = {
   (GPoint[]) {
     {-3, 2},
     {3, 2},
-    {3, -25},
-    {-3, -25}
+    {3, -40},
+    {-3, -40}
   }
 };
 
@@ -37,15 +37,15 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
   (GPoint []) {
     {-3, 2},
     {3, 2},
-    {3, -50},
-    {-3, -50}
+    {3, -60},
+    {-3, -60}
   }
 };
 
 void initLayerPathAndCenter (Layer *layer, GPath *path,
 			     const GPathInfo *pathInfo,
 			     const void *updateProc) {
-  layer_init(layer, GRect(0, 0, 144, 128));
+  layer_init(layer, GRect(8, 0, 128, 128));
   layer->update_proc = updateProc;
   gpath_init(path, pathInfo);
   gpath_move_to(path, grect_center_point(&layer->frame));
