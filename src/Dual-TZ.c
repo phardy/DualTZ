@@ -75,6 +75,11 @@ void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
   graphics_context_set_stroke_color(ctx, GColorBlack);
   gpath_draw_filled(ctx, &AnalogueHourPath);
   gpath_draw_outline(ctx, &AnalogueHourPath);
+
+  graphics_fill_circle(ctx, grect_center_point(&me->frame), 6);
+  graphics_draw_circle(ctx, grect_center_point(&me->frame), 6);
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_circle(ctx, grect_center_point(&me->frame), 1);
 }
 
 void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
@@ -90,6 +95,11 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   graphics_context_set_stroke_color(ctx, GColorBlack);
   gpath_draw_filled(ctx, &AnalogueMinutePath);
   gpath_draw_outline(ctx, &AnalogueMinutePath);
+
+  graphics_fill_circle(ctx, grect_center_point(&me->frame), 6);
+  graphics_draw_circle(ctx, grect_center_point(&me->frame), 6);
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_circle(ctx, grect_center_point(&me->frame), 1);
 }
 
 void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
@@ -106,7 +116,7 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
   }
 }
 
-void display_init() {
+void display_init(AppContextRef *ctx) {
   // load resources
   resource_init_current_app(&APP_RESOURCES);
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_12));
@@ -149,17 +159,6 @@ void display_init() {
   bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
   bitmap_layer_set_compositing_mode(&DigitalWindow.layer, GCompOpAnd);
   layer_add_child(&window.layer, &DigitalWindow.layer.layer);
-}
-
-void handle_init(AppContextRef ctx) {
-  AnalogueGRect = GRect(8, 0, 128, 128);
-  display_init();
-
-  if (clock_is_24h_style()) {
-    TZFormat = "%H:%M";
-  } else {
-    TZFormat = "%I:%M";
-  }
 
   // init analogue hands
   initLayerPathAndCenter(&AnalogueMinuteLayer, &AnalogueMinutePath,
@@ -170,6 +169,17 @@ void handle_init(AppContextRef ctx) {
 			 &hour_display_layer_update_callback);
   layer_add_child(&window.layer, &AnalogueMinuteLayer);
   layer_add_child(&window.layer, &AnalogueHourLayer);
+}
+
+void handle_init(AppContextRef ctx) {
+  AnalogueGRect = GRect(8, 0, 128, 128);
+  display_init(&ctx);
+
+  if (clock_is_24h_style()) {
+    TZFormat = "%H:%M";
+  } else {
+    TZFormat = "%I:%M";
+  }
 
   // write current time to display
   PblTm curTime;
