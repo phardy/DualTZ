@@ -23,22 +23,24 @@ static GFont TimeFont;
 static GFont TimeSFont;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
-  4,
+  5,
   (GPoint[]) {
-    {-3, 2},
-    {3, 2},
-    {3, -40},
-    {-3, -40}
+    {-4, 2},
+    {4, 2},
+    {4, -30},
+    {0, -40},
+    {-4, -30}
   }
 };
 
 const GPathInfo MINUTE_HAND_PATH_POINTS = {
-  4,
+  5,
   (GPoint []) {
-    {-3, 2},
-    {3, 2},
-    {3, -60},
-    {-3, -60}
+    {-4, 2},
+    {4, 2},
+    {4, -50},
+    {0, -60},
+    {-4, -50}
   }
 };
 
