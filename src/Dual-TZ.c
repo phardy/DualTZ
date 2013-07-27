@@ -23,7 +23,7 @@ static GFont TimeSFont;
 // These are generic vars
 // char TZNameText[] = "xxxxxxxxxxxxxxx"; // 15 characters
 // char TZOffsetText[] = "+xx";
-char TZNameText[] = "Sydney";
+char TZNameText[] = "Time zone label";
 char TZOffsetText[] = "+10";
 static char TZTimeText[] = "00:00";
 static char TZTimeSText[] = "00";
@@ -37,8 +37,8 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
   text_layer_set_text(&TZTimeS, TZTimeSText);
 }
 
-void handle_init(AppContextRef ctx) {
-  // init resources
+void display_init() {
+  // load resources
   resource_init_current_app(&APP_RESOURCES);
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_12));
   TimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
@@ -48,7 +48,7 @@ void handle_init(AppContextRef ctx) {
   window_init(&window, "Root window");
   window_stack_push(&window, true /* Animated */);
 
-  // load background
+  // load background image
   bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
   layer_add_child(&window.layer, &DigitalWindow.layer.layer);
 
@@ -60,7 +60,6 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text_alignment(&TZTime, GTextAlignmentRight);
   text_layer_set_text_color(&TZTime, GColorBlack);
   text_layer_set_font(&TZTime, TimeFont);
-  text_layer_set_text(&TZTime, TZTimeText);
   layer_add_child(&window.layer, &TZTime.layer);
 
   // seconds display
@@ -68,24 +67,29 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text_alignment(&TZTimeS, GTextAlignmentLeft);
   text_layer_set_text_color(&TZTimeS, GColorBlack);
   text_layer_set_font(&TZTimeS, TimeSFont);
-  text_layer_set_text(&TZTimeS, TZTimeSText);
   layer_add_child(&window.layer, &TZTimeS.layer);
 
   // timezone name display
-  text_layer_init(&TZName, GRect(1, 127, 120, 15));
+  text_layer_init(&TZName, GRect(1, 127, 120, 13));
   text_layer_set_text_alignment(&TZName, GTextAlignmentRight);
   text_layer_set_text_color(&TZName, GColorBlack);
   text_layer_set_font(&TZName, TZFont);
-  text_layer_set_text(&TZName, TZNameText);
-  // layer_add_child(&window.layer, &TZName.layer);
+  layer_add_child(&window.layer, &TZName.layer);
 
   // timezone offset display
-  text_layer_init(&TZOffset, GRect(120, 127, 24, 15));
+  text_layer_init(&TZOffset, GRect(120, 127, 24, 13));
   text_layer_set_text_alignment(&TZOffset, GTextAlignmentRight);
   text_layer_set_text_color(&TZOffset, GColorBlack);
   text_layer_set_font(&TZOffset, TZFont);
+  layer_add_child(&window.layer, &TZOffset.layer);
+}
+
+void handle_init(AppContextRef ctx) {
+  display_init();
+  text_layer_set_text(&TZTime, TZTimeText);
+  text_layer_set_text(&TZTimeS, TZTimeSText);
+  text_layer_set_text(&TZName, TZNameText);
   text_layer_set_text(&TZOffset, TZOffsetText);
-  // layer_add_child(&window.layer, &TZOffset.layer);
 
   if (clock_is_24h_style()) {
     TZFormat = "%H:%M";
