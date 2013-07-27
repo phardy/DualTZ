@@ -88,16 +88,22 @@ void display_init() {
 
 void handle_init(AppContextRef ctx) {
   display_init();
-  text_layer_set_text(&TZTime, TZTimeText);
-  text_layer_set_text(&TZTimeS, TZTimeSText);
-  text_layer_set_text(&TZName, TZNameText);
-  text_layer_set_text(&TZOffset, TZOffsetText);
 
   if (clock_is_24h_style()) {
     TZFormat = "%H:%M";
   } else {
     TZFormat = "%I:%M";
   }
+
+  // write current time to display
+  PblTm curTime;
+  get_time(&curTime);
+  string_format_time(TZTimeSText, sizeof(TZTimeSText), "%S", &curTime);
+  string_format_time(TZTimeText, sizeof(TZTimeText), TZFormat, &curTime);
+  text_layer_set_text(&TZTime, TZTimeText);
+  text_layer_set_text(&TZTimeS, TZTimeSText);
+  text_layer_set_text(&TZName, TZNameText);
+  text_layer_set_text(&TZOffset, TZOffsetText);
 }
 
 void handle_deinit(AppContextRef ctx) {
