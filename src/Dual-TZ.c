@@ -1,9 +1,12 @@
 #include "pebble_os.h"
 #include "pebble_app.h"
 #include "pebble_fonts.h"
+#include "http.h"
 
 #define MY_UUID { 0x33, 0x1D, 0x7F, 0x32, 0x4F, 0xEE, 0x4D, 0x6C, 0xBD, 0x95, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
-PBL_APP_INFO(MY_UUID,
+#define HTTP_APP_ID 5887304
+
+PBL_APP_INFO(HTTP_UUID,
              "Dual-TZ", "Kids, Inc.",
              1, 0, /* App version */
              DEFAULT_MENU_ICON,
@@ -52,6 +55,12 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
     {-4, -50}
   }
 };
+
+void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
+			 uint32_t unixtime, const char* tz_name,
+			 void* context) {
+  text_layer_set_text(&TZOffset, "OK");
+}
 
 void initLayerPathAndCenter (Layer *layer, GPath *path,
 			     const GPathInfo *pathInfo,
@@ -202,6 +211,16 @@ void handle_init(AppContextRef ctx) {
   // draw analogue hands
   layer_mark_dirty(&AnalogueMinuteLayer);
   layer_mark_dirty(&AnalogueHourLayer);
+
+  http_set_app_id(HTTP_APP_ID);
+  HTTPCallbacks callbacks = {
+    .time = &http_time_callback
+  };
+  http_register_callbacks(callbacks, ctx);
+  HTTPResult x = http_time_request();
+  if (x == HTTP_BUSY) {
+    text_layer_set_text(&TZName, "boom");
+  }
 }
 
 void handle_deinit(AppContextRef ctx) {
