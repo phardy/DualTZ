@@ -19,6 +19,7 @@ TextLayer TZName;
 TextLayer TZOffset;
 TextLayer DigitalTime;
 TextLayer DigitalTimeS;
+TextLayer FaceLabel;
 static GFont TZFont;
 static GFont DigitalTimeFont;
 static GFont DigitalTimeSFont;
@@ -161,6 +162,15 @@ void display_init(AppContextRef *ctx) {
   bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
   bitmap_layer_set_compositing_mode(&DigitalWindow.layer, GCompOpAnd);
   layer_add_child(&window.layer, &DigitalWindow.layer.layer);
+
+  // static face stuff
+  text_layer_init(&FaceLabel, GRect(52, 8, 40, 15));
+  text_layer_set_text_alignment(&FaceLabel, GTextAlignmentCenter);
+  text_layer_set_background_color(&FaceLabel, GColorBlack);
+  text_layer_set_text_color(&FaceLabel, GColorWhite);
+  text_layer_set_font(&FaceLabel, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text(&FaceLabel, "local");
+  layer_add_child(&window.layer, &FaceLabel.layer);
 
   // init analogue hands
   initLayerPathAndCenter(&AnalogueMinuteLayer, &AnalogueMinutePath,
