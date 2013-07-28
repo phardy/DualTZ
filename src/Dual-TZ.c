@@ -3,6 +3,9 @@
 #include "pebble_fonts.h"
 #include "http.h"
 
+#include "Dual-TZ.h"
+#include "ptime.h"
+
 #define MY_UUID { 0x33, 0x1D, 0x7F, 0x32, 0x4F, 0xEE, 0x4D, 0x6C, 0xBD, 0x95, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
 #define HTTP_APP_ID 5887304
 
@@ -28,11 +31,14 @@ static GFont DigitalTimeSFont;
 
 // Time rememberating stuff.
 // Currently hardcoded. Sorry.
-char TZNameText[] = "Kolkata"; // max 15 characters (arbitrary)
-char TZOffsetText[] = "+5:30"; // 5 characters (for now)
+char TZNameText[] = "Sydney"; // max 15 characters (arbitrary)
+char TZOffsetText[] = "+10"; // 5 characters (for now)
+int32_t TZOffsetS = 36000; // Correct for Kolkata
 static char DigitalTimeText[] = "00:00";
 static char DigitalTimeSText[] = "00";
 static char *DigitalTimeFormat;
+bool localTZSet = false;
+int32_t localTZOffset = 0;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -59,7 +65,15 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
 void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
 			 uint32_t unixtime, const char* tz_name,
 			 void* context) {
-  text_layer_set_text(&TZOffset, "OK");
+  localTZSet = true;
+  localTZOffset = utc_offset_seconds - TZOffsetS;
+
+  text_layer_set_text(&TZName, TZNameText);
+  text_layer_set_text(&TZOffset, TZOffsetText);
+
+  PblTm now;
+  get_time(&now);
+  update_digital_time(&now);
 }
 
 void initLayerPathAndCenter (Layer *layer, GPath *path,
@@ -111,6 +125,16 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   graphics_fill_circle(ctx, grect_center_point(&me->frame), 1);
 }
 
+void update_digital_time(PblTm *time) {
+  time_t t = pmktime(time);
+  t += localTZOffset;
+  PblTm adjtime = plocaltime(&t);
+
+  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
+		     DigitalTimeFormat, &adjtime);
+  text_layer_set_text(&DigitalTime, DigitalTimeText);
+}
+
 void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
   string_format_time(DigitalTimeSText, sizeof(DigitalTimeSText),
 		     "%S", t->tick_time);
@@ -121,9 +145,8 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
     if (t->tick_time->tm_min % 2 == 0) {
       layer_mark_dirty(&AnalogueHourLayer);
     }
-    string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-		       DigitalTimeFormat, t->tick_time);
-    text_layer_set_text(&DigitalTime, DigitalTimeText);
+
+    update_digital_time(t->tick_time);
   }
 }
 
