@@ -1,4 +1,0 @@
-* non-italic digital font.
-* add dial to background.
-* analogue face.
-* 
