@@ -231,7 +231,12 @@ void pbl_main(void *params) {
   PebbleAppHandlers handlers = {
     .init_handler = &handle_init,
     .deinit_handler = &handle_deinit,
-
+    .messaging_info = {
+      .buffer_sizes = {
+	.inbound = 124,
+	.outbound = 256
+      }
+    },
     .tick_info = {
       .tick_handler = &handle_second_tick,
       .tick_units = SECOND_UNIT
