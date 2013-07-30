@@ -5,6 +5,7 @@
 
 #include "Dual-TZ.h"
 #include "ptime.h"
+#include "config.h"
 
 #define MY_UUID { 0x33, 0x1D, 0x7F, 0x32, 0x4F, 0xEE, 0x4D, 0x6C, 0xBD, 0x95, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
 #define HTTP_APP_ID 5887304
@@ -32,9 +33,9 @@ static GFont DigitalTimeSFont;
 
 // Time rememberating stuff.
 // Currently hardcoded. Sorry.
-char TZNameText[] = "Rio de Janeiro"; // max 15 characters (arbitrary)
-char TZOffsetText[] = "-3"; // 5 characters (for now)
-int32_t TZOffsetS = -10800; // Correct for Kolkata
+char TZNameText[] = TZNAMETEXT;
+char TZOffsetText[] = TZOFFSETTEXT;
+int32_t TZOffsetS = TZOFFSETSEC;
 static char DigitalTimeText[] = "00:00";
 static char DigitalTimeSText[] = "00";
 static char *DigitalTimeFormat;
