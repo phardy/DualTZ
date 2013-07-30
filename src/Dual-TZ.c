@@ -6,8 +6,6 @@
 #include "Dual-TZ.h"
 #include "ptime.h"
 
-#include "xprintf.h"
-
 #define MY_UUID { 0x33, 0x1D, 0x7F, 0x32, 0x4F, 0xEE, 0x4D, 0x6C, 0xBD, 0x95, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
 #define HTTP_APP_ID 5887304
 
@@ -131,21 +129,10 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
 void update_digital_time(PblTm *time) {
   time_t t1 = pmktime(time);
   int32_t t = (int32_t)t1 + localTZOffset;
-  // plocaltime is broken, so we calculate hours and minutes the boring way.
-  // adjTime = plocaltime(&t);
-  // int32_t secs_today = t % 86400;
-  // adjTime.tm_hour = secs_today % 3600;
-  // secs_today %= 3600;
-  // adjTime.tm_min = secs_today / 60;
-  
-  // string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-  // 		     DigitalTimeFormat, &adjTime);
-  int32_t rem = t % 86400; // seconds in day
-  int32_t hours = rem / 3600; // seconds in hour
-  rem %= 3600;
-  int32_t min = rem / 60; // seconds in minute
-  xsprintf(DigitalTimeText, "%d:%d", hours, min);
 
+  PblTm adjTime = plocaltime(&t);
+  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
+		     DigitalTimeFormat, &adjTime);
   text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
