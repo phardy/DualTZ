@@ -34,9 +34,9 @@ static GFont DigitalTimeSFont;
 
 // Time rememberating stuff.
 // Currently hardcoded. Sorry.
-char TZNameText[] = "Sydney"; // max 15 characters (arbitrary)
-char TZOffsetText[] = "+10"; // 5 characters (for now)
-int32_t TZOffsetS = 36000; // Correct for Kolkata
+char TZNameText[] = "Rio de Janeiro"; // max 15 characters (arbitrary)
+char TZOffsetText[] = "-3"; // 5 characters (for now)
+int32_t TZOffsetS = -10800; // Correct for Kolkata
 static char DigitalTimeText[] = "00:00";
 static char DigitalTimeSText[] = "00";
 static char *DigitalTimeFormat;
@@ -69,7 +69,7 @@ void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
 			 uint32_t unixtime, const char* tz_name,
 			 void* context) {
   localTZSet = true;
-  localTZOffset = utc_offset_seconds - TZOffsetS;
+  localTZOffset = TZOffsetS - utc_offset_seconds;
 
   text_layer_set_text(&TZName, TZNameText);
   text_layer_set_text(&TZOffset, TZOffsetText);
