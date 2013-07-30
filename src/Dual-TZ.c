@@ -6,6 +6,8 @@
 #include "Dual-TZ.h"
 #include "ptime.h"
 
+#include "xprintf.h"
+
 #define MY_UUID { 0x33, 0x1D, 0x7F, 0x32, 0x4F, 0xEE, 0x4D, 0x6C, 0xBD, 0x95, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
 #define HTTP_APP_ID 5887304
 
@@ -40,6 +42,7 @@ static char DigitalTimeSText[] = "00";
 static char *DigitalTimeFormat;
 bool localTZSet = false;
 int32_t localTZOffset = 0;
+PblTm adjTime;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -129,10 +132,17 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
 void update_digital_time(PblTm *time) {
   time_t t = pmktime(time);
   t += localTZOffset;
-  PblTm adjtime = plocaltime(&t);
+  // plocaltime is broken, so we calculate hours and minutes the boring way.
+  // adjTime = plocaltime(&t);
 
-  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-		     DigitalTimeFormat, &adjtime);
+  // string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
+  // DigitalTimeFormat, &adjTime);
+  int rem = t % 86400; // seconds in day
+  int hours = rem % 3600; // seconds in hour
+  rem %= 3600;
+  int min = rem / 60; // seconds in minute
+  xsprintf(DigitalTimeText, "%d:%d", hours, min);
+
   text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
