@@ -77,8 +77,8 @@ PblTm plocaltime (const time_t *timep) {
   PblTm res;
   long days, rem;
 
-  days = ((long)timep) / SECSPERDAY;
-  rem = ((long)timep) % SECSPERDAY;
+  days = ((int32_t)timep) / SECSPERDAY;
+  rem = ((int32_t)timep) % SECSPERDAY;
   while (rem < 0) {
     rem += SECSPERDAY;
     --days;
