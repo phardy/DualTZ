@@ -42,7 +42,6 @@ static char DigitalTimeSText[] = "00";
 static char *DigitalTimeFormat;
 bool localTZSet = false;
 int32_t localTZOffset = 0;
-PblTm adjTime;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -130,17 +129,21 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
 }
 
 void update_digital_time(PblTm *time) {
-  time_t t = pmktime(time);
-  t += localTZOffset;
+  time_t t1 = pmktime(time);
+  int32_t t = (int32_t)t1 + localTZOffset;
   // plocaltime is broken, so we calculate hours and minutes the boring way.
   // adjTime = plocaltime(&t);
-
+  // int32_t secs_today = t % 86400;
+  // adjTime.tm_hour = secs_today % 3600;
+  // secs_today %= 3600;
+  // adjTime.tm_min = secs_today / 60;
+  
   // string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-  // DigitalTimeFormat, &adjTime);
-  int rem = t % 86400; // seconds in day
-  int hours = rem % 3600; // seconds in hour
+  // 		     DigitalTimeFormat, &adjTime);
+  int32_t rem = t % 86400; // seconds in day
+  int32_t hours = rem / 3600; // seconds in hour
   rem %= 3600;
-  int min = rem / 60; // seconds in minute
+  int32_t min = rem / 60; // seconds in minute
   xsprintf(DigitalTimeText, "%d:%d", hours, min);
 
   text_layer_set_text(&DigitalTime, DigitalTimeText);
