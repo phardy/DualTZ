@@ -26,10 +26,12 @@ TextLayer TZName;
 TextLayer TZOffset;
 TextLayer DigitalTime;
 TextLayer DigitalTimeS;
+TextLayer Date;
 TextLayer FaceLabel;
 static GFont TZFont;
 static GFont DigitalTimeFont;
 static GFont DigitalTimeSFont;
+static GFont DateFont;
 
 // Time rememberating stuff.
 // Currently hardcoded. Sorry.
@@ -38,6 +40,7 @@ char TZOffsetText[] = TZOFFSETTEXT;
 int32_t TZOffsetS = TZOFFSETSEC;
 static char DigitalTimeText[] = "00:00";
 static char DigitalTimeSText[] = "00";
+static char DateText[] = "  ";
 static char *DigitalTimeFormat;
 bool localTZSet = false;
 int32_t localTZOffset = 0;
@@ -150,6 +153,11 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
     update_digital_time(t->tick_time);
   }
+  if (t->tick_time->tm_hour == 0 && t->tick_time->tm_min == 0) {
+    string_format_time(DateText, sizeof(DateText),
+		       "%e", t->tick_time);
+    text_layer_set_text(&Date, DateText);
+  }
 }
 
 void display_init(AppContextRef *ctx) {
@@ -158,6 +166,7 @@ void display_init(AppContextRef *ctx) {
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));
   DigitalTimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
   DigitalTimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
+  DateFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
 
   // init root window
   window_init(&window, "Root window");
@@ -190,6 +199,13 @@ void display_init(AppContextRef *ctx) {
   text_layer_set_text_color(&TZOffset, GColorBlack);
   text_layer_set_font(&TZOffset, TZFont);
   layer_add_child(&window.layer, &TZOffset.layer);
+
+  // date display
+  text_layer_init(&Date, GRect(113, 55, 20, 20));
+  text_layer_set_text_alignment(&Date, GTextAlignmentLeft);
+  text_layer_set_text_color(&Date, GColorBlack);
+  text_layer_set_font(&Date, DateFont);
+  layer_add_child(&window.layer, &Date.layer);
 
   // load background image
   bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
@@ -235,12 +251,15 @@ void handle_init(AppContextRef ctx) {
 		     "%S", &curTime);
   string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
 		     DigitalTimeFormat, &curTime);
+  string_format_time(DateText, sizeof(DateText), 
+		     "%e", &curTime);
   text_layer_set_text(&DigitalTime, DigitalTimeText);
   text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
   // text_layer_set_text(&TZName, TZNameText);
   // text_layer_set_text(&TZOffset, TZOffsetText);
   text_layer_set_text(&TZName, "local time");
   text_layer_set_text(&TZOffset, " ");
+  text_layer_set_text(&Date, DateText);
 
   // draw analogue hands
   layer_mark_dirty(&AnalogueMinuteLayer);

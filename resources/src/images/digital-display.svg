@@ -27,14 +27,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.9921875"
-     inkscape:cx="64"
-     inkscape:cy="104.5573"
+     inkscape:zoom="4.8928571"
+     inkscape:cx="72"
+     inkscape:cy="84.000017"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="709"
+     inkscape:window-width="1920"
+     inkscape:window-height="1021"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -180,5 +180,16 @@
        sodipodi:ry="3.9285715"
        d="m 54.642857,86.928574 a 5,3.9285715 0 1 1 -10,0 5,3.9285715 0 1 1 10,0 z"
        transform="matrix(0.6,0,0,0.76363636,42.214283,822.98043)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3007"
+       width="13"
+       height="11"
+       x="112"
+       y="943.36243"
+       rx="2.2188528"
+       ry="2.9357207"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>
