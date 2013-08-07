@@ -33,8 +33,6 @@ static GFont DigitalTimeFont;
 static GFont DigitalTimeSFont;
 static GFont DateFont;
 
-// Time rememberating stuff.
-// Currently hardcoded. Sorry.
 char TZNameText[] = TZNAMETEXT;
 char TZOffsetText[] = TZOFFSETTEXT;
 int32_t TZOffsetS = TZOFFSETSEC;
@@ -81,7 +79,7 @@ void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
   update_digital_time(&now);
 }
 
-void initLayerPathAndCenter (Layer *layer, GPath *path,
+void init_layer_path_and_center (Layer *layer, GPath *path,
 			     const GPathInfo *pathInfo,
 			     const void *updateProc) {
   layer_init(layer, AnalogueGRect);
@@ -223,10 +221,10 @@ void display_init(AppContextRef *ctx) {
   layer_add_child(&window.layer, &FaceLabel.layer);
 
   // init analogue hands
-  initLayerPathAndCenter(&AnalogueMinuteLayer, &AnalogueMinutePath,
+  init_layer_path_and_center(&AnalogueMinuteLayer, &AnalogueMinutePath,
 			 &MINUTE_HAND_PATH_POINTS,
 			 &minute_display_layer_update_callback);
-  initLayerPathAndCenter(&AnalogueHourLayer, &AnalogueHourPath,
+  init_layer_path_and_center(&AnalogueHourLayer, &AnalogueHourPath,
 			 &HOUR_HAND_PATH_POINTS,
 			 &hour_display_layer_update_callback);
   layer_add_child(&window.layer, &AnalogueMinuteLayer);
@@ -256,8 +254,6 @@ void handle_init(AppContextRef ctx) {
 		     "%e", &curTime);
   text_layer_set_text(&DigitalTime, DigitalTimeText);
   text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
-  // text_layer_set_text(&TZName, TZNameText);
-  // text_layer_set_text(&TZOffset, TZOffsetText);
   text_layer_set_text(&TZName, "local time");
   text_layer_set_text(&TZOffset, " ");
   text_layer_set_text(&Date, DateText);
