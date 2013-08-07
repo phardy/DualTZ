@@ -134,9 +134,10 @@ void update_digital_time(PblTm *time) {
   time_t t1 = pmktime(time);
   int32_t t = (int32_t)t1 + localTZOffset;
 
-  PblTm adjTime = plocaltime(&t);
+  PblTm *adjTime;
+  adjTime = pgmtime(&t);
   string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-		     DigitalTimeFormat, &adjTime);
+		     DigitalTimeFormat, adjTime);
   text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
