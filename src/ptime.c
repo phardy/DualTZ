@@ -1,3 +1,8 @@
+/*
+  This code is derived from PDPCLIB, the public domain C runtime
+  library by Paul Edwards. http://pdos.sourceforge.net/
+*/
+
 #include "pebble_os.h"
 
 /* scalar date routines    --    public domain by Ray Gardner
