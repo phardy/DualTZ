@@ -1,14 +1,23 @@
 #include "pebble_os.h"
 #include "pebble_app.h"
 #include "pebble_fonts.h"
+#include "http.h"
 
+#include "../../common/config.h"
 
-#define MY_UUID { 0x5C, 0x54, 0x02, 0xF2, 0xC9, 0xD4, 0x46, 0x5D, 0x94, 0xDA, 0xCC, 0xF3, 0x29, 0xEE, 0x1F, 0x83 }
-PBL_APP_INFO(MY_UUID,
-             "Template App", "Your Company",
-             1, 0, /* App version */
-             DEFAULT_MENU_ICON,
-             APP_INFO_STANDARD_APP);
+#ifdef ANDROID
+PBL_APP_INFO(SELECTOR_APP_UUID,
+	     "Dual-TZ Config", "Kids, Inc.",
+	     1, 0, /* App version */
+	     DEFAULT_MENU_ICON,
+	     APP_INFO_STANDARD_APP);
+#else
+PBL_APP_INFO(HTTP_UUID,
+	     "Dual-TZ Config", "KIDS, Inc.",
+	     1, 0, /* App version */
+	     DEFAULT_MENU_ICON,
+	     APP_INFO_STANDARD_APP);
+#endif
 
 Window window;
 
