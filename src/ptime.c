@@ -4,25 +4,13 @@
 
 #include "time.h"
 
-#define SECSPERMIN 60L
-#define MINSPERHOUR 60L
-#define HOURSPERDAY 24L
-#define SECSPERHOUR (SECSPERMIN * MINSPERHOUR)
-#define SECSPERDAY (SECSPERHOUR * HOURSPERDAY)
-#define DAYSPERWEEK 7
-#define MONSPERYEAR 12
-
-#define _SEC_IN_MINUTE 60L
-#define _SEC_IN_HOUR 3600L
-#define _SEC_IN_DAY 86400L
-
-static _CONST int DAYS_IN_MONTH[12] =
-  {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-#define _DAYS_IN_MONTH(x) ((x == 1) ? days_in_feb : DAYS_IN_MONTH[x])
-
-static _CONST int _DAYS_BEFORE_MONTH[12] =
-  {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+#define SECS_PER_MIN 60L
+#define MINS_PER_HOUR 60L
+#define HOURS_PER_DAY 24L
+#define SECS_PER_HOUR (SECS_PER_MIN * MINS_PER_HOUR)
+#define SECS_PER_DAY (SECS_PER_HOUR * HOURS_PER_DAY)
+#define DAYS_PER_WEEK 7
+#define MONS_PER_YEAR 12
 
 #define _ISLEAP(y) (((y) % 4) == 0 && (((y) % 100) != 0 || (((y)+1900) % 400) == 0))
 #define _DAYS_IN_YEAR(year) (_ISLEAP(year) ? 366 : 365)
@@ -33,8 +21,8 @@ time_t pmktime (PblTm *tm) {
   int year;
 
   /* compute hours, minutes, seconds */
-  tim += tm->tm_sec + (tm->tm_min * _SEC_IN_MINUTE) +
-    (tm->tm_hour * _SEC_IN_HOUR);
+  tim += tm->tm_sec + (tm->tm_min * SECS_PER_MIN) +
+    (tm->tm_hour * SECS_PER_HOUR);
 
   /* days in this year */
   days += tm->tm_yday;
@@ -58,12 +46,12 @@ time_t pmktime (PblTm *tm) {
   }
 
   /* compute total seconds */
-  tim += (days * _SEC_IN_DAY);
+  tim += (days * SECS_PER_DAY);
 
   return tim;
 }
 
-static _CONST int mon_lengths[2][MONSPERYEAR] = {
+static _CONST int mon_lengths[2][MONS_PER_YEAR] = {
   {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
   {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
@@ -77,22 +65,22 @@ PblTm plocaltime (const time_t *timep) {
   PblTm res;
   long days, rem;
 
-  days = ((int32_t)*timep) / SECSPERDAY;
-  rem = ((int32_t)*timep) % SECSPERDAY;
+  days = ((int32_t)*timep) / SECS_PER_DAY;
+  rem = ((int32_t)*timep) % SECS_PER_DAY;
   while (rem < 0) {
-    rem += SECSPERDAY;
+    rem += SECS_PER_DAY;
     --days;
   }
-  while (rem >= SECSPERDAY) {
-    rem += SECSPERDAY;
+  while (rem >= SECS_PER_DAY) {
+    rem += SECS_PER_DAY;
     ++days;
   }
 
   /* compute hour, min, and sec */
-  res.tm_hour = (int) (rem / SECSPERHOUR);
-  rem %= SECSPERHOUR;
-  res.tm_min = (int) (rem / SECSPERMIN);
-  res.tm_sec = (int) (rem % SECSPERMIN);
+  res.tm_hour = (int) (rem / SECS_PER_HOUR);
+  rem %= SECS_PER_HOUR;
+  res.tm_min = (int) (rem / SECS_PER_MIN);
+  res.tm_sec = (int) (rem % SECS_PER_MIN);
 
   return res;
 }
