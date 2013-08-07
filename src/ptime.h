@@ -1,2 +1,3 @@
+
 time_t pmktime (PblTm *tmptr);
-PblTm *plocaltime (const time_t *timer);
+PblTm *pgmtime (const time_t *timer);
