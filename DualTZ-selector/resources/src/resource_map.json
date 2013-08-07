@@ -1,11 +1,16 @@
 
-{"friendlyVersion": "VERSION",
- "versionDefName": "VERSION",
+{"friendlyVersion": "prototype",
+ "versionDefName": "APP_RESOURCES",
  "media": [
-	   {
-	    "type":"raw",
-	    "defName":"DUMMY",
-	    "file":"resource_map.json"
-	   }
-	  ]
+     {
+	 "type":"raw",
+	 "defName":"ARCTIC_TZ",
+	 "file":"TZfiles/Arctic.txt"
+     },
+     {
+	 "type":"raw",
+	 "defName":"DUMMY",
+	 "file":"resource_map.json"
+     }
+ ]
 }

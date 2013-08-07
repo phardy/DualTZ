@@ -1,7 +1,6 @@
 #include "pebble_os.h"
 #include "pebble_app.h"
 #include "pebble_fonts.h"
-#include "http.h"
 
 #include "../../common/config.h"
 
@@ -26,6 +25,8 @@ void handle_init(AppContextRef ctx) {
 
   window_init(&window, "Window Name");
   window_stack_push(&window, true /* Animated */);
+
+  resource_init_current_app(&APP_RESOURCES);
 }
 
 
