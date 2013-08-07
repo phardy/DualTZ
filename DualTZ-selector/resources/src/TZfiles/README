@@ -1,0 +1,5 @@
+The files in this directory are generated from utils/parse-zones.sh.
+
+The format is:
+TZ_name TZoffset TZoffset(seconds)
+
