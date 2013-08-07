@@ -7,14 +7,19 @@
 #include "ptime.h"
 #include "../../common/config.h"
 
-#define MY_UUID { 0x33, 0x1D, 0x7F, 0x32, 0x4F, 0xEE, 0x4D, 0x6C, 0xBD, 0x95, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
-#define HTTP_APP_ID 5887304
-
-PBL_APP_INFO(HTTP_UUID,
+#ifdef ANDROID
+PBL_APP_INFO(WATCHFACE_APP_UUID,
              "Dual-TZ", "Kids, Inc.",
              1, 0, /* App version */
              DEFAULT_MENU_ICON,
              APP_INFO_WATCH_FACE);
+#else
+PBL_APP_INFO(HTTP_UUID,
+	     "Dual-TZ", "Kids, Inc.",
+	     1, 0, /* App version */
+	     DEFAULT_MENU_ICON,
+	     APP_INFO_WATCH_FACE);
+#endif
 
 // Layout stuff
 Window window;

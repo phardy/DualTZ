@@ -4,3 +4,10 @@
 #define TZOFFSETTEXT "+0"
 // Time zone offset in seconds from UTC.
 #define TZOFFSETSEC 60*60*0
+
+// Do not define if building watch apps that will talk to httpebble on iOS.
+#define ANDROID
+
+#define WATCHFACE_APP_UUID { 0x91, 0x41, 0xB6, 0x28, 0xBC, 0x89, 0x49, 0x8E, 0xB1, 0x47, 0xE2, 0x7C, 0x6C, 0xDB, 0x44, 0x73 }
+// Use the same httpebble app ID everywhere to share the cookie dict.
+#define HTTP_APP_ID 5887304
