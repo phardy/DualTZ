@@ -3,6 +3,8 @@
 #include "pebble_fonts.h"
 
 #include "../../common/config.h"
+#include "DualTZ-selector.h"
+#include "root_window.h"
 
 #ifdef ANDROID
 PBL_APP_INFO(SELECTOR_APP_UUID,
@@ -24,17 +26,22 @@ PBL_APP_INFO(HTTP_UUID,
 #define MAX_TZ 150
 #define TZ_NAME_LEN 15
 #define TZ_OFFSET_LEN 5
+
 // tz_index contains offsets for the start of
 // each line in the current resource (tz file)
 uint16_t tz_index[MAX_TZ];
 uint16_t tz_count;
 
-Window window;
+Window root_window;
+// Window 
 MenuLayer root_menu;
 TextLayer textlayer;
 
+typedef char * string;
+static string regions[NUM_REGIONS];
+
 // Text to be written
-static uint8_t tz_name[TZ_NAME_LEN+1];
+// static uint8_t tz_name[TZ_NAME_LEN+1];
 
 uint8_t filebuf[BUF_SIZE];
 void read_file(void) {
@@ -57,31 +64,41 @@ void read_file(void) {
 
 void handle_init(AppContextRef ctx) {
 
-  window_init(&window, "Window Name");
-  window_stack_push(&window, true /* Animated */);
+  window_init(&root_window, "Window Name");
+  window_stack_push(&root_window, true /* Animated */);
 
   resource_init_current_app(&APP_RESOURCES);
 
-  text_layer_init(&textlayer, window.layer.frame);
-  text_layer_set_font(&textlayer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text_color(&textlayer, GColorBlack);
-  text_layer_set_text(&textlayer, "Hello world");
-  layer_add_child(&window.layer, &textlayer.layer);
-  read_file();
+  WindowHandlers handlers = {
+    .load = root_window_load,
+  };
+  window_set_window_handlers(&root_window, handlers);
 
-  // Read the first element from our file in to a string...
-  ResHandle fh = resource_get_handle(RESOURCE_ID_ARCTIC_TZ);
-  resource_load_byte_range(fh, 0, tz_name, 16);
-  for (int x = 0; x < 16; x++) {
-    if (tz_name[x] == '_')
-      tz_name[x] = ' ';
-    else if (tz_name[x] == ' ') {
-      tz_name[x] = '\0';
-      break;
-    }
-  }
-  tz_name[15] = '\0';
-  text_layer_set_text(&textlayer, (char*)tz_name);
+  // Populate the regions array
+  regions[0] = "Africa";
+  regions[1] = "America";
+  regions[2] = "Antarctica";
+  regions[3] = "Arctic";
+  regions[4] = "Asia";
+  regions[5] = "Australia";
+  regions[6] = "Atlantic";
+  regions[7] = "Europe";
+  regions[8] = "Indian";
+  regions[9] = "Pacific";
+
+  /* // Read the first element from our file in to a string... */
+  /* ResHandle fh = resource_get_handle(RESOURCE_ID_ARCTIC_TZ); */
+  /* resource_load_byte_range(fh, 0, tz_name, 16); */
+  /* for (int x = 0; x < 16; x++) { */
+  /*   if (tz_name[x] == '_') */
+  /*     tz_name[x] = ' '; */
+  /*   else if (tz_name[x] == ' ') { */
+  /*     tz_name[x] = '\0'; */
+  /*     break; */
+  /*   } */
+  /* } */
+  /* tz_name[15] = '\0'; */
+  /* text_layer_set_text(&textlayer, (char*)tz_name); */
 }
 
 
