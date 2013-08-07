@@ -1,0 +1,10 @@
+Azores -1:00 -3600
+Bermuda -4:00 -14400
+Canary 0:00 0
+Cape_Verde -1:00 -3600
+Faroe 0:00 0
+Madeira 0:00 0
+Reykjavik 0:00 0
+South_Georgia -2:00 -7200
+Stanley -3:00 -10800
+St_Helena 0:00 0
