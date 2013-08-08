@@ -3,8 +3,8 @@
 #include "pebble_fonts.h"
 
 #include "xprintf.h"
+#include "PDutils.h"
 
-#include "pstring.h"
 #include "../../common/config.h"
 
 #ifdef ANDROID
@@ -35,7 +35,8 @@ MenuLayer root_menu;
 MenuLayer region_menu;
 MenuLayer zone_menu;
 
-TZInfo DisplayTZ;
+TZInfo SelectedTZ;
+TZInfo RemoteTZ;
 
 // Number of TZ regions
 #define NUM_REGIONS 10
@@ -82,7 +83,7 @@ void read_file(uint32_t resource_id) {
 }
 
 // Fetches the timezone stored at the given index in the
-// current resource handle, parses it in to DisplayTZ
+// current resource handle, parses it in to SelectedTZ
 void fetch_time_zone(uint16_t idx) {
   // Making assumptions about the maximum line length and format here...
   uint8_t line[80];
@@ -103,22 +104,22 @@ void fetch_time_zone(uint16_t idx) {
   char *token;
   // Extract TZ name
   token = pstrtok((char*)line, sep);
-  strncpy(DisplayTZ.tz_name, token, TZ_NAME_LEN);
+  strncpy(SelectedTZ.tz_name, token, TZ_NAME_LEN);
   // formatting cleanup
   for (int i=0; i<TZ_NAME_LEN; i++) {
-    if (DisplayTZ.tz_name[i] == '_')
-      DisplayTZ.tz_name[i] = ' ';
+    if (SelectedTZ.tz_name[i] == '_')
+      SelectedTZ.tz_name[i] = ' ';
   }
-  DisplayTZ.tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
+  SelectedTZ.tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
   // Extract TZ offset
   token = pstrtok(NULL, sep);
-  strncpy(DisplayTZ.tz_offset, token, TZ_OFFSET_LEN);
-  DisplayTZ.tz_offset[TZ_OFFSET_LEN] = '\0';
+  strncpy(SelectedTZ.tz_offset, token, TZ_OFFSET_LEN);
+  SelectedTZ.tz_offset[TZ_OFFSET_LEN] = '\0';
   // Extract TZ seconds
   token = pstrtok(NULL, (char*)'\n');
   long offset;
   xatoi(&token, &offset);
-  DisplayTZ.tz_seconds = (int16_t)offset;
+  SelectedTZ.tz_seconds = (int16_t)offset;
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -131,13 +132,13 @@ void root_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
   char sub[TZ_NAME_LEN+TZ_OFFSET_LEN+2]; // +3 so we can add 2-char sep
   switch (cell_index->row) {
   case 0 :
-    strcpy(sub, DisplayTZ.tz_name);
+    strcpy(sub, RemoteTZ.tz_name);
     strcat(sub, ": ");
-    strcat(sub, DisplayTZ.tz_offset);
+    strcat(sub, RemoteTZ.tz_offset);
     menu_cell_basic_draw(ctx, cell_layer, "Change Timezone", sub, NULL);
     break;
   case 1 :
-    if (DisplayTZ.tz_dst) {
+    if (RemoteTZ.tz_dst) {
       strcpy(sub, "On");
     } else {
       strcpy(sub, "Off");
@@ -185,8 +186,8 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
 
   fetch_time_zone(cell_index->row);
-  menu_cell_basic_draw(ctx, cell_layer, DisplayTZ.tz_name,
-		       DisplayTZ.tz_offset, NULL);
+  menu_cell_basic_draw(ctx, cell_layer, SelectedTZ.tz_name,
+		       SelectedTZ.tz_offset, NULL);
 }
 
 void zone_window_appear_handler(struct Window *window) {
@@ -235,10 +236,9 @@ void handle_init(AppContextRef ctx) {
   // Push root window to bottom of stack
   window_stack_push(&root_window, true /* Animated */);
 
-  // Right now, hard-code to displaying UTC always
-  strcpy(DisplayTZ.tz_name, UTC.tz_name);
-  strcpy(DisplayTZ.tz_offset, UTC.tz_offset);
-  DisplayTZ.tz_seconds = UTC.tz_seconds;
+  // Prime RemoteTZ with informative values
+  strcpy(RemoteTZ.tz_name, "Retrieving...");
+  strcpy(RemoteTZ.tz_offset, "???");
 
   // Populate the regions array
   regions[0] = "Africa";
