@@ -190,7 +190,17 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 
 void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
 			       void *data) {
-  // tmp
+  TZInfo newTZ;
+  fetch_time_zone(cell_index->row, &newTZ);
+  // Global DST setting is stored in RemoteTZ.
+  // We recalc DST now so watchface doesn't have to.
+  if (RemoteTZ.tz_dst) {
+    newTZ.tz_seconds = newTZ.tz_seconds + 3600;
+    newTZ.tz_dst = true;
+  }
+  uint8_t cookiebuf[sizeof(newTZ)];
+  memcpy(&cookiebuf, &newTZ, sizeof(newTZ));
+  http_cookie_set_data(1, HTTP_COOKIE_TZINFO, cookiebuf, sizeof(newTZ));
 }
 
 void zone_window_appear_handler(struct Window *window) {
@@ -202,18 +212,21 @@ void http_cookie_failed_callback(int32_t cookie, int http_status,
 				 void* context) {
   strcpy(RemoteTZ.tz_name, "Unknown failure");
   strcpy(RemoteTZ.tz_offset, " :-(");
-  menu_layer_reload_data(&zone_menu);
+  menu_layer_reload_data(&root_menu);
 }
 
 void http_cookie_get_callback(int32_t request_id, Tuple* result,
 			      void* context) {
   strcpy(RemoteTZ.tz_name, "Got it!");
-  menu_layer_reload_data(&zone_menu);
+  menu_layer_reload_data(&root_menu);
 }
 
 void http_cookie_set_callback(int32_t request_id, bool successful,
 			      void* context) {
-  // nussink
+  if (!successful) {
+    strcpy(RemoteTZ.tz_name, "Send failed");
+    menu_layer_reload_data(&root_menu);
+  }
 }
 
 void handle_init(AppContextRef ctx) {
