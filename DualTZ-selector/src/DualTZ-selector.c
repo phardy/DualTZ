@@ -301,6 +301,7 @@ void handle_init(AppContextRef ctx) {
   // Prime RemoteTZ with informative values
   strcpy(RemoteTZ.tz_name, "Retrieving...");
   strcpy(RemoteTZ.tz_offset, "???");
+  RemoteTZ.tz_dst = false;
 
   // Populate the regions array
   regions[0] = "Africa";
