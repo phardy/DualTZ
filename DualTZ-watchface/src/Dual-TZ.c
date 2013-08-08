@@ -38,9 +38,7 @@ static GFont DigitalTimeFont;
 static GFont DigitalTimeSFont;
 static GFont DateFont;
 
-char TZNameText[] = TZNAMETEXT;
-char TZOffsetText[] = TZOFFSETTEXT;
-int32_t TZOffsetS = TZOFFSETSEC;
+static TZInfo DisplayTZ;
 static char DigitalTimeText[] = "00:00";
 static char DigitalTimeSText[] = "00";
 static char DateText[] = "  ";
@@ -74,10 +72,10 @@ void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
 			 uint32_t unixtime, const char* tz_name,
 			 void* context) {
   localTZSet = true;
-  localTZOffset = TZOffsetS - utc_offset_seconds;
+  localTZOffset = DisplayTZ.tz_seconds - utc_offset_seconds;
 
-  text_layer_set_text(&TZName, TZNameText);
-  text_layer_set_text(&TZOffset, TZOffsetText);
+  text_layer_set_text(&TZName, DisplayTZ.tz_name);
+  text_layer_set_text(&TZOffset, DisplayTZ.tz_offset);
 
   PblTm now;
   get_time(&now);
@@ -241,6 +239,10 @@ void handle_init(AppContextRef ctx) {
   // in a 144px display. Pebble seems to say otherwise, though.
   AnalogueGRect = GRect(4, 0, 128, 128);
   display_init(&ctx);
+
+  strcpy(DisplayTZ.tz_name, UTC.tz_name);
+  strcpy(DisplayTZ.tz_offset, UTC.tz_offset);
+  DisplayTZ.tz_seconds = UTC.tz_seconds;
 
   if (clock_is_24h_style()) {
     DigitalTimeFormat = "%H:%M";
