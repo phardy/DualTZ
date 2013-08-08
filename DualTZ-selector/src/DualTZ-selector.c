@@ -73,6 +73,14 @@ void root_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
   }
 }
 
+void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
+			       void *data) {
+  switch (cell_index->row) {
+  case 0:
+    window_stack_push(&region_window, true);
+  }
+}
+
 void root_window_load(Window *me) {
   GRect bounds = me->layer.bounds;
 
@@ -81,7 +89,7 @@ void root_window_load(Window *me) {
   MenuLayerCallbacks root_callbacks = {
     .get_num_rows = root_menu_get_num_rows_callback,
     .draw_row = root_menu_draw_row_callback,
-    // .select_click = root_menu_select_callback
+    .select_click = root_menu_select_callback
   };
 
   menu_layer_set_callbacks(&root_menu, NULL, root_callbacks);
@@ -134,8 +142,8 @@ void handle_init(AppContextRef ctx) {
 
   window_init(&root_window, "Dual-TZ configurator");
   window_init(&region_window, "Region select");
-  // window_stack_push(&root_window, true /* Animated */);
-  window_stack_push(&region_window, true /* Animated */);
+  window_stack_push(&root_window, true /* Animated */);
+  // window_stack_push(&region_window, true /* Animated */);
 
   resource_init_current_app(&APP_RESOURCES);
 
