@@ -54,8 +54,8 @@ uint32_t region_resources[NUM_REGIONS] = {
 };
 // tz_index contains offsets for the start of
 // each line in the current resource (tz file)
-uint16_t tz_index[MAX_TZ];
-uint16_t tz_count;
+static uint16_t tz_index[MAX_TZ];
+static uint16_t tz_count;
 
 ResHandle current_resource_handle;
 void read_file(uint32_t resource_id) {
@@ -136,18 +136,21 @@ void region_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
 
 uint16_t zone_menu_get_num_rows_callback(MenuLayer *me,
 					 uint16_t section_index, void *data) {
-  // return tz_count;
-  // Hardcoded for Australia
-  return 12;
+  return tz_count;
 }
 
 void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
-  uint8_t tz_name[15];
+  uint8_t tz_name[TZ_NAME_LEN+1];
   resource_load_byte_range(current_resource_handle, tz_index[cell_index->row],
-			   tz_name, 15);
-  tz_name[14] = '\0';
+			   tz_name, TZ_NAME_LEN);
+  tz_name[TZ_NAME_LEN] = '\0';
   menu_cell_basic_draw(ctx, cell_layer, (char*)tz_name, NULL, NULL);
+}
+
+void zone_window_appear_handler(struct Window *window) {
+  // Required because I'm changing the menu data on every appearance.
+  menu_layer_reload_data(&zone_menu);
 }
 
 void handle_init(AppContextRef ctx) {
@@ -177,6 +180,9 @@ void handle_init(AppContextRef ctx) {
 
   // Setup for zone window
   window_init(&zone_window, "Zone select");
+  window_set_window_handlers(&zone_window, (WindowHandlers) {
+      .appear = &zone_window_appear_handler
+	});
   menu_layer_init(&zone_menu, zone_window.layer.bounds);
   menu_layer_set_callbacks(&zone_menu, NULL, (MenuLayerCallbacks){
       .get_num_rows = zone_menu_get_num_rows_callback,
