@@ -81,22 +81,6 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
   }
 }
 
-void root_window_load(Window *me) {
-  GRect bounds = me->layer.bounds;
-
-  menu_layer_init(&root_menu, bounds);
-
-  MenuLayerCallbacks root_callbacks = {
-    .get_num_rows = root_menu_get_num_rows_callback,
-    .draw_row = root_menu_draw_row_callback,
-    .select_click = root_menu_select_callback
-  };
-
-  menu_layer_set_callbacks(&root_menu, NULL, root_callbacks);
-  menu_layer_set_click_config_onto_window(&root_menu, me);
-  layer_add_child(&me->layer, menu_layer_get_layer(&root_menu));
-}
-
 uint16_t region_menu_get_num_rows_callback(MenuLayer *me,
 					 uint16_t section_index, void *data) {
   return NUM_REGIONS;
@@ -105,18 +89,6 @@ uint16_t region_menu_get_num_rows_callback(MenuLayer *me,
 void region_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				 MenuIndex *cell_index, void *data) {
   menu_cell_basic_draw(ctx, cell_layer, regions[cell_index->row], NULL, NULL);
-}
-
-void region_window_load(Window *me) {
-  GRect bounds = me->layer.bounds;
-  menu_layer_init(&region_menu, bounds);
-
-  menu_layer_set_callbacks(&region_menu, NULL, (MenuLayerCallbacks){
-      .get_num_rows = region_menu_get_num_rows_callback,
-	.draw_row = region_menu_draw_row_callback,
-	});
-  menu_layer_set_click_config_onto_window(&region_menu, me);
-  layer_add_child(&me->layer, menu_layer_get_layer(&region_menu));
 }
 
 uint8_t filebuf[BUF_SIZE];
@@ -139,20 +111,38 @@ void read_file(void) {
 }
 
 void handle_init(AppContextRef ctx) {
-
-  window_init(&root_window, "Dual-TZ configurator");
-  window_init(&region_window, "Region select");
-  window_stack_push(&root_window, true /* Animated */);
-  // window_stack_push(&region_window, true /* Animated */);
-
   resource_init_current_app(&APP_RESOURCES);
 
-  window_set_window_handlers(&root_window, (WindowHandlers){
-      .load = root_window_load,
+  // Setup for root window
+  window_init(&root_window, "Dual-TZ configurator");
+  menu_layer_init(&root_menu, root_window.layer.bounds);
+  menu_layer_set_callbacks(&root_menu, NULL, (MenuLayerCallbacks){
+      .get_num_rows = root_menu_get_num_rows_callback,
+	.draw_row = root_menu_draw_row_callback,
+	.select_click = root_menu_select_callback
 	});
-  window_set_window_handlers(&region_window, (WindowHandlers){
-      .load = region_window_load,
+  menu_layer_set_click_config_onto_window(&root_menu, &root_window);
+  layer_add_child(&root_window.layer, menu_layer_get_layer(&root_menu));
+
+  // Setup for region window
+  window_init(&region_window, "Region select");
+  menu_layer_init(&region_menu, region_window.layer.bounds);
+  menu_layer_set_callbacks(&region_menu, NULL, (MenuLayerCallbacks){
+      .get_num_rows = region_menu_get_num_rows_callback,
+	.draw_row = region_menu_draw_row_callback,
 	});
+  menu_layer_set_click_config_onto_window(&region_menu, &region_window);
+  layer_add_child(&region_window.layer, menu_layer_get_layer(&region_menu));
+
+  // Push root window to bottom of stack
+  window_stack_push(&root_window, true /* Animated */);
+
+  // window_set_window_handlers(&root_window, (WindowHandlers){
+  //     .load = root_window_load,
+  // 	});
+  // window_set_window_handlers(&region_window, (WindowHandlers){
+  //     .load = region_window_load,
+  // });
 
   // Right now, hard-code to displaying UTC always
   strcpy(DisplayTZ.tz_name, UTC.tz_name);
