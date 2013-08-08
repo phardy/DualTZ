@@ -163,10 +163,20 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
   case 1:
     if (RemoteTZ.tz_dst) {
       RemoteTZ.tz_dst = false;
+      RemoteTZ.tz_seconds = RemoteTZ.tz_seconds - 3600;
     } else {
       RemoteTZ.tz_dst = true;
+      RemoteTZ.tz_dst = RemoteTZ.tz_seconds + 3600;
     }
-    // TODO: update watch TZ here
+    // RemoteTZ is canonical, so copy it in to stageTZ and go
+    strcpy(stageTZ.tz_name, RemoteTZ.tz_name);
+    strcpy(stageTZ.tz_offset, RemoteTZ.tz_offset);
+    stageTZ.tz_seconds = RemoteTZ.tz_seconds;
+    stageTZ.tz_dst = RemoteTZ.tz_dst;
+    uint8_t cookiebuf[sizeof(stageTZ)];
+    memcpy(&cookiebuf, &stageTZ, sizeof(stageTZ));
+    http_cookie_set_data(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO,
+			 cookiebuf, sizeof(stageTZ));
     menu_layer_reload_data(&root_menu);
   }
 }
@@ -205,12 +215,9 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
 			       void *data) {
   fetch_time_zone(cell_index->row, &stageTZ);
-  // Global DST setting is stored in RemoteTZ.
-  // We recalc DST now so watchface doesn't have to.
-  if (RemoteTZ.tz_dst) {
-    stageTZ.tz_seconds = stageTZ.tz_seconds + 3600;
-    stageTZ.tz_dst = true;
-  }
+  // Resetting DST to off seems like the best way
+  // to ensure a known state. And confuse me less.
+  stageTZ.tz_dst = false;
   uint8_t cookiebuf[sizeof(stageTZ)];
   memcpy(&cookiebuf, &stageTZ, sizeof(stageTZ));
   http_cookie_set_data(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO,
