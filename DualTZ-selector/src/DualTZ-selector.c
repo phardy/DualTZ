@@ -2,13 +2,10 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
-#include "string.h"
+#include "xprintf.h"
 
 #include "pstring.h"
 #include "../../common/config.h"
-
-// test
-#include "xprintf.h"
 
 #ifdef ANDROID
 PBL_APP_INFO(SELECTOR_APP_UUID,
@@ -119,13 +116,9 @@ void fetch_time_zone(uint16_t idx) {
   DisplayTZ.tz_offset[TZ_OFFSET_LEN] = '\0';
   // Extract TZ seconds
   token = pstrtok(NULL, (char*)'\n');
-  char strsecs[15];
-  strcpy(strsecs, token);
-  long offset = strtol(strsecs, NULL, 10);
-  char test[15];
-  xsprintf(test, "%d", offset);
-  strncpy(DisplayTZ.tz_name, test, TZ_NAME_LEN);
-  DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
+  long offset;
+  xatoi(&token, &offset);
+  DisplayTZ.tz_seconds = (int16_t)offset;
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
