@@ -146,9 +146,6 @@ void root_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
     }
     menu_cell_basic_draw(ctx, cell_layer, "Daylight Savings", sub, NULL);
     break;
-  default :
-    // ohshi-
-    break;
   }
 }
 
