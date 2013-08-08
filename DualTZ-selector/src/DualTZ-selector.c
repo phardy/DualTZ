@@ -84,8 +84,8 @@ void read_file(uint32_t resource_id) {
 }
 
 // Fetches the timezone stored at the given index in the
-// current resource handle, parses it in to SelectedTZ
-void fetch_time_zone(uint16_t idx) {
+// current resource handle, parses it in to the given TZInfo struct.
+void fetch_time_zone(uint16_t idx, TZInfo *tz) {
   // Making assumptions about the maximum line length and format here...
   uint8_t line[80];
   resource_load_byte_range(current_resource_handle, tz_index[idx],
@@ -105,22 +105,22 @@ void fetch_time_zone(uint16_t idx) {
   char *token;
   // Extract TZ name
   token = pstrtok((char*)line, sep);
-  strncpy(SelectedTZ.tz_name, token, TZ_NAME_LEN);
+  strncpy(tz->tz_name, token, TZ_NAME_LEN);
   // formatting cleanup
   for (int i=0; i<TZ_NAME_LEN; i++) {
-    if (SelectedTZ.tz_name[i] == '_')
-      SelectedTZ.tz_name[i] = ' ';
+    if (tz->tz_name[i] == '_')
+      tz->tz_name[i] = ' ';
   }
-  SelectedTZ.tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
+  tz->tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
   // Extract TZ offset
   token = pstrtok(NULL, sep);
-  strncpy(SelectedTZ.tz_offset, token, TZ_OFFSET_LEN);
-  SelectedTZ.tz_offset[TZ_OFFSET_LEN] = '\0';
+  strncpy(tz->tz_offset, token, TZ_OFFSET_LEN);
+  tz->tz_offset[TZ_OFFSET_LEN] = '\0';
   // Extract TZ seconds
   token = pstrtok(NULL, (char*)'\n');
   long offset;
   xatoi(&token, &offset);
-  SelectedTZ.tz_seconds = (int16_t)offset;
+  tz->tz_seconds = (int16_t)offset;
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -183,7 +183,7 @@ uint16_t zone_menu_get_num_rows_callback(MenuLayer *me,
 void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
 
-  fetch_time_zone(cell_index->row);
+  fetch_time_zone(cell_index->row, &SelectedTZ);
   menu_cell_basic_draw(ctx, cell_layer, SelectedTZ.tz_name,
 		       SelectedTZ.tz_offset, NULL);
 }
