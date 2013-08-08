@@ -7,6 +7,9 @@
 #include "pstring.h"
 #include "../../common/config.h"
 
+// test
+#include "xprintf.h"
+
 #ifdef ANDROID
 PBL_APP_INFO(SELECTOR_APP_UUID,
 	     "Dual-TZ Config", "Kids, Inc.",
@@ -101,6 +104,7 @@ void fetch_time_zone(uint16_t idx) {
 
   const char sep[] = " ";
   char *token;
+  // Extract TZ name
   token = pstrtok((char*)line, sep);
   strncpy(DisplayTZ.tz_name, token, TZ_NAME_LEN);
   // formatting cleanup
@@ -109,9 +113,19 @@ void fetch_time_zone(uint16_t idx) {
       DisplayTZ.tz_name[i] = ' ';
   }
   DisplayTZ.tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
+  // Extract TZ offset
   token = pstrtok(NULL, sep);
   strncpy(DisplayTZ.tz_offset, token, TZ_OFFSET_LEN);
   DisplayTZ.tz_offset[TZ_OFFSET_LEN] = '\0';
+  // Extract TZ seconds
+  token = pstrtok(NULL, (char*)'\n');
+  char strsecs[15];
+  strcpy(strsecs, token);
+  long offset = strtol(strsecs, NULL, 10);
+  char test[15];
+  xsprintf(test, "%d", offset);
+  strncpy(DisplayTZ.tz_name, test, TZ_NAME_LEN);
+  DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
