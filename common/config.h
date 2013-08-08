@@ -15,6 +15,8 @@
 // Use the same httpebble app ID everywhere to share the cookie dict.
 #define HTTP_APP_ID 5887304
 
+#define HTTP_COOKIE_TZINFO 1
+
 #define TZ_NAME_LEN 15
 #define TZ_OFFSET_LEN 5
 typedef struct {

@@ -193,6 +193,24 @@ void zone_window_appear_handler(struct Window *window) {
   menu_layer_reload_data(&zone_menu);
 }
 
+void http_cookie_failed_callback(int32_t cookie, int http_status,
+				 void* context) {
+  strcpy(RemoteTZ.tz_name, "Unknown failure");
+  strcpy(RemoteTZ.tz_offset, " :-(");
+  menu_layer_reload_data(&zone_menu);
+}
+
+void http_cookie_get_callback(int32_t request_id, Tuple* result,
+			      void* context) {
+  strcpy(RemoteTZ.tz_name, "Got it!");
+  menu_layer_reload_data(&zone_menu);
+}
+
+void http_cookie_set_callback(int32_t request_id, bool successful,
+			      void* context) {
+  // nussink
+}
+
 void handle_init(AppContextRef ctx) {
   resource_init_current_app(&APP_RESOURCES);
 
@@ -249,8 +267,15 @@ void handle_init(AppContextRef ctx) {
   regions[7] = "Europe";
   regions[8] = "Indian";
   regions[9] = "Pacific";
-}
 
+  http_set_app_id(HTTP_APP_ID);
+  http_register_callbacks((HTTPCallbacks) {
+      .failure = http_cookie_failed_callback,
+	.cookie_get = http_cookie_get_callback,
+	.cookie_set = http_cookie_set_callback
+	}, ctx);
+  http_cookie_get(0, HTTP_COOKIE_TZINFO);
+}
 
 void pbl_main(void *params) {
   PebbleAppHandlers handlers = {
