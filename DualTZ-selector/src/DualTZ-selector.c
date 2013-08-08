@@ -40,6 +40,8 @@ Window root_window;
 MenuLayer root_menu;
 TextLayer textlayer;
 
+TZInfo DisplayTZ;
+
 typedef char * string;
 static string regions[NUM_REGIONS];
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -49,7 +51,26 @@ uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
 
 void root_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				 MenuIndex *cell_index, void *data) {
-  menu_cell_basic_draw(ctx, cell_layer, regions[cell_index->row], NULL, NULL);
+  char sub[TZ_NAME_LEN+TZ_OFFSET_LEN+2]; // +3 so we can add 2-char sep
+  switch (cell_index->row) {
+  case 0 :
+    strcpy(sub, DisplayTZ.tz_name);
+    strcat(sub, ": ");
+    strcat(sub, DisplayTZ.tz_offset);
+    menu_cell_basic_draw(ctx, cell_layer, "Change Timezone", sub, NULL);
+    break;
+  case 1 :
+    if (DisplayTZ.tz_dst) {
+      strcpy(sub, "On");
+    } else {
+      strcpy(sub, "Off");
+    }
+    menu_cell_basic_draw(ctx, cell_layer, "Daylight Savings", sub, NULL);
+    break;
+  default :
+    // ohshi-
+    break;
+  }
 }
 
 void root_window_load(Window *me) {
@@ -101,6 +122,11 @@ void handle_init(AppContextRef ctx) {
     .load = root_window_load,
   };
   window_set_window_handlers(&root_window, handlers);
+
+  // Right now, hard-code to displaying UTC always
+  strcpy(DisplayTZ.tz_name, UTC.tz_name);
+  strcpy(DisplayTZ.tz_offset, UTC.tz_offset);
+  DisplayTZ.tz_seconds = UTC.tz_seconds;
 
   // Populate the regions array
   regions[0] = "Africa";
