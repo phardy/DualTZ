@@ -188,6 +188,11 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 		       SelectedTZ.tz_offset, NULL);
 }
 
+void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
+			       void *data) {
+  // tmp
+}
+
 void zone_window_appear_handler(struct Window *window) {
   // Required because I'm changing the menu data on every appearance.
   menu_layer_reload_data(&zone_menu);
@@ -245,6 +250,7 @@ void handle_init(AppContextRef ctx) {
   menu_layer_set_callbacks(&zone_menu, NULL, (MenuLayerCallbacks){
       .get_num_rows = zone_menu_get_num_rows_callback,
 	.draw_row = zone_menu_draw_row_callback,
+	.select_click = zone_menu_select_callback
 	});
   menu_layer_set_click_config_onto_window(&zone_menu, &zone_window);
   layer_add_child(&zone_window.layer, menu_layer_get_layer(&zone_menu));
