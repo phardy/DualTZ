@@ -2,6 +2,7 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
+#include "http.h"
 #include "xprintf.h"
 #include "PDutils.h"
 

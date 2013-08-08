@@ -1,10 +1,11 @@
 #include "pebble_os.h"
 #include "pebble_app.h"
 #include "pebble_fonts.h"
+
 #include "http.h"
+#include "PDutils.h"
 
 #include "DualTZ-watchface.h"
-#include "PDutils.h"
 #include "../../common/config.h"
 
 #ifdef ANDROID
