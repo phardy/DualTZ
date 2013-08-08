@@ -46,8 +46,8 @@ uint32_t region_resources[NUM_REGIONS] = {
   RESOURCE_ID_ANTARCTICA_TZ,
   RESOURCE_ID_ARCTIC_TZ,
   RESOURCE_ID_ASIA_TZ,
-  RESOURCE_ID_AUSTRALIA_TZ,
   RESOURCE_ID_ATLANTIC_TZ,
+  RESOURCE_ID_AUSTRALIA_TZ,
   RESOURCE_ID_EUROPE_TZ,
   RESOURCE_ID_INDIAN_TZ,
   RESOURCE_ID_PACIFIC_TZ
@@ -203,8 +203,8 @@ void handle_init(AppContextRef ctx) {
   regions[2] = "Antarctica";
   regions[3] = "Arctic";
   regions[4] = "Asia";
-  regions[5] = "Australia";
-  regions[6] = "Atlantic";
+  regions[5] = "Atlantic";
+  regions[6] = "Australia";
   regions[7] = "Europe";
   regions[8] = "Indian";
   regions[9] = "Pacific";
