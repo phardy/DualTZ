@@ -144,6 +144,14 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
   uint8_t tz_name[TZ_NAME_LEN+1];
   resource_load_byte_range(current_resource_handle, tz_index[cell_index->row],
 			   tz_name, TZ_NAME_LEN);
+  for (int i=0; i<TZ_NAME_LEN; i++) {
+    if (tz_name[i] == ' ') {
+      tz_name[i] = '\0';
+      break;
+    } else if (tz_name[i] == '_') {
+      tz_name[i] = ' ';
+    }
+  }
   tz_name[TZ_NAME_LEN] = '\0';
   menu_cell_basic_draw(ctx, cell_layer, (char*)tz_name, NULL, NULL);
 }
