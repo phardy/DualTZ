@@ -127,7 +127,7 @@ void region_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 void region_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
 				 void *data) {
   // reindex for the selected zone
-  read_file(cell_index->row);
+  read_file(cell_index->row+1);
   // display the zone window
   window_stack_push(&zone_window, true);
 }
@@ -140,7 +140,8 @@ uint16_t zone_menu_get_num_rows_callback(MenuLayer *me,
 void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
   uint8_t tz_name[TZ_NAME_LEN+1];
-  resource_load_byte_range(current_resource_handle, 0, tz_name, TZ_NAME_LEN+1);
+  resource_load_byte_range(current_resource_handle, tz_index[cell_index->row],
+			   tz_name, TZ_NAME_LEN+1);
   for (int x=0; x == TZ_NAME_LEN; x++) {
     if (tz_name[x] == '_')
       tz_name[x] = ' ';
