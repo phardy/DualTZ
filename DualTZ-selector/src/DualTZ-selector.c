@@ -36,8 +36,13 @@ MenuLayer root_menu;
 MenuLayer region_menu;
 MenuLayer zone_menu;
 
+// SelectedTZ is only used by menu update callbacks
 TZInfo SelectedTZ;
+// RemoteTZ is expected to always reflect
+// what we believe is stored on the watch
 TZInfo RemoteTZ;
+// stageTZ is a placeholder for updates either to/from watch
+TZInfo stageTZ;
 
 // Number of TZ regions
 #define NUM_REGIONS 10
@@ -154,6 +159,15 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
   switch (cell_index->row) {
   case 0:
     window_stack_push(&region_window, true);
+    break;
+  case 1:
+    if (RemoteTZ.tz_dst) {
+      RemoteTZ.tz_dst = false;
+    } else {
+      RemoteTZ.tz_dst = true;
+    }
+    // TODO: update watch TZ here
+    menu_layer_reload_data(&root_menu);
   }
 }
 
@@ -190,18 +204,17 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 
 void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
 			       void *data) {
-  TZInfo newTZ;
-  fetch_time_zone(cell_index->row, &newTZ);
+  fetch_time_zone(cell_index->row, &stageTZ);
   // Global DST setting is stored in RemoteTZ.
   // We recalc DST now so watchface doesn't have to.
   if (RemoteTZ.tz_dst) {
-    newTZ.tz_seconds = newTZ.tz_seconds + 3600;
-    newTZ.tz_dst = true;
+    stageTZ.tz_seconds = stageTZ.tz_seconds + 3600;
+    stageTZ.tz_dst = true;
   }
-  uint8_t cookiebuf[sizeof(newTZ)];
-  memcpy(&cookiebuf, &newTZ, sizeof(newTZ));
+  uint8_t cookiebuf[sizeof(stageTZ)];
+  memcpy(&cookiebuf, &stageTZ, sizeof(stageTZ));
   http_cookie_set_data(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO,
-		       cookiebuf, sizeof(newTZ));
+		       cookiebuf, sizeof(stageTZ));
 }
 
 void zone_window_appear_handler(struct Window *window) {
@@ -220,11 +233,11 @@ void http_cookie_get_callback(int32_t request_id, Tuple* result,
 			      void* context) {
   if (request_id != HTTP_TZINFO_GET_REQ) return;
   if (result->key == HTTP_COOKIE_TZINFO) {
-    TZInfo *newTZ = (TZInfo *) result->value;
-    strcpy(RemoteTZ.tz_name, newTZ->tz_name);
-    strcpy(RemoteTZ.tz_offset, newTZ->tz_offset);
-    RemoteTZ.tz_seconds = newTZ->tz_seconds;
-    RemoteTZ.tz_dst = newTZ->tz_dst;
+    TZInfo *tmpTZ = (TZInfo *) result->value;
+    strcpy(RemoteTZ.tz_name, tmpTZ->tz_name);
+    strcpy(RemoteTZ.tz_offset, tmpTZ->tz_offset);
+    RemoteTZ.tz_seconds = tmpTZ->tz_seconds;
+    RemoteTZ.tz_dst = tmpTZ->tz_dst;
 
     menu_layer_reload_data(&root_menu);
   }
@@ -233,10 +246,14 @@ void http_cookie_get_callback(int32_t request_id, Tuple* result,
 void http_cookie_set_callback(int32_t request_id, bool successful,
 			      void* context) {
   if (successful) {
-    
+    strcpy(RemoteTZ.tz_name, stageTZ.tz_name);
+    strcpy(RemoteTZ.tz_offset, stageTZ.tz_offset);
+    RemoteTZ.tz_seconds = stageTZ.tz_seconds;
+    RemoteTZ.tz_dst = stageTZ.tz_dst;
+  } else {
     strcpy(RemoteTZ.tz_name, "Send failed");
-    menu_layer_reload_data(&root_menu);
   }
+  menu_layer_reload_data(&root_menu);
 }
 
 void handle_init(AppContextRef ctx) {
