@@ -4,6 +4,7 @@
 
 #include "string.h"
 
+#include "pstring.h"
 #include "../../common/config.h"
 
 #ifdef ANDROID
@@ -52,6 +53,7 @@ uint32_t region_resources[NUM_REGIONS] = {
   RESOURCE_ID_INDIAN_TZ,
   RESOURCE_ID_PACIFIC_TZ
 };
+
 // tz_index contains offsets for the start of
 // each line in the current resource (tz file)
 static uint16_t tz_index[MAX_TZ];
@@ -77,6 +79,39 @@ void read_file(uint32_t resource_id) {
     index += bytesread;
   }
   tz_count--; // Deal with the newline at the end of the file
+}
+
+// Fetches the timezone stored at the given index in the
+// current resource handle, parses it in to DisplayTZ
+void fetch_time_zone(uint16_t idx) {
+  // Making assumptions about the maximum line length and format here...
+  uint8_t line[80];
+  resource_load_byte_range(current_resource_handle, tz_index[idx],
+			   line, 80);
+  // Find the newline and replace it with a string terminator
+  for (int i=0; i<80; i++) {
+    if (line[i] == '\0') {
+      break;
+    } else if (line[i] == '\n') {
+      line[i] = '\0';
+      break;
+    }
+  }
+  line[79] = '\0';
+
+  const char sep[] = " ";
+  char *token;
+  token = pstrtok((char*)line, sep);
+  strncpy(DisplayTZ.tz_name, token, TZ_NAME_LEN);
+  // formatting cleanup
+  for (int i=0; i<TZ_NAME_LEN; i++) {
+    if (DisplayTZ.tz_name[i] == '_')
+      DisplayTZ.tz_name[i] = ' ';
+  }
+  DisplayTZ.tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
+  token = pstrtok(NULL, sep);
+  strncpy(DisplayTZ.tz_offset, token, TZ_OFFSET_LEN);
+  DisplayTZ.tz_offset[TZ_OFFSET_LEN] = '\0';
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -141,19 +176,10 @@ uint16_t zone_menu_get_num_rows_callback(MenuLayer *me,
 
 void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
-  uint8_t tz_name[TZ_NAME_LEN+1];
-  resource_load_byte_range(current_resource_handle, tz_index[cell_index->row],
-			   tz_name, TZ_NAME_LEN);
-  for (int i=0; i<TZ_NAME_LEN; i++) {
-    if (tz_name[i] == ' ') {
-      tz_name[i] = '\0';
-      break;
-    } else if (tz_name[i] == '_') {
-      tz_name[i] = ' ';
-    }
-  }
-  tz_name[TZ_NAME_LEN] = '\0';
-  menu_cell_basic_draw(ctx, cell_layer, (char*)tz_name, NULL, NULL);
+
+  fetch_time_zone(cell_index->row);
+  menu_cell_basic_draw(ctx, cell_layer, DisplayTZ.tz_name,
+		       DisplayTZ.tz_offset, NULL);
 }
 
 void zone_window_appear_handler(struct Window *window) {
