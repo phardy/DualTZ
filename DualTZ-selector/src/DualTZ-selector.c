@@ -2,9 +2,9 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
+#include "string.h"
+
 #include "../../common/config.h"
-#include "DualTZ-selector.h"
-#include "root_window.h"
 
 #ifdef ANDROID
 PBL_APP_INFO(SELECTOR_APP_UUID,
@@ -21,6 +21,9 @@ PBL_APP_INFO(HTTP_UUID,
 #endif
 
 #define BUF_SIZE 1024
+
+// Number of TZ regions
+#define NUM_REGIONS 10
 
 // Longest file is 143, most are much shorter.
 #define MAX_TZ 150
@@ -39,6 +42,31 @@ TextLayer textlayer;
 
 typedef char * string;
 static string regions[NUM_REGIONS];
+uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
+					 uint16_t section_index, void *data) {
+  return NUM_REGIONS;
+}
+
+void root_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
+				 MenuIndex *cell_index, void *data) {
+  menu_cell_basic_draw(ctx, cell_layer, regions[cell_index->row], NULL, NULL);
+}
+
+void root_window_load(Window *me) {
+  GRect bounds = me->layer.bounds;
+
+  menu_layer_init(&root_menu, bounds);
+
+  MenuLayerCallbacks root_callbacks = {
+    .get_num_rows = root_menu_get_num_rows_callback,
+    .draw_row = root_menu_draw_row_callback,
+    // .select_click = root_menu_select_callback
+  };
+
+  menu_layer_set_callbacks(&root_menu, NULL, root_callbacks);
+  menu_layer_set_click_config_onto_window(&root_menu, me);
+  layer_add_child(&me->layer, menu_layer_get_layer(&root_menu));
+}
 
 // Text to be written
 // static uint8_t tz_name[TZ_NAME_LEN+1];
