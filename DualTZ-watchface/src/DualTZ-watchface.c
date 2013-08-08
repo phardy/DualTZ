@@ -10,13 +10,13 @@
 
 #ifdef ANDROID
 PBL_APP_INFO(WATCHFACE_APP_UUID,
-             "Dual-TZ", "Kids, Inc.",
+             "DualTZ", "Kids, Inc.",
              1, 0, /* App version */
              DEFAULT_MENU_ICON,
              APP_INFO_WATCH_FACE);
 #else
 PBL_APP_INFO(HTTP_UUID,
-	     "Dual-TZ", "Kids, Inc.",
+	     "DualTZ", "Kids, Inc.",
 	     1, 0, /* App version */
 	     DEFAULT_MENU_ICON,
 	     APP_INFO_WATCH_FACE);
@@ -180,7 +180,7 @@ void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
 		     "%S", t->tick_time);
   text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
 
-  if (t->tick_time->tm_sec == 0) {
+  if (t->tick_time->tm_sec % 30 == 0) {
     layer_mark_dirty(&AnalogueMinuteLayer);
     if (t->tick_time->tm_min % 2 == 0) {
       layer_mark_dirty(&AnalogueHourLayer);
