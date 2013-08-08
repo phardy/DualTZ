@@ -3,7 +3,7 @@
 #include "pebble_fonts.h"
 #include "http.h"
 
-#include "Dual-TZ.h"
+#include "DualTZ-watchface.h"
 #include "PDutils.h"
 #include "../../common/config.h"
 
