@@ -21,6 +21,7 @@ typedef struct {
   char tz_name[TZ_NAME_LEN+1];
   char tz_offset[TZ_OFFSET_LEN+1];
   uint16_t tz_seconds;
+  bool tz_dst;
 } TZInfo;
 
-static TZInfo UTC = {"UTC", "+0", 0};
+static TZInfo UTC = {"UTC", "+0", 0, NULL};
