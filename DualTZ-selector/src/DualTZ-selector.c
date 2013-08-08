@@ -200,7 +200,8 @@ void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
   }
   uint8_t cookiebuf[sizeof(newTZ)];
   memcpy(&cookiebuf, &newTZ, sizeof(newTZ));
-  http_cookie_set_data(1, HTTP_COOKIE_TZINFO, cookiebuf, sizeof(newTZ));
+  http_cookie_set_data(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO,
+		       cookiebuf, sizeof(newTZ));
 }
 
 void zone_window_appear_handler(struct Window *window) {
@@ -217,13 +218,22 @@ void http_cookie_failed_callback(int32_t cookie, int http_status,
 
 void http_cookie_get_callback(int32_t request_id, Tuple* result,
 			      void* context) {
-  strcpy(RemoteTZ.tz_name, "Got it!");
-  menu_layer_reload_data(&root_menu);
+  if (request_id != HTTP_TZINFO_GET_REQ) return;
+  if (result->key == HTTP_COOKIE_TZINFO) {
+    TZInfo *newTZ = (TZInfo *) result->value;
+    strcpy(RemoteTZ.tz_name, newTZ->tz_name);
+    strcpy(RemoteTZ.tz_offset, newTZ->tz_offset);
+    RemoteTZ.tz_seconds = newTZ->tz_seconds;
+    RemoteTZ.tz_dst = newTZ->tz_dst;
+
+    menu_layer_reload_data(&root_menu);
+  }
 }
 
 void http_cookie_set_callback(int32_t request_id, bool successful,
 			      void* context) {
-  if (!successful) {
+  if (successful) {
+    
     strcpy(RemoteTZ.tz_name, "Send failed");
     menu_layer_reload_data(&root_menu);
   }
@@ -293,7 +303,7 @@ void handle_init(AppContextRef ctx) {
 	.cookie_get = http_cookie_get_callback,
 	.cookie_set = http_cookie_set_callback
 	}, ctx);
-  http_cookie_get(0, HTTP_COOKIE_TZINFO);
+  http_cookie_get(HTTP_TZINFO_GET_REQ, HTTP_COOKIE_TZINFO);
 }
 
 void pbl_main(void *params) {
