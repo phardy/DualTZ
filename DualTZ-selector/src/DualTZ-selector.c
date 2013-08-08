@@ -57,23 +57,24 @@ uint32_t region_resources[NUM_REGIONS] = {
 uint16_t tz_index[MAX_TZ];
 uint16_t tz_count;
 
-uint8_t filebuf[BUF_SIZE];
 ResHandle current_resource_handle;
 void read_file(uint32_t resource_id) {
   current_resource_handle = resource_get_handle(resource_id);
   uint16_t bytesread = BUF_SIZE+1;
   uint16_t index = 0;
-  tz_count=0;
+  uint8_t filebuf[BUF_SIZE];
+  tz_count = 0;
   tz_index[tz_count] = index;
   tz_count++;
   while (bytesread >= BUF_SIZE) {
     bytesread = resource_load_byte_range(current_resource_handle, index, filebuf, BUF_SIZE);
     for (int i=0; i < bytesread; i++) {
       if (filebuf[i] == '\n') {
-	tz_index[tz_count] = index;
+	tz_index[tz_count] = index+i+1;
 	tz_count++;
       }
     }
+    index += bytesread;
   }
 }
 
@@ -139,18 +140,10 @@ uint16_t zone_menu_get_num_rows_callback(MenuLayer *me,
 
 void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
-  uint8_t tz_name[TZ_NAME_LEN+1];
+  uint8_t tz_name[15];
   resource_load_byte_range(current_resource_handle, tz_index[cell_index->row],
-			   tz_name, TZ_NAME_LEN+1);
-  for (int x=0; x == TZ_NAME_LEN; x++) {
-    if (tz_name[x] == '_')
-      tz_name[x] = ' ';
-    else if (tz_name[x] == ' ') {
-      tz_name[x] = '\0';
-      break;
-    }
-  }
-  tz_name[TZ_NAME_LEN] = '\0';
+			   tz_name, 15);
+  tz_name[14] = '\0';
   menu_cell_basic_draw(ctx, cell_layer, (char*)tz_name, NULL, NULL);
 }
 
@@ -208,20 +201,6 @@ void handle_init(AppContextRef ctx) {
   regions[7] = "Europe";
   regions[8] = "Indian";
   regions[9] = "Pacific";
-
-  /* // Read the first element from our file in to a string... */
-  /* ResHandle fh = resource_get_handle(RESOURCE_ID_ARCTIC_TZ); */
-  /* resource_load_byte_range(fh, 0, tz_name, 16); */
-  /* for (int x = 0; x < 16; x++) { */
-  /*   if (tz_name[x] == '_') */
-  /*     tz_name[x] = ' '; */
-  /*   else if (tz_name[x] == ' ') { */
-  /*     tz_name[x] = '\0'; */
-  /*     break; */
-  /*   } */
-  /* } */
-  /* tz_name[15] = '\0'; */
-  /* text_layer_set_text(&textlayer, (char*)tz_name); */
 }
 
 
