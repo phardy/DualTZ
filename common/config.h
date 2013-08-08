@@ -28,4 +28,10 @@ typedef struct {
   bool tz_dst;
 } TZInfo;
 
+typedef enum {
+  local,
+  utc,
+  remote
+} TZState;
+
 static TZInfo UTC = {"UTC", "+0", 0, NULL};

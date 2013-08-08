@@ -44,7 +44,7 @@ static char DigitalTimeText[] = "00:00";
 static char DigitalTimeSText[] = "00";
 static char DateText[] = "  ";
 static char *DigitalTimeFormat;
-bool localTZSet = false;
+TZState DigitalTZState = local;
 int32_t localTZOffset = 0;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
@@ -69,18 +69,50 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
+void http_cookie_failed_callback(int32_t cookie, int http_status,
+			      void* context) {
+  // Bam. If we successfully got UTC time, may as well show it.
+  if (DigitalTZState == utc) {
+      text_layer_set_text(&TZName, UTC.tz_name);
+      text_layer_set_text(&TZOffset, UTC.tz_offset);
+
+      PblTm now;
+      get_time(&now);
+      update_digital_time(&now);
+  }
+}
+
+void http_cookie_get_callback (int32_t request_id, Tuple* result,
+			       void* context) {
+  if (request_id != HTTP_TZINFO_GET_REQ) return;
+  if (result->key == HTTP_COOKIE_TZINFO) {
+    TZInfo *tmpTZ = (TZInfo *) result->value;
+    strcpy(DisplayTZ.tz_name, tmpTZ->tz_name);
+    strcpy(DisplayTZ.tz_offset, tmpTZ->tz_offset);
+    DisplayTZ.tz_seconds = tmpTZ->tz_seconds;
+    DisplayTZ.tz_dst = tmpTZ->tz_dst;
+
+    // Start displaying the TZ we just received
+    DigitalTZState = remote;
+    localTZOffset = localTZOffset + DisplayTZ.tz_seconds;
+    text_layer_set_text(&TZName, DisplayTZ.tz_name);
+    text_layer_set_text(&TZOffset, DisplayTZ.tz_offset);
+
+    PblTm now;
+    get_time(&now);
+    update_digital_time(&now);
+  }
+}
+    
 void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
 			 uint32_t unixtime, const char* tz_name,
 			 void* context) {
-  localTZSet = true;
-  localTZOffset = DisplayTZ.tz_seconds - utc_offset_seconds;
+  DigitalTZState = utc;
+  localTZOffset = UTC.tz_seconds - utc_offset_seconds;
 
-  text_layer_set_text(&TZName, DisplayTZ.tz_name);
-  text_layer_set_text(&TZOffset, DisplayTZ.tz_offset);
-
-  PblTm now;
-  get_time(&now);
-  update_digital_time(&now);
+  // Don't update anything yet until we've
+  // tried to request the remote TZ
+  http_cookie_get(HTTP_TZINFO_GET_REQ, HTTP_COOKIE_TZINFO);
 }
 
 void init_layer_path_and_center (Layer *layer, GPath *path,
@@ -272,6 +304,8 @@ void handle_init(AppContextRef ctx) {
 
   http_set_app_id(HTTP_APP_ID);
   HTTPCallbacks callbacks = {
+    .failure = http_cookie_failed_callback,
+    .cookie_get = http_cookie_get_callback,
     .time = &http_time_callback
   };
   http_register_callbacks(callbacks, ctx);
