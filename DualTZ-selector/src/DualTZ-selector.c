@@ -76,6 +76,7 @@ void read_file(uint32_t resource_id) {
     }
     index += bytesread;
   }
+  tz_count--; // Deal with the newline at the end of the file
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
