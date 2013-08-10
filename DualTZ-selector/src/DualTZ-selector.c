@@ -125,7 +125,7 @@ void fetch_time_zone(uint16_t idx, TZInfo *tz) {
   token = pstrtok(NULL, (char*)'\n');
   long offset;
   xatoi(&token, &offset);
-  tz->tz_seconds = (int16_t)offset;
+  tz->tz_seconds = (int32_t)offset;
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,

@@ -24,7 +24,7 @@
 typedef struct {
   char tz_name[TZ_NAME_LEN+1];
   char tz_offset[TZ_OFFSET_LEN+1];
-  int16_t tz_seconds;
+  int32_t tz_seconds;
   bool tz_dst;
 } TZInfo;
 
