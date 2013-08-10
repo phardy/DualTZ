@@ -1,12 +1,5 @@
 #include <string.h>
 
-// A textual name for this time zone. Max 15 characters.
-#define TZNAMETEXT "UTC"
-// A textual description for the time zone offset. Max 5 characters.
-#define TZOFFSETTEXT "+0"
-// Time zone offset in seconds from UTC.
-#define TZOFFSETSEC 60*60*0
-
 // Do not define if building watch apps that will talk to httpebble on iOS.
 #define ANDROID
 
@@ -20,7 +13,7 @@
 #define HTTP_COOKIE_TZINFO 1
 
 #define TZ_NAME_LEN 15
-#define TZ_OFFSET_LEN 5
+#define TZ_OFFSET_LEN 6
 typedef struct {
   char tz_name[TZ_NAME_LEN+1];
   char tz_offset[TZ_OFFSET_LEN+1];
