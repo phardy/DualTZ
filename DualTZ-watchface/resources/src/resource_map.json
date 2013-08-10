@@ -23,6 +23,11 @@
 	 "file":"images/digital-display.png"
      },
      {
+	 "type":"png",
+	 "defName":"IMAGE_MENU_ICON",
+	 "file":"images/appicon.png"
+     },
+     {
 	 "type":"raw",
 	 "defName":"DUMMY",
 	 "file":"resource_map.json"
