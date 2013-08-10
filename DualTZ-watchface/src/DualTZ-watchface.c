@@ -236,7 +236,7 @@ void display_init(AppContextRef *ctx) {
   layer_add_child(&window.layer, &TZOffset.layer);
 
   // date display
-  text_layer_init(&Date, GRect(113, 55, 20, 20));
+  text_layer_init(&Date, GRect(112, 55, 20, 20));
   text_layer_set_text_alignment(&Date, GTextAlignmentLeft);
   text_layer_set_text_color(&Date, GColorBlack);
   text_layer_set_font(&Date, DateFont);
