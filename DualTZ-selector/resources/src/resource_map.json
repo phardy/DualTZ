@@ -58,6 +58,11 @@
 	 "file":"TZfiles/UTC.txt"
      },
      {
+	 "type":"png",
+	 "defName":"IMAGE_MENU_ICON",
+	 "file":"images/appicon.png"
+     },
+     {
 	 "type":"raw",
 	 "defName":"DUMMY",
 	 "file":"resource_map.json"

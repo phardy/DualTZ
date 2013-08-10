@@ -10,15 +10,15 @@
 
 #ifdef ANDROID
 PBL_APP_INFO(SELECTOR_APP_UUID,
-	     "Dual-TZ Config", "Kids, Inc.",
+	     "DualTZ Config", "Kids, Inc.",
 	     1, 0, /* App version */
-	     DEFAULT_MENU_ICON,
+	     RESOURCE_ID_IMAGE_MENU_ICON,
 	     APP_INFO_STANDARD_APP);
 #else
 PBL_APP_INFO(HTTP_UUID,
-	     "Dual-TZ Config", "KIDS, Inc.",
+	     "DualTZ Config", "KIDS, Inc.",
 	     1, 0, /* App version */
-	     DEFAULT_MENU_ICON,
+	     RESOURCE_ID_IMAGE_MENU_ICON,
 	     APP_INFO_STANDARD_APP);
 #endif
 
