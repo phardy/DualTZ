@@ -54,6 +54,11 @@
      },
      {
 	 "type":"raw",
+	 "defName":"UTC_TZ",
+	 "file":"TZfiles/UTC.txt"
+     },
+     {
+	 "type":"raw",
 	 "defName":"DUMMY",
 	 "file":"resource_map.json"
      }

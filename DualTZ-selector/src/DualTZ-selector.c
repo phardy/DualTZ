@@ -26,8 +26,6 @@ PBL_APP_INFO(HTTP_UUID,
 
 // Longest file is 125, most are much shorter.
 #define MAX_TZ 130
-#define TZ_NAME_LEN 15
-#define TZ_OFFSET_LEN 5
 
 Window root_window;
 Window region_window;
@@ -45,7 +43,7 @@ TZInfo RemoteTZ;
 TZInfo stageTZ;
 
 // Number of TZ regions
-#define NUM_REGIONS 10
+#define NUM_REGIONS 11
 typedef char * string;
 static string regions[NUM_REGIONS];
 uint32_t region_resources[NUM_REGIONS] = {
@@ -58,7 +56,8 @@ uint32_t region_resources[NUM_REGIONS] = {
   RESOURCE_ID_AUSTRALIA_TZ,
   RESOURCE_ID_EUROPE_TZ,
   RESOURCE_ID_INDIAN_TZ,
-  RESOURCE_ID_PACIFIC_TZ
+  RESOURCE_ID_PACIFIC_TZ,
+  RESOURCE_ID_UTC_TZ
 };
 
 // tz_index contains offsets for the start of
@@ -321,6 +320,7 @@ void handle_init(AppContextRef ctx) {
   regions[7] = "Europe";
   regions[8] = "Indian";
   regions[9] = "Pacific";
+  regions[10] = "UTC";
 
   http_set_app_id(HTTP_APP_ID);
   http_register_callbacks((HTTPCallbacks) {
