@@ -9,6 +9,7 @@ This project uses code from a few different sources with different licenses.
   the website explicitly state a license, but the website does seem to
   indicate that it's open source. I'm including the unomdified source files
   here, and hoping that the author doesn't mind.
+* The font, [Digital-7](http://www.styleseven.com/php/get_product.php?product=Digital-7) is freeware.
 
 All other code is provided under the MIT License.
 
