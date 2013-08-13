@@ -7,3 +7,7 @@
 * Despite how I configure the minute and hour hand updating, it seems
   to happen regularly: minute hand shifts every ten seconds no matter
   what. Does that mean it's refreshing every tick?
+* Refactor TZInfo, remove text offset and regenerate from seconds when
+  required. Seems like the easiest way to give visual feedback of actual
+  offset when DST is active.
+* Find a bigger source for TZ data. Or at least sort the one I have nicer.
