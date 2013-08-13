@@ -257,7 +257,7 @@ void display_init(AppContextRef *ctx) {
 
   // AM/PM display
   if (!clock_is_24h_style()) {
-    text_layer_init(&AmPm, GRect(6, 137, 20, 20));
+    text_layer_init(&AmPm, GRect(7, 153, 20, 20));
     text_layer_set_text_alignment(&AmPm, GTextAlignmentLeft);
     text_layer_set_text_color(&AmPm, GTextAlignmentLeft);
     text_layer_set_font(&AmPm, TZFont);
