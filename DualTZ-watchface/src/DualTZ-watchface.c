@@ -33,6 +33,7 @@ TextLayer TZOffset;
 TextLayer DigitalTime;
 TextLayer DigitalTimeS;
 TextLayer Date;
+TextLayer AmPm;
 TextLayer FaceLabel;
 static GFont TZFont;
 static GFont DigitalTimeFont;
@@ -172,6 +173,18 @@ void update_digital_time(PblTm *time) {
   adjTime = pgmtime(&t);
   string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
 		     DigitalTimeFormat, adjTime);
+  if (!clock_is_24h_style()) {
+    // Remove leading zero by overwriting it with a space
+    if (adjTime->tm_hour % 12 < 10) {
+      DigitalTimeText[0] = ' ';
+    }
+    if (adjTime->tm_hour < 12) {
+      // Nothing at all for AM
+      text_layer_set_text(&AmPm, "  ");
+    } else {
+      text_layer_set_text(&AmPm, "PM");
+    }
+  }
   text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
@@ -241,6 +254,15 @@ void display_init(AppContextRef *ctx) {
   text_layer_set_text_color(&Date, GColorBlack);
   text_layer_set_font(&Date, DateFont);
   layer_add_child(&window.layer, &Date.layer);
+
+  // AM/PM display
+  if (!clock_is_24h_style()) {
+    text_layer_init(&AmPm, GRect(6, 137, 20, 20));
+    text_layer_set_text_alignment(&AmPm, GTextAlignmentLeft);
+    text_layer_set_text_color(&AmPm, GTextAlignmentLeft);
+    text_layer_set_font(&AmPm, TZFont);
+    layer_add_child(&window.layer, &AmPm.layer);
+  }
 
   // load background image
   bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
