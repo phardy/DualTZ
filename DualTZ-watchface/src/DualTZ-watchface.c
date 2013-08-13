@@ -175,7 +175,7 @@ void update_digital_time(PblTm *time) {
 		     DigitalTimeFormat, adjTime);
   if (!clock_is_24h_style()) {
     // Remove leading zero by overwriting it with a space
-    if (adjTime->tm_hour % 12 < 10) {
+    if (DigitalTimeText[0] == '0') {
       DigitalTimeText[0] = ' ';
     }
     if (adjTime->tm_hour < 12) {
