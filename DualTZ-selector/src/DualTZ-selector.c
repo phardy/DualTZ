@@ -125,6 +125,7 @@ void fetch_time_zone(uint16_t idx, TZInfo *tz) {
   long offset;
   xatoi(&token, &offset);
   tz->tz_seconds = (int32_t)offset;
+  tz->tz_dst = false;
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -165,7 +166,7 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
       RemoteTZ.tz_seconds = RemoteTZ.tz_seconds - 3600;
     } else {
       RemoteTZ.tz_dst = true;
-      RemoteTZ.tz_dst = RemoteTZ.tz_seconds + 3600;
+      RemoteTZ.tz_seconds = RemoteTZ.tz_seconds + 3600;
     }
     // RemoteTZ is canonical, so copy it in to stageTZ and go
     strcpy(stageTZ.tz_name, RemoteTZ.tz_name);
