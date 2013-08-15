@@ -1,11 +1,11 @@
-Casey	+08
-Davis	+07
-DumontDUrville	+10
-Macquarie	+11
-Mawson	+05
-McMurdo	+12
+Casey	08
+Davis	07
+DumontDUrville	10
+Macquarie	11
+Mawson	05
+McMurdo	12
 Palmer	-04
 Rothera	-03
-South Pole	+12
-Syowa	+03
-Vostok	+06
+South Pole	12
+Syowa	03
+Vostok	06
