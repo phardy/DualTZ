@@ -42,9 +42,10 @@ static GFont DigitalTimeSFont;
 static GFont DateFont;
 
 static TZInfo DisplayTZ;
-static char DigitalTimeText[] = "00:00";
-static char DigitalTimeSText[] = "00";
+static char DigitalTimeText[] = "  :  ";
+static char DigitalTimeSText[] = "  ";
 static char DateText[] = "  ";
+static char DigitalTZOffset[] = "      ";
 static char *DigitalTimeFormat;
 TZState DigitalTZState = local;
 int32_t localTZOffset = 0;
@@ -75,12 +76,13 @@ void http_cookie_failed_callback(int32_t cookie, int http_status,
 			      void* context) {
   // Bam. If we successfully got UTC time, may as well show it.
   if (DigitalTZState == utc) {
-      text_layer_set_text(&TZName, UTC.tz_name);
-      text_layer_set_text(&TZOffset, UTC.tz_offset);
+    format_timezone(&UTC, DigitalTZOffset);
+    text_layer_set_text(&TZName, UTC.tz_name);
+    text_layer_set_text(&TZOffset, DigitalTZOffset);
 
-      PblTm now;
-      get_time(&now);
-      update_digital_time(&now);
+    PblTm now;
+    get_time(&now);
+    update_digital_time(&now);
   }
 }
 
@@ -90,16 +92,22 @@ void http_cookie_get_callback (int32_t request_id, Tuple* result,
   if (result->key == HTTP_COOKIE_TZINFO) {
     TZInfo *tmpTZ = (TZInfo *) result->value;
     strcpy(DisplayTZ.tz_name, tmpTZ->tz_name);
-    strcpy(DisplayTZ.tz_offset, tmpTZ->tz_offset);
-    DisplayTZ.tz_seconds = tmpTZ->tz_seconds;
+    DisplayTZ.tz_hours = tmpTZ->tz_hours;
+    DisplayTZ.tz_minutes = tmpTZ->tz_minutes;
     DisplayTZ.tz_dst = tmpTZ->tz_dst;
 
     // Start displaying the TZ we just received
     DigitalTZState = remote;
-    localTZOffset = localTZOffset + DisplayTZ.tz_seconds;
+    format_timezone(&DisplayTZ, DigitalTZOffset);
     text_layer_set_text(&TZName, DisplayTZ.tz_name);
-    text_layer_set_text(&TZOffset, DisplayTZ.tz_offset);
+    text_layer_set_text(&TZOffset, DigitalTZOffset);
 
+    localTZOffset = localTZOffset + (DisplayTZ.tz_hours * 3600);
+    if (DisplayTZ.tz_hours < 0) {
+      localTZOffset = localTZOffset - (DisplayTZ.tz_minutes * 60);
+    } else {
+      localTZOffset = localTZOffset + (DisplayTZ.tz_minutes * 60);
+    }
     PblTm now;
     get_time(&now);
     update_digital_time(&now);
@@ -110,7 +118,7 @@ void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
 			 uint32_t unixtime, const char* tz_name,
 			 void* context) {
   DigitalTZState = utc;
-  localTZOffset = UTC.tz_seconds - utc_offset_seconds;
+  localTZOffset =  -utc_offset_seconds;
 
   // Don't update anything yet until we've
   // tried to request the remote TZ
@@ -297,8 +305,8 @@ void handle_init(AppContextRef ctx) {
   display_init(&ctx);
 
   strcpy(DisplayTZ.tz_name, UTC.tz_name);
-  strcpy(DisplayTZ.tz_offset, UTC.tz_offset);
-  DisplayTZ.tz_seconds = UTC.tz_seconds;
+  DisplayTZ.tz_hours = UTC.tz_hours;
+  DisplayTZ.tz_minutes = UTC.tz_minutes;
 
   if (clock_is_24h_style()) {
     DigitalTimeFormat = "%H:%M";
