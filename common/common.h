@@ -4,8 +4,8 @@
 #define TZ_OFFSET_LEN 6
 typedef struct {
   char tz_name[TZ_NAME_LEN+1];
-  char tz_offset[TZ_OFFSET_LEN+1];
-  int32_t tz_seconds;
+  int8_t tz_hours;
+  int8_t tz_minutes;
   bool tz_dst;
 } TZInfo;
 
@@ -15,4 +15,4 @@ typedef enum {
   remote
 } TZState;
 
-static TZInfo UTC = {"UTC", "+0", 0, NULL};
+static TZInfo UTC = {"UTC", 0, 0, NULL};
