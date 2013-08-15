@@ -1,5 +1,3 @@
-#include <string.h>
-
 // Do not define if building watch apps that will talk to httpebble on iOS.
 #define ANDROID
 
@@ -11,20 +9,3 @@
 #define HTTP_TZINFO_GET_REQ 0
 #define HTTP_TZINFO_SET_REQ 1
 #define HTTP_COOKIE_TZINFO 1
-
-#define TZ_NAME_LEN 15
-#define TZ_OFFSET_LEN 6
-typedef struct {
-  char tz_name[TZ_NAME_LEN+1];
-  int8_t tz_hours;
-  int8_t tz_minutes;
-  bool tz_dst;
-} TZInfo;
-
-typedef enum {
-  local,
-  utc,
-  remote
-} TZState;
-
-static TZInfo UTC = {"UTC", 0, 0, false};

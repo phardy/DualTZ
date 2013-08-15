@@ -7,6 +7,7 @@
 #include "PDutils.h"
 
 #include "../../common/config.h"
+#include "common.h"
 
 #ifdef ANDROID
 PBL_APP_INFO(SELECTOR_APP_UUID,

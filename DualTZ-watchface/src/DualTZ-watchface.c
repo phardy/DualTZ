@@ -7,6 +7,7 @@
 
 #include "DualTZ-watchface.h"
 #include "../../common/config.h"
+#include "common.h"
 
 #ifdef ANDROID
 PBL_APP_INFO(WATCHFACE_APP_UUID,
