@@ -268,7 +268,7 @@ void handle_init(AppContextRef ctx) {
 
   // Setup for root window
   window_init(&root_window, "Dual-TZ configurator");
-  menu_layer_init(&root_menu, root_window.layer.bounds);
+  menu_layer_init(&root_menu, GRect(0, 0, 144, 153));
   menu_layer_set_callbacks(&root_menu, NULL, (MenuLayerCallbacks){
       .get_num_rows = root_menu_get_num_rows_callback,
 	.draw_row = root_menu_draw_row_callback,
@@ -279,7 +279,8 @@ void handle_init(AppContextRef ctx) {
 
   // Setup for region window
   window_init(&region_window, "Region select");
-  menu_layer_init(&region_menu, region_window.layer.bounds);
+  // Using a static size because we don't yet know window size.
+  menu_layer_init(&region_menu, GRect(0, 0, 144, 153));
   menu_layer_set_callbacks(&region_menu, NULL, (MenuLayerCallbacks){
       .get_num_rows = region_menu_get_num_rows_callback,
 	.draw_row = region_menu_draw_row_callback,
@@ -293,7 +294,8 @@ void handle_init(AppContextRef ctx) {
   window_set_window_handlers(&zone_window, (WindowHandlers) {
       .appear = &zone_window_appear_handler
 	});
-  menu_layer_init(&zone_menu, zone_window.layer.bounds);
+  // Using a static size because we don't yet know window size.
+  menu_layer_init(&zone_menu, GRect(0, 0, 144, 153));
   menu_layer_set_callbacks(&zone_menu, NULL, (MenuLayerCallbacks){
       .get_num_rows = zone_menu_get_num_rows_callback,
 	.draw_row = zone_menu_draw_row_callback,
