@@ -1,25 +1,25 @@
-Zulu +0 0
-Yankee -12 -43200
-X-ray -11 -39600
-Whiskey -10 -36000
-Victor -09 -32400
-Uniform -08 -28800
-Tango -07 -25200
-Sierra -06 -21600
-Romeo -05 -18000
-Quebec -04 -14400
-Papa -03 -10800
-Oscar -02 -7200
-November -01 -3600
-Alpha +01 3600
-Bravo +02 7200
-Charlie +03 10800
-Delta +04 14400
-Echo +05 18000
-Foxtrot +06 21600
-Golf +07 25200
-Hotel +08 28800
-India +09 32400
-Kilo +10 36000
-Lima +11 39600
-Mike +12 43200
+Zulu	+0
+Yankee	-12
+X-ray	-11
+Whiskey	-10
+Victor	-09
+Uniform	-08
+Tango	-07
+Sierra	-06
+Romeo	-05
+Quebec	-04
+Papa	-03
+Oscar	-02
+November	-01
+Alpha	+01
+Bravo	+02
+Charlie	+03
+Delta	+04
+Echo	+05
+Foxtrot	+06
+Golf	+07
+Hotel	+08
+India	+09
+Kilo	+10
+Lima	+11
+Mike	+12
