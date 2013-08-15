@@ -1,12 +1,12 @@
-Adelaide 09:30 34200
-Brisbane +10 36000
-Broken_Hill 09:30 34200
-Currie +10 36000
-Darwin 09:30 34200
-Eucla 08:45 31500
-Hobart +10 36000
-Lindeman +10 36000
-Lord_Howe 10:30 37800
-Melbourne +10 36000
-Perth +08 28800
-Sydney +10 36000
+Adelaide	09:30
+Brisbane	+10
+Broken Hill	09:30
+Currie	+10
+Darwin	09:30
+Eucla	08:45
+Hobart	+10
+Lindeman	+10
+Lord Howe	10:30
+Melbourne	+10
+Perth	+08
+Sydney	+10

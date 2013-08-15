@@ -1,10 +1,10 @@
-Azores -01 -3600
-Bermuda -04 -14400
-Canary +00 0
-Cape_Verde -01 -3600
-Faroe +00 0
-Madeira +00 0
-Reykjavik +00 0
-South_Georgia -02 -7200
-Stanley -03 -10800
-St_Helena +00 0
+Azores	-01
+Bermuda	-04
+Canary	+00
+Cape Verde	-01
+Faroe	+00
+Madeira	+00
+Reykjavik	+00
+South Georgia	-02
+Stanley	-03
+St Helena	+00

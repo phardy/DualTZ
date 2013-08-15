@@ -1,57 +1,57 @@
-Amsterdam +01 3600
-Andorra +01 3600
-Athens +02 7200
-Belgrade +01 3600
-Berlin +01 3600
-Bratislava +01 3600
-Brussels +01 3600
-Bucharest +02 7200
-Budapest +01 3600
-Busingen +01 3600
-Chisinau +02 7200
-Copenhagen +01 3600
-Dublin +00 0
-Gibraltar +01 3600
-Guernsey +00 0
-Helsinki +02 7200
-Isle_of_Man +00 0
-Istanbul +02 7200
-Jersey +00 0
-Kaliningrad +03 10800
-Kiev +02 7200
-Lisbon +00 0
-Ljubljana +01 3600
-London +00 0
-Luxembourg +01 3600
-Madrid +01 3600
-Malta +01 3600
-Mariehamn +02 7200
-Minsk +03 10800
-Monaco +01 3600
-Moscow +04 14400
-Nicosia +02 7200
-Oslo +01 3600
-Paris +01 3600
-Podgorica +01 3600
-Prague +01 3600
-Riga +02 7200
-Rome +01 3600
-Samara +04 14400
-San_Marino +01 3600
-Sarajevo +01 3600
-Simferopol +02 7200
-Skopje +01 3600
-Sofia +02 7200
-Stockholm +01 3600
-Tallinn +02 7200
-Tirane +01 3600
-Uzhgorod +02 7200
-Vaduz +01 3600
-Vatican +01 3600
-Vienna +01 3600
-Vilnius +02 7200
-Volgograd +04 14400
-Warsaw +01 3600
-Zagreb +01 3600
-Zaporozhye +02 7200
-Zurich +01 3600
+Amsterdam	+01
+Andorra	+01
+Athens	+02
+Belgrade	+01
+Berlin	+01
+Bratislava	+01
+Brussels	+01
+Bucharest	+02
+Budapest	+01
+Busingen	+01
+Chisinau	+02
+Copenhagen	+01
+Dublin	+00
+Gibraltar	+01
+Guernsey	+00
+Helsinki	+02
+Isle of Man	+00
+Istanbul	+02
+Jersey	+00
+Kaliningrad	+03
+Kiev	+02
+Lisbon	+00
+Ljubljana	+01
+London	+00
+Luxembourg	+01
+Madrid	+01
+Malta	+01
+Mariehamn	+02
+Minsk	+03
+Monaco	+01
+Moscow	+04
+Nicosia	+02
+Oslo	+01
+Paris	+01
+Podgorica	+01
+Prague	+01
+Riga	+02
+Rome	+01
+Samara	+04
+San Marino	+01
+Sarajevo	+01
+Simferopol	+02
+Skopje	+01
+Sofia	+02
+Stockholm	+01
+Tallinn	+02
+Tirane	+01
+Uzhgorod	+02
+Vaduz	+01
+Vatican	+01
+Vienna	+01
+Vilnius	+02
+Volgograd	+04
+Warsaw	+01
+Zagreb	+01
+Zaporozhye	+02
+Zurich	+01

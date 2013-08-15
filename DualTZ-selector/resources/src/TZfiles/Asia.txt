@@ -1,80 +1,80 @@
-Aden +03 10800
-Almaty +06 21600
-Amman +02 7200
-Anadyr +12 43200
-Aqtau +05 18000
-Aqtobe +05 18000
-Ashgabat +05 18000
-Baghdad +03 10800
-Bahrain +03 10800
-Baku +04 14400
-Bangkok +07 25200
-Beirut +02 7200
-Bishkek +06 21600
-Brunei +08 28800
-Choibalsan +08 28800
-Chongqing +08 28800
-Colombo 05:30 19800
-Damascus +02 7200
-Dhaka +06 21600
-Dili +09 32400
-Dubai +04 14400
-Dushanbe +05 18000
-Gaza +02 7200
-Harbin +08 28800
-Hebron +02 7200
-Ho_Chi_Minh +07 25200
-Hong_Kong +08 28800
-Hovd +07 25200
-Irkutsk +09 32400
-Istanbul +02 7200
-Jakarta +07 25200
-Jayapura +09 32400
-Jerusalem +02 7200
-Kabul 04:30 16200
-Kamchatka +12 43200
-Karachi +05 18000
-Kashgar +08 28800
-Kathmandu 05:45 20700
-Khandyga +10 36000
-Kolkata 05:30 19800
-Krasnoyarsk +08 28800
-Kuala_Lumpur +08 28800
-Kuching +08 28800
-Kuwait +03 10800
-Macau +08 28800
-Magadan +12 43200
-Makassar +08 28800
-Manila +08 28800
-Muscat +04 14400
-Nicosia +02 7200
-Novokuznetsk +07 25200
-Novosibirsk +07 25200
-Omsk +07 25200
-Oral +05 18000
-Phnom_Penh +07 25200
-Pontianak +07 25200
-Pyongyang +09 32400
-Qatar +03 10800
-Qyzylorda +06 21600
-Rangoon 06:30 23400
-Riyadh +03 10800
-Sakhalin +11 39600
-Samarkand +05 18000
-Seoul +09 32400
-Shanghai +08 28800
-Singapore +08 28800
-Taipei +08 28800
-Tashkent +05 18000
-Tbilisi +04 14400
-Tehran 03:30 12600
-Thimphu +06 21600
-Tokyo +09 32400
-Ulaanbaatar +08 28800
-Urumqi +08 28800
-Ust-Nera +11 39600
-Vientiane +07 25200
-Vladivostok +11 39600
-Yakutsk +10 36000
-Yekaterinburg +06 21600
-Yerevan +04 14400
+Aden	+03
+Almaty	+06
+Amman	+02
+Anadyr	+12
+Aqtau	+05
+Aqtobe	+05
+Ashgabat	+05
+Baghdad	+03
+Bahrain	+03
+Baku	+04
+Bangkok	+07
+Beirut	+02
+Bishkek	+06
+Brunei	+08
+Choibalsan	+08
+Chongqing	+08
+Colombo	05:30
+Damascus	+02
+Dhaka	+06
+Dili	+09
+Dubai	+04
+Dushanbe	+05
+Gaza	+02
+Harbin	+08
+Hebron	+02
+Ho Chi Minh	+07
+Hong Kong	+08
+Hovd	+07
+Irkutsk	+09
+Istanbul	+02
+Jakarta	+07
+Jayapura	+09
+Jerusalem	+02
+Kabul	04:30
+Kamchatka	+12
+Karachi	+05
+Kashgar	+08
+Kathmandu	05:45
+Khandyga	+10
+Kolkata	05:30
+Krasnoyarsk	+08
+Kuala Lumpur	+08
+Kuching	+08
+Kuwait	+03
+Macau	+08
+Magadan	+12
+Makassar	+08
+Manila	+08
+Muscat	+04
+Nicosia	+02
+Novokuznetsk	+07
+Novosibirsk	+07
+Omsk	+07
+Oral	+05
+Phnom Penh	+07
+Pontianak	+07
+Pyongyang	+09
+Qatar	+03
+Qyzylorda	+06
+Rangoon	06:30
+Riyadh	+03
+Sakhalin	+11
+Samarkand	+05
+Seoul	+09
+Shanghai	+08
+Singapore	+08
+Taipei	+08
+Tashkent	+05
+Tbilisi	+04
+Tehran	03:30
+Thimphu	+06
+Tokyo	+09
+Ulaanbaatar	+08
+Urumqi	+08
+Ust-Nera	+11
+Vientiane	+07
+Vladivostok	+11
+Yakutsk	+10
+Yekaterinburg	+06
+Yerevan	+04

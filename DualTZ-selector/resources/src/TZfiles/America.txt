@@ -1,125 +1,125 @@
-Adak -10 -36000
-Anchorage -09 -32400
-Anguilla -04 -14400
-Antigua -04 -14400
-Argentina -03 -10800
-Aruba -04 -14400
-Asuncion -04 -14400
-Atikokan -05 -18000
-Bahia -03 -10800
-Bahia_Banderas -06 -21600
-Barbados -04 -14400
-Belem -03 -10800
-Belize -06 -21600
-Blanc-Sablon -04 -14400
-Boa_Vista -04 -14400
-Bogota -05 -18000
-Boise -07 -25200
-Cambridge_Bay -07 -25200
-Campo_Grande -04 -14400
-Cancun -06 -21600
-Cayenne -03 -10800
-Cayman -05 -18000
-Chicago -06 -21600
-Chihuahua -07 -25200
-Costa_Rica -06 -21600
-Creston -07 -25200
-Cuiaba -04 -14400
-Curacao -04 -14400
-Danmarkshavn 0 0
-Dawson -08 -28800
-Dawson_Creek -07 -25200
-Denver -07 -25200
-Detroit -05 -18000
-Dominica -04 -14400
-Edmonton -07 -25200
-Eirunepe -04 -14400
-El_Salvador -06 -21600
-Fortaleza -03 -10800
-Glace_Bay -04 -14400
-Godthab -03 -10800
-Goose_Bay -04 -14400
-Grand_Turk -05 -18000
-Grenada -04 -14400
-Guadeloupe -04 -14400
-Guatemala -06 -21600
-Guayaquil -05 -18000
-Guyana -04 -14400
-Halifax -04 -14400
-Havana -05 -18000
-Hermosillo -07 -25200
-Indiana -05 -18000
-Inuvik -07 -25200
-Iqaluit -05 -18000
-Jamaica -05 -18000
-Juneau -09 -32400
-Kentucky -05 -18000
-Kralendijk -04 -14400
-La_Paz -04 -14400
-Lima -05 -18000
-Los_Angeles -08 -28800
-Lower_Princes -04 -14400
-Maceio -03 -10800
-Managua -06 -21600
-Manaus -04 -14400
-Marigot -04 -14400
-Martinique -04 -14400
-Matamoros -06 -21600
-Mazatlan -07 -25200
-Menominee -06 -21600
-Merida -06 -21600
-Metlakatla -08 -28800
-Mexico_City -06 -21600
-Miquelon -03 -10800
-Moncton -04 -14400
-Monterrey -06 -21600
-Montevideo -03 -10800
-Montreal -05 -18000
-Montserrat -04 -14400
-Nassau -05 -18000
-New_York -05 -18000
-Nipigon -05 -18000
-Nome -09 -32400
-Noronha -02 -7200
-North_Dakota -06 -21600
-Ojinaga -07 -25200
-Panama -05 -18000
-Pangnirtung -05 -18000
-Paramaribo -03 -10800
-Phoenix -07 -25200
-Port-au-Prince -05 -18000
-Port_of_Spain -04 -14400
-Porto_Velho -04 -14400
-Puerto_Rico -04 -14400
-Rainy_River -06 -21600
-Rankin_Inlet -06 -21600
-Recife -03 -10800
-Regina -06 -21600
-Resolute -06 -21600
-Rio_Branco -04 -14400
-Santa_Isabel -08 -28800
-Santarem -03 -10800
-Santiago -04 -14400
-Santo_Domingo -04 -14400
-Sao_Paulo -03 -10800
-Scoresbysund -01 -3600
-Shiprock -07 -25200
-Sitka -09 -32400
-St_Barthelemy -04 -14400
-St_Johns -03:30 -12600
-St_Kitts -04 -14400
-St_Lucia -04 -14400
-St_Thomas -04 -14400
-St_Vincent -04 -14400
-Swift_Current -06 -21600
-Tegucigalpa -06 -21600
-Thule -04 -14400
-Thunder_Bay -05 -18000
-Tijuana -08 -28800
-Toronto -05 -18000
-Tortola -04 -14400
-Vancouver -08 -28800
-Whitehorse -08 -28800
-Winnipeg -06 -21600
-Yakutat -09 -32400
-Yellowknife -07 -25200
+Adak	-10
+Anchorage	-09
+Anguilla	-04
+Antigua	-04
+Argentina	-03
+Aruba	-04
+Asuncion	-04
+Atikokan	-05
+Bahia	-03
+Bahia Banderas	-06
+Barbados	-04
+Belem	-03
+Belize	-06
+Blanc-Sablon	-04
+Boa Vista	-04
+Bogota	-05
+Boise	-07
+Cambridge Bay	-07
+Campo Grande	-04
+Cancun	-06
+Cayenne	-03
+Cayman	-05
+Chicago	-06
+Chihuahua	-07
+Costa Rica	-06
+Creston	-07
+Cuiaba	-04
+Curacao	-04
+Danmarkshavn	0
+Dawson	-08
+Dawson Creek	-07
+Denver	-07
+Detroit	-05
+Dominica	-04
+Edmonton	-07
+Eirunepe	-04
+El Salvador	-06
+Fortaleza	-03
+Glace Bay	-04
+Godthab	-03
+Goose Bay	-04
+Grand Turk	-05
+Grenada	-04
+Guadeloupe	-04
+Guatemala	-06
+Guayaquil	-05
+Guyana	-04
+Halifax	-04
+Havana	-05
+Hermosillo	-07
+Indiana	-05
+Inuvik	-07
+Iqaluit	-05
+Jamaica	-05
+Juneau	-09
+Kentucky	-05
+Kralendijk	-04
+La Paz	-04
+Lima	-05
+Los Angeles	-08
+Lower Princes	-04
+Maceio	-03
+Managua	-06
+Manaus	-04
+Marigot	-04
+Martinique	-04
+Matamoros	-06
+Mazatlan	-07
+Menominee	-06
+Merida	-06
+Metlakatla	-08
+Mexico City	-06
+Miquelon	-03
+Moncton	-04
+Monterrey	-06
+Montevideo	-03
+Montreal	-05
+Montserrat	-04
+Nassau	-05
+New York	-05
+Nipigon	-05
+Nome	-09
+Noronha	-02
+North Dakota	-06
+Ojinaga	-07
+Panama	-05
+Pangnirtung	-05
+Paramaribo	-03
+Phoenix	-07
+Port-au-Prince	-05
+Port of Spain	-04
+Porto Velho	-04
+Puerto Rico	-04
+Rainy River	-06
+Rankin Inlet	-06
+Recife	-03
+Regina	-06
+Resolute	-06
+Rio Branco	-04
+Santa Isabel	-08
+Santarem	-03
+Santiago	-04
+Santo Domingo	-04
+Sao Paulo	-03
+Scoresbysund	-01
+Shiprock	-07
+Sitka	-09
+St Barthelemy	-04
+St Johns	-03:30
+St Kitts	-04
+St Lucia	-04
+St Thomas	-04
+St Vincent	-04
+Swift Current	-06
+Tegucigalpa	-06
+Thule	-04
+Thunder Bay	-05
+Tijuana	-08
+Toronto	-05
+Tortola	-04
+Vancouver	-08
+Whitehorse	-08
+Winnipeg	-06
+Yakutat	-09
+Yellowknife	-07

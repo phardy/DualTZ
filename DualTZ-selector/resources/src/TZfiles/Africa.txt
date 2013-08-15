@@ -1,52 +1,52 @@
-Abidjan +00 0
-Accra +00 0
-Addis_Ababa +03 10800
-Algiers +01 3600
-Asmara +03 10800
-Bamako +00 0
-Bangui +01 3600
-Banjul +00 0
-Bissau +00 0
-Blantyre +02 7200
-Brazzaville +01 3600
-Bujumbura +02 7200
-Cairo +02 7200
-Casablanca +00 0
-Ceuta +01 3600
-Conakry +00 0
-Dakar +00 0
-Dar_es_Salaam +03 10800
-Djibouti +03 10800
-Douala +01 3600
-El_Aaiun +00 0
-Freetown +00 0
-Gaborone +02 7200
-Harare +02 7200
-Johannesburg +02 7200
-Juba +03 10800
-Kampala +03 10800
-Khartoum +03 10800
-Kigali +02 7200
-Kinshasa +01 3600
-Lagos +01 3600
-Libreville +01 3600
-Lome +00 0
-Luanda +01 3600
-Lubumbashi +02 7200
-Lusaka +02 7200
-Malabo +01 3600
-Maputo +02 7200
-Maseru +02 7200
-Mbabane +02 7200
-Mogadishu +03 10800
-Monrovia +00 0
-Nairobi +03 10800
-Ndjamena +01 3600
-Niamey +01 3600
-Nouakchott +00 0
-Ouagadougou +00 0
-Porto-Novo +01 3600
-Sao_Tome +00 0
-Tripoli +01 3600
-Tunis +01 3600
-Windhoek +01 3600
+Abidjan	+00
+Accra	+00
+Addis Ababa	+03
+Algiers	+01
+Asmara	+03
+Bamako	+00
+Bangui	+01
+Banjul	+00
+Bissau	+00
+Blantyre	+02
+Brazzaville	+01
+Bujumbura	+02
+Cairo	+02
+Casablanca	+00
+Ceuta	+01
+Conakry	+00
+Dakar	+00
+Dar es Salaam	+03
+Djibouti	+03
+Douala	+01
+El Aaiun	+00
+Freetown	+00
+Gaborone	+02
+Harare	+02
+Johannesburg	+02
+Juba	+03
+Kampala	+03
+Khartoum	+03
+Kigali	+02
+Kinshasa	+01
+Lagos	+01
+Libreville	+01
+Lome	+00
+Luanda	+01
+Lubumbashi	+02
+Lusaka	+02
+Malabo	+01
+Maputo	+02
+Maseru	+02
+Mbabane	+02
+Mogadishu	+03
+Monrovia	+00
+Nairobi	+03
+Ndjamena	+01
+Niamey	+01
+Nouakchott	+00
+Ouagadougou	+00
+Porto-Novo	+01
+Sao Tome	+00
+Tripoli	+01
+Tunis	+01
+Windhoek	+01

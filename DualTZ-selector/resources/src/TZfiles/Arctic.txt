@@ -1,1 +1,1 @@
-Longyearbyen +01 3600
+Longyearbyen	+01

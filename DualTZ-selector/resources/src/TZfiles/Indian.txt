@@ -1,11 +1,11 @@
-Antananarivo +03 10800
-Chagos +06 21600
-Christmas +07 25200
-Cocos 06:30 23400
-Comoro +03 10800
-Kerguelen +05 18000
-Mahe +04 14400
-Maldives +05 18000
-Mauritius +04 14400
-Mayotte +03 10800
-Reunion +04 14400
+Antananarivo	+03
+Chagos	+06
+Christmas	+07
+Cocos	06:30
+Comoro	+03
+Kerguelen	+05
+Mahe	+04
+Maldives	+05
+Mauritius	+04
+Mayotte	+03
+Reunion	+04
