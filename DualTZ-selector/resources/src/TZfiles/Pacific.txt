@@ -2,14 +2,14 @@ Apia	13
 Auckland	12
 Chatham	12:45
 Chuuk	10
-Easter	-06
+Easter	-6
 Efate	11
 Enderbury	13
 Fakaofo	13
 Fiji	12
 Funafuti	12
-Galapagos	-06
-Gambier	-09
+Galapagos	-6
+Gambier	-9
 Guadalcanal	11
 Guam	10
 Honolulu	-10
@@ -18,15 +18,15 @@ Kiritimati	14
 Kosrae	11
 Kwajalein	12
 Majuro	12
-Marquesas	-09:30
+Marquesas	-9:30
 Midway	-11
 Nauru	12
 Niue	-11
 Norfolk	11:30
 Noumea	11
 Pago Pago	-11
-Palau	09
-Pitcairn	-08
+Palau	9
+Pitcairn	-8
 Pohnpei	11
 Port Moresby	10
 Rarotonga	-10

@@ -1,12 +1,12 @@
-Adelaide	09:30
+Adelaide	9:30
 Brisbane	10
-Broken Hill	09:30
+Broken Hill	9:30
 Currie	10
-Darwin	09:30
-Eucla	08:45
+Darwin	9:30
+Eucla	8:45
 Hobart	10
 Lindeman	10
 Lord Howe	10:30
 Melbourne	10
-Perth	08
+Perth	8
 Sydney	10

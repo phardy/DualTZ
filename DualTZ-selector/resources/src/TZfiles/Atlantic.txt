@@ -1,10 +1,10 @@
-Azores	-01
-Bermuda	-04
-Canary	00
-Cape Verde	-01
-Faroe	00
-Madeira	00
-Reykjavik	00
-South Georgia	-02
-Stanley	-03
-St Helena	00
+Azores	-1
+Bermuda	-4
+Canary	0
+Cape Verde	-1
+Faroe	0
+Madeira	0
+Reykjavik	0
+South Georgia	-2
+Stanley	-3
+St Helena	0

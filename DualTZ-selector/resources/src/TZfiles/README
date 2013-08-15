@@ -4,5 +4,5 @@ Lines are tab-separated, and go
 
 TZName	TZOffset
 
-TZOffset is off the form "[+-]?[0-9]{2}(:[0-9]{2})?"
-
+The format of TZOffset is pretty finicky too. Must have no leading zeroes.
+Positive offsets shouldn't have a plus.
