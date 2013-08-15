@@ -105,27 +105,50 @@ void fetch_time_zone(uint16_t idx, TZInfo *tz) {
   }
   line[79] = '\0';
 
-  const char sep[] = " ";
+  const char sep[] = "\t:";
   char *token;
   // Extract TZ name
   token = pstrtok((char*)line, sep);
-  strncpy(tz->tz_name, token, TZ_NAME_LEN);
-  // formatting cleanup
-  for (int i=0; i<TZ_NAME_LEN; i++) {
-    if (tz->tz_name[i] == '_')
-      tz->tz_name[i] = ' ';
+  if (token != NULL) {
+    strncpy(tz->tz_name, token, TZ_NAME_LEN);
+    tz->tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
   }
-  tz->tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
   // Extract TZ offset
   token = pstrtok(NULL, sep);
-  strncpy(tz->tz_offset, token, TZ_OFFSET_LEN);
-  tz->tz_offset[TZ_OFFSET_LEN] = '\0';
-  // Extract TZ seconds
-  token = pstrtok(NULL, (char*)'\n');
-  long offset;
-  xatoi(&token, &offset);
-  tz->tz_seconds = (int32_t)offset;
+  if (token != NULL) {
+    long tz_hours;
+    xatoi(&token, &tz_hours);
+    tz->tz_hours = (int8_t)tz_hours;
+  } else {
+    tz->tz_hours = 0;
+  }
+  token = pstrtok(NULL, sep);
+  if (token != NULL) {
+    long tz_minutes;
+    xatoi(&token, &tz_minutes);
+    tz->tz_minutes = (int8_t)tz_minutes;
+  } else {
+    tz->tz_minutes = 0;
+  }
+
   tz->tz_dst = false;
+}
+
+void format_timezone(TZInfo *tz, char *str) {
+  // xprintf doesn't seem to support the + formatting flag
+  if (tz->tz_hours < 0) {
+    if (tz->tz_minutes == 0) {
+      xsprintf(str, "%02d", tz->tz_hours);
+    } else {
+      xsprintf(str, "%02d:%02d", tz->tz_hours, tz->tz_minutes);
+    }
+  } else {
+    if (tz->tz_minutes == 0) {
+      xsprintf(str, "+%02d", tz->tz_hours);
+    } else {
+      xsprintf(str, "+%02d:%02d", tz->tz_hours, tz->tz_minutes);
+    }
+  }
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -135,12 +158,14 @@ uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
 
 void root_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				 MenuIndex *cell_index, void *data) {
-  char sub[TZ_NAME_LEN+TZ_OFFSET_LEN+2]; // +3 so we can add 2-char sep
+  char tz[TZ_OFFSET_LEN+1];
+  char sub[TZ_NAME_LEN+TZ_OFFSET_LEN+3]; // +3 so we can add 2-char sep
   switch (cell_index->row) {
   case 0 :
+    format_timezone(&RemoteTZ, tz);
     strcpy(sub, RemoteTZ.tz_name);
     strcat(sub, ": ");
-    strcat(sub, RemoteTZ.tz_offset);
+    strcat(sub, tz);
     menu_cell_basic_draw(ctx, cell_layer, "Change Timezone", sub, NULL);
     break;
   case 1 :
@@ -163,15 +188,15 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
   case 1:
     if (RemoteTZ.tz_dst) {
       RemoteTZ.tz_dst = false;
-      RemoteTZ.tz_seconds = RemoteTZ.tz_seconds - 3600;
+      RemoteTZ.tz_hours--;
     } else {
       RemoteTZ.tz_dst = true;
-      RemoteTZ.tz_seconds = RemoteTZ.tz_seconds + 3600;
+      RemoteTZ.tz_hours++;
     }
     // RemoteTZ is canonical, so copy it in to stageTZ and go
     strcpy(stageTZ.tz_name, RemoteTZ.tz_name);
-    strcpy(stageTZ.tz_offset, RemoteTZ.tz_offset);
-    stageTZ.tz_seconds = RemoteTZ.tz_seconds;
+    stageTZ.tz_hours = RemoteTZ.tz_hours;
+    stageTZ.tz_minutes = RemoteTZ.tz_minutes;
     stageTZ.tz_dst = RemoteTZ.tz_dst;
     uint8_t cookiebuf[sizeof(stageTZ)];
     memcpy(&cookiebuf, &stageTZ, sizeof(stageTZ));
@@ -208,8 +233,10 @@ void zone_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer,
 				   MenuIndex *cell_index, void *data) {
 
   fetch_time_zone(cell_index->row, &SelectedTZ);
+  char offset[TZ_OFFSET_LEN+1];
+  format_timezone(&SelectedTZ, offset);
   menu_cell_basic_draw(ctx, cell_layer, SelectedTZ.tz_name,
-		       SelectedTZ.tz_offset, NULL);
+		       offset, NULL);
 }
 
 void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
@@ -232,7 +259,8 @@ void zone_window_appear_handler(struct Window *window) {
 void http_cookie_failed_callback(int32_t cookie, int http_status,
 				 void* context) {
   strcpy(RemoteTZ.tz_name, "Unknown failure");
-  strcpy(RemoteTZ.tz_offset, " :-(");
+  RemoteTZ.tz_hours = 0;
+  RemoteTZ.tz_minutes = 0;
   menu_layer_reload_data(&root_menu);
 }
 
@@ -242,8 +270,8 @@ void http_cookie_get_callback(int32_t request_id, Tuple* result,
   if (result->key == HTTP_COOKIE_TZINFO) {
     TZInfo *tmpTZ = (TZInfo *) result->value;
     strcpy(RemoteTZ.tz_name, tmpTZ->tz_name);
-    strcpy(RemoteTZ.tz_offset, tmpTZ->tz_offset);
-    RemoteTZ.tz_seconds = tmpTZ->tz_seconds;
+    RemoteTZ.tz_hours = tmpTZ->tz_hours;
+    RemoteTZ.tz_minutes = tmpTZ->tz_minutes;
     RemoteTZ.tz_dst = tmpTZ->tz_dst;
 
     menu_layer_reload_data(&root_menu);
@@ -254,8 +282,8 @@ void http_cookie_set_callback(int32_t request_id, bool successful,
 			      void* context) {
   if (successful) {
     strcpy(RemoteTZ.tz_name, stageTZ.tz_name);
-    strcpy(RemoteTZ.tz_offset, stageTZ.tz_offset);
-    RemoteTZ.tz_seconds = stageTZ.tz_seconds;
+    RemoteTZ.tz_hours = stageTZ.tz_hours;
+    RemoteTZ.tz_minutes = stageTZ.tz_minutes;
     RemoteTZ.tz_dst = stageTZ.tz_dst;
   } else {
     strcpy(RemoteTZ.tz_name, "Send failed");
@@ -309,7 +337,8 @@ void handle_init(AppContextRef ctx) {
 
   // Prime RemoteTZ with informative values
   strcpy(RemoteTZ.tz_name, "Retrieving...");
-  strcpy(RemoteTZ.tz_offset, "???");
+  RemoteTZ.tz_hours = 0;
+  RemoteTZ.tz_minutes = 0;
   RemoteTZ.tz_dst = false;
 
   // Populate the regions array
