@@ -106,33 +106,7 @@ void fetch_time_zone(uint16_t idx, TZInfo *tz) {
   }
   line[79] = '\0';
 
-  const char sep[] = "\t:";
-  char *token;
-  // Extract TZ name
-  token = pstrtok((char*)line, sep);
-  if (token != NULL) {
-    strncpy(tz->tz_name, token, TZ_NAME_LEN);
-    tz->tz_name[TZ_NAME_LEN] = '\0'; // In case we have a long name
-  }
-  // Extract TZ offset
-  token = pstrtok(NULL, sep);
-  if (token != NULL) {
-    long tz_hours;
-    xatoi(&token, &tz_hours);
-    tz->tz_hours = (int8_t)tz_hours;
-  } else {
-    tz->tz_hours = 0;
-  }
-  token = pstrtok(NULL, sep);
-  if (token != NULL) {
-    long tz_minutes;
-    xatoi(&token, &tz_minutes);
-    tz->tz_minutes = (int8_t)tz_minutes;
-  } else {
-    tz->tz_minutes = 0;
-  }
-
-  tz->tz_dst = false;
+  parse_timezone((char*)line, tz);
 }
 
 uint16_t root_menu_get_num_rows_callback(MenuLayer *me,
@@ -182,10 +156,12 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
     stageTZ.tz_hours = RemoteTZ.tz_hours;
     stageTZ.tz_minutes = RemoteTZ.tz_minutes;
     stageTZ.tz_dst = RemoteTZ.tz_dst;
-    uint8_t cookiebuf[sizeof(stageTZ)];
-    memcpy(&cookiebuf, &stageTZ, sizeof(stageTZ));
-    http_cookie_set_data(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO,
-			 cookiebuf, sizeof(stageTZ));
+    // two tabs, max length of six for TZ offset, one DST char
+    char cookiestr[sizeof(stageTZ.tz_name) + 9];
+    xprintf(cookiestr, "%s\t%i:%i\t%i",
+	    stageTZ.tz_name, stageTZ.tz_hours,
+	    stageTZ.tz_minutes, stageTZ.tz_dst);
+    http_cookie_set_cstring(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO, cookiestr);
     menu_layer_reload_data(&root_menu);
   }
 }
@@ -252,12 +228,7 @@ void http_cookie_get_callback(int32_t request_id, Tuple* result,
 			      void* context) {
   if (request_id != HTTP_TZINFO_GET_REQ) return;
   if (result->key == HTTP_COOKIE_TZINFO) {
-    TZInfo *tmpTZ = (TZInfo *) result->value;
-    strcpy(RemoteTZ.tz_name, tmpTZ->tz_name);
-    RemoteTZ.tz_hours = tmpTZ->tz_hours;
-    RemoteTZ.tz_minutes = tmpTZ->tz_minutes;
-    RemoteTZ.tz_dst = tmpTZ->tz_dst;
-
+    parse_timezone((char *)result->value, &RemoteTZ);
     menu_layer_reload_data(&root_menu);
   }
 }

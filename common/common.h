@@ -15,6 +15,8 @@ typedef enum {
   remote
 } TZState;
 
-static TZInfo UTC = {"UTC", 0, 0, NULL};
+// static TZInfo UTC = {"UTC", 0, 0, NULL};
 
 void format_timezone(TZInfo *tz, char *str);
+
+void parse_timezone(char *str, TZInfo *tz);
