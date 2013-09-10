@@ -3,7 +3,6 @@
 #include "pebble_fonts.h"
 
 #include "http.h"
-#include "xprintf.h"
 #include "PDutils.h"
 
 #include "../../common/config.h"
@@ -158,9 +157,12 @@ void root_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
     stageTZ.tz_dst = RemoteTZ.tz_dst;
     // two tabs, max length of six for TZ offset, one DST char
     char cookiestr[sizeof(stageTZ.tz_name) + 9];
-    xprintf(cookiestr, "%s\t%i:%i\t%i",
-	    stageTZ.tz_name, stageTZ.tz_hours,
-	    stageTZ.tz_minutes, stageTZ.tz_dst);
+    int isdst;
+    if (stageTZ.tz_dst) isdst = 1;
+    else isdst = 0;
+    snprintf(cookiestr, sizeof(stageTZ.tz_name)+9, "%s\t%i:%i\t%i",
+    	     stageTZ.tz_name, stageTZ.tz_hours,
+    	     stageTZ.tz_minutes, isdst);
     http_cookie_set_cstring(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO, cookiestr);
     menu_layer_reload_data(&root_menu);
   }
@@ -205,10 +207,11 @@ void zone_menu_select_callback(MenuLayer *me, MenuIndex *cell_index,
   // Resetting DST to off seems like the best way
   // to ensure a known state. And confuse me less.
   stageTZ.tz_dst = false;
-  uint8_t cookiebuf[sizeof(stageTZ)];
-  memcpy(&cookiebuf, &stageTZ, sizeof(stageTZ));
-  http_cookie_set_data(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO,
-		       cookiebuf, sizeof(stageTZ));
+  char cookiestr[sizeof(stageTZ.tz_name) + 9];
+  snprintf(cookiestr, sizeof(stageTZ.tz_name)+9, "%s\t%i:%i\t%i",
+	   stageTZ.tz_name, stageTZ.tz_hours,
+	   stageTZ.tz_minutes, stageTZ.tz_dst);
+  http_cookie_set_cstring(HTTP_TZINFO_SET_REQ, HTTP_COOKIE_TZINFO, cookiestr);
 }
 
 void zone_window_appear_handler(struct Window *window) {
