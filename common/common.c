@@ -57,8 +57,8 @@ void parse_timezone(char *str, TZInfo *tz) {
   }
 
   token = pstrtok(NULL, sep);
-  if (token != NULL) {
-    //parse
+  if (token != NULL && token[0] == '1') {
+    tz->tz_dst = true;
   } else {
     tz->tz_dst = false;
   }
