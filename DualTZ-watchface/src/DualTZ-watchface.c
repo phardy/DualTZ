@@ -5,20 +5,19 @@
 #include "http.h"
 #include "PDutils.h"
 
-// #include "DualTZ-watchface.h"
 #include "../../common/config.h"
 #include "common.h"
 
 #ifdef ANDROID
 PBL_APP_INFO(WATCHFACE_APP_UUID,
              "DualTZ", "Kids, Inc.",
-             1, 3, /* App version */
+             2, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
 #else
 PBL_APP_INFO(HTTP_UUID,
 	     "DualTZ", "Kids, Inc.",
-	     1, 3, /* App version */
+	     2, 0, /* App version */
 	     RESOURCE_ID_IMAGE_MENU_ICON,
 	     APP_INFO_WATCH_FACE);
 #endif
