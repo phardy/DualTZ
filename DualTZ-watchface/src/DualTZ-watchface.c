@@ -5,7 +5,7 @@
 #include "http.h"
 #include "PDutils.h"
 
-#include "DualTZ-watchface.h"
+// #include "DualTZ-watchface.h"
 #include "../../common/config.h"
 #include "common.h"
 
@@ -72,13 +72,35 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
+void update_digital_time(PblTm *time) {
+  time_t t1 = pmktime(time);
+  int32_t t = (int32_t)t1 + localTZOffset;
+
+  PblTm *adjTime;
+  adjTime = pgmtime(&t);
+  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
+		     DigitalTimeFormat, adjTime);
+  if (!clock_is_24h_style()) {
+    // Remove leading zero by overwriting it with a space
+    if (DigitalTimeText[0] == '0') {
+      DigitalTimeText[0] = ' ';
+    }
+    if (adjTime->tm_hour < 12) {
+      // Nothing at all for AM
+      text_layer_set_text(&AmPm, "  ");
+    } else {
+      text_layer_set_text(&AmPm, "PM");
+    }
+  }
+  text_layer_set_text(&DigitalTime, DigitalTimeText);
+}
+
 void http_cookie_failed_callback(int32_t cookie, int http_status,
 			      void* context) {
   // Bam. If we successfully got UTC time, may as well show it.
   if (DigitalTZState == utc) {
-    format_timezone(&UTC, DigitalTZOffset);
-    text_layer_set_text(&TZName, UTC.tz_name);
-    text_layer_set_text(&TZOffset, DigitalTZOffset);
+    text_layer_set_text(&TZName, "UTC (error)");
+    text_layer_set_text(&TZOffset, "+0");
 
     PblTm now;
     get_time(&now);
@@ -90,11 +112,7 @@ void http_cookie_get_callback (int32_t request_id, Tuple* result,
 			       void* context) {
   if (request_id != HTTP_TZINFO_GET_REQ) return;
   if (result->key == HTTP_COOKIE_TZINFO) {
-    TZInfo *tmpTZ = (TZInfo *) result->value;
-    strcpy(DisplayTZ.tz_name, tmpTZ->tz_name);
-    DisplayTZ.tz_hours = tmpTZ->tz_hours;
-    DisplayTZ.tz_minutes = tmpTZ->tz_minutes;
-    DisplayTZ.tz_dst = tmpTZ->tz_dst;
+    parse_timezone((char *)result->value, &DisplayTZ);
 
     // Start displaying the TZ we just received
     DigitalTZState = remote;
@@ -119,9 +137,9 @@ void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
 			 void* context) {
   DigitalTZState = utc;
   localTZOffset =  -utc_offset_seconds;
+  text_layer_set_text(&TZName, "UTC (fetching)");
+  text_layer_set_text(&TZOffset, "+0");
 
-  // Don't update anything yet until we've
-  // tried to request the remote TZ
   http_cookie_get(HTTP_TZINFO_GET_REQ, HTTP_COOKIE_TZINFO);
 }
 
@@ -172,29 +190,6 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   graphics_draw_circle(ctx, grect_center_point(&me->frame), 6);
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_circle(ctx, grect_center_point(&me->frame), 1);
-}
-
-void update_digital_time(PblTm *time) {
-  time_t t1 = pmktime(time);
-  int32_t t = (int32_t)t1 + localTZOffset;
-
-  PblTm *adjTime;
-  adjTime = pgmtime(&t);
-  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-		     DigitalTimeFormat, adjTime);
-  if (!clock_is_24h_style()) {
-    // Remove leading zero by overwriting it with a space
-    if (DigitalTimeText[0] == '0') {
-      DigitalTimeText[0] = ' ';
-    }
-    if (adjTime->tm_hour < 12) {
-      // Nothing at all for AM
-      text_layer_set_text(&AmPm, "  ");
-    } else {
-      text_layer_set_text(&AmPm, "PM");
-    }
-  }
-  text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
 void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
@@ -304,9 +299,9 @@ void handle_init(AppContextRef ctx) {
   AnalogueGRect = GRect(4, 0, 128, 128);
   display_init(&ctx);
 
-  strcpy(DisplayTZ.tz_name, UTC.tz_name);
-  DisplayTZ.tz_hours = UTC.tz_hours;
-  DisplayTZ.tz_minutes = UTC.tz_minutes;
+  strcpy(DisplayTZ.tz_name, "UTC");
+  DisplayTZ.tz_hours = 0;
+  DisplayTZ.tz_minutes = 0;
 
   if (clock_is_24h_style()) {
     DigitalTimeFormat = "%H:%M";
