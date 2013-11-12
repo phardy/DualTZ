@@ -26,8 +26,8 @@ PBL_APP_INFO(HTTP_UUID,
 Window window;
 BmpContainer DigitalWindow;
 GRect AnalogueGRect;
-Layer AnalogueHourLayer, AnalogueMinuteLayer;
-GPath AnalogueHourPath, AnalogueMinutePath;
+Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
+static GPath *AnalogueHourPath, *AnalogueMinutePath;
 TextLayer TZName;
 TextLayer TZOffset;
 TextLayer DigitalTime;
@@ -49,9 +49,9 @@ static char *DigitalTimeFormat;
 TZState DigitalTZState = local;
 int32_t localTZOffset = 0;
 
-const GPathInfo HOUR_HAND_PATH_POINTS = {
-  5,
-  (GPoint[]) {
+static const GPathInfo HOUR_HAND_PATH_POINTS = {
+  .num_points = 5,
+  .points = (GPoint[]) {
     {-4, 2},
     {4, 2},
     {4, -30},
@@ -60,9 +60,9 @@ const GPathInfo HOUR_HAND_PATH_POINTS = {
   }
 };
 
-const GPathInfo MINUTE_HAND_PATH_POINTS = {
-  5,
-  (GPoint []) {
+static const GPathInfo MINUTE_HAND_PATH_POINTS = {
+  .num_points = 5,
+  .points = (GPoint []) {
     {-4, 2},
     {4, 2},
     {4, -50},
@@ -140,15 +140,6 @@ void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
   text_layer_set_text(&TZOffset, "+0");
 
   http_cookie_get(HTTP_TZINFO_GET_REQ, HTTP_COOKIE_TZINFO);
-}
-
-void init_layer_path_and_center (Layer *layer, GPath *path,
-			     const GPathInfo *pathInfo,
-			     const void *updateProc) {
-  layer_init(layer, AnalogueGRect);
-  layer->update_proc = updateProc;
-  gpath_init(path, pathInfo);
-  gpath_move_to(path, grect_center_point(&layer->frame));
 }
 
 void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
@@ -291,15 +282,22 @@ void display_init(AppContextRef *ctx) {
   text_layer_set_font(FaceLabel, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text(FaceLabel, "local");
   layer_add_chld(window_get_root_layer(window),
-		 text_layer_get_layer(FaceLabel));xs
+		 text_layer_get_layer(FaceLabel));
 
   // init analogue hands
-  init_layer_path_and_center(&AnalogueMinuteLayer, &AnalogueMinutePath,
-			 &MINUTE_HAND_PATH_POINTS,
-			 &minute_display_layer_update_callback);
-  init_layer_path_and_center(&AnalogueHourLayer, &AnalogueHourPath,
-			 &HOUR_HAND_PATH_POINTS,
-			 &hour_display_layer_update_callback);
+  AnalogueMinuteLayer = layer_create(AnalogueGRect);
+  layer_set_update_proc(AnalogueMinuteLayer, minute_display_layer_update_callback);
+  AnalogueMinutePath = gpath_create(MINUTE_HAND_PATH_POINTS);
+  gpath_move_to(AnalogueMinutePath,
+		grect_center_point(AnalogueGRect));
+
+  AnalogueHourLayer = layer_create(AnalogueGRect);
+  layer_set_update_proc(AnalogueHourLayer, hour_display_layer_update_callback);
+  AnalogueHourPath = gpath_create(HOUR_HAND_PATH_POINTS);
+  gpath_move_to(AnalogueHourPath,
+		grect_center_point(AnalogueGRect));
+  layer_add_child(window_get_root_layer(window), AnalogueMinuteLayer);
+  layer_add_child(window_get_root_layer(window), AnalogueHourLayer);
   layer_add_child(&window.layer, &AnalogueMinuteLayer);
   layer_add_child(&window.layer, &AnalogueHourLayer);
 }
@@ -353,6 +351,10 @@ void handle_init() {
 }
 
 handle_deinit() {
+  gpath_destroy(AnalogueHourPath);
+  layer_destroy(AnalogueHourLayer);
+  gpath_destroy(AnalogueMinutePath);
+  layer_destroy(AnalogueMinuteLayer);
   text_layer_destroy(FaceLabel);
   bitmap_layer_destroy(DigitalWindow);
   if (!clock_is_24h_style()) {
@@ -363,10 +365,6 @@ handle_deinit() {
   text_layer_destroy(DigitalTimeS);
   text_layer_destroy(DigitalTime);
   window_destroy(window);
-}
-
-void handle_deinit(AppContextRef ctx) {
-  bmp_deinit_container(&DigitalWindow);
 }
 
 int main() {
