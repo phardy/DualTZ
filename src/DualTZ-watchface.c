@@ -220,66 +220,78 @@ void display_init(AppContextRef *ctx) {
   DateFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
 
   // init root window
-  window_init(&window, "Root window");
-  window_stack_push(&window, true /* Animated */);
+  window = window_create();
+  window_stack_push(window, true /* Animated */);
+  GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // main time display
-  text_layer_init(&DigitalTime, GRect(17, 127, 90, 40)); // sizing hacky as hell
-  text_layer_set_text_alignment(&DigitalTime, GTextAlignmentRight);
-  text_layer_set_text_color(&DigitalTime, GColorBlack);
-  text_layer_set_font(&DigitalTime, DigitalTimeFont);
-  layer_add_child(&window.layer, &DigitalTime.layer);
+  DigitalTime = text_layer_create(GRect(17, 127, 90, 40)); // Size guess!
+  text_layer_set_text_alignment(DigitalTime, GTextAlignmentRight);
+  text_layer_set_text_color(DigitalTime, GColorBlack);
+  text_layer_set_font(DigitalTime, DigitalTimeFont);
+  layer_add_child(window_get_root_layer(window),
+		  text_layer_get_layer(DigitalTime));
 
   // seconds display
-  text_layer_init(&DigitalTimeS, GRect(109, 147, 20, 20)); // sizing made me cry
-  text_layer_set_text_alignment(&DigitalTimeS, GTextAlignmentLeft);
-  text_layer_set_text_color(&DigitalTimeS, GColorBlack);
-  text_layer_set_font(&DigitalTimeS, DigitalTimeSFont);
-  layer_add_child(&window.layer, &DigitalTimeS.layer);
+  DigitalTimeS = text_layer_create(GRect(109, 147, 20, 20)); // sizing made me cry
+  text_layer_set_text_alignment(DigitalTimeS, GTextAlignmentLeft);
+  text_layer_set_text_color(DigitalTimeS, GColorBlack);
+  text_layer_set_font(DigitalTimeS, DigitalTimeSFont);
+  layer_add_child(window_get_root_layer(window), 
+		  text_layer_get_layer(DigitalTimeS));
 
   // timezone name display
-  text_layer_init(&TZName, GRect(14, 125, 95, 15));
-  text_layer_set_text_alignment(&TZName, GTextAlignmentCenter);
-  text_layer_set_text_color(&TZName, GColorBlack);
-  text_layer_set_font(&TZName, TZFont);
-  layer_add_child(&window.layer, &TZName.layer);
+  TZName = text_layer_create(GRect(14, 125, 95, 15));
+  text_layer_set_text_alignment(TZName, GTextAlignmentCenter);
+  text_layer_set_text_color(TZName, GColorBlack);
+  text_layer_set_font(TZName, TZFont);
+  layer_add_child(window_get_root_layer(window),
+		  text_layer_get_layer(TZName));
 
   // timezone offset display
-  text_layer_init(&TZOffset, GRect(110, 125, 40, 15));
-  text_layer_set_text_alignment(&TZOffset, GTextAlignmentLeft);
-  text_layer_set_text_color(&TZOffset, GColorBlack);
-  text_layer_set_font(&TZOffset, TZFont);
-  layer_add_child(&window.layer, &TZOffset.layer);
+  TZOffset = text_layer_create(GRect(110, 125, 40, 15));
+  text_layer_set_text_alignment(TZOffset, GTextAlignmentLeft);
+  text_layer_set_text_color(TZOffset, GColorBlack);
+  text_layer_set_font(TZOffset, TZFont);
+  layer_add_child(window_get_root_layer(window),
+		  text_layer_get_layer(TZOffset));
 
   // date display
-  text_layer_init(&Date, GRect(112, 55, 20, 20));
-  text_layer_set_text_alignment(&Date, GTextAlignmentLeft);
-  text_layer_set_text_color(&Date, GColorBlack);
-  text_layer_set_font(&Date, DateFont);
-  layer_add_child(&window.layer, &Date.layer);
+  Date = text_layer_create(GRect(112, 55, 20, 20));
+  text_layer_set_text_alignment(Date, GTextAlignmentLeft);
+  text_layer_set_text_color(Date, GColorBlack);
+  text_layer_set_font(Date, DateFont);
+  layer_add_child(window_get_root_layer(window),
+		  text_layer_get_layer(Date));
 
   // AM/PM display
   if (!clock_is_24h_style()) {
-    text_layer_init(&AmPm, GRect(7, 153, 20, 20));
-    text_layer_set_text_alignment(&AmPm, GTextAlignmentLeft);
-    text_layer_set_text_color(&AmPm, GTextAlignmentLeft);
-    text_layer_set_font(&AmPm, TZFont);
-    layer_add_child(&window.layer, &AmPm.layer);
+    AmPm = text_layer_create(GRect(7, 153, 20, 20));
+    text_layer_set_text_alignment(AmPm, GTextAlignmentLeft);
+    text_layer_set_text_color(AmPm, GTextAlignmentLeft);
+    text_layer_set_font(AmPm, TZFont);
+    layer_add_child(window_get_root_layer(window),
+		    text_layer_get_layer(AmPm));xs
   }
 
   // load background image
-  bmp_init_container(RESOURCE_ID_IMAGE_DIGITAL_BG, &DigitalWindow);
-  bitmap_layer_set_compositing_mode(&DigitalWindow.layer, GCompOpAnd);
-  layer_add_child(&window.layer, &DigitalWindow.layer.layer);
+  // (it goes over the top to prevent clipping that was happening in old SDK)
+  DigitalWindow = bitmap_layer_create(window_bounds);
+  // TODO: Make sure this resource is the actual GBitmap.
+  bitmap_layer_set_bitmap(DigitalWindow, RESOURCE_ID_IMAGE_DIGITAL_BG);
+  bitmap_layer_set_compositing_mode(DigitalWindow, GCompOpAnd);
+  layer_add_child(window_get_root_layer(window),
+		  bitmap_layer_get_layer(DigitalWindow));
 
   // static face stuff
-  text_layer_init(&FaceLabel, GRect(52, 8, 40, 15));
-  text_layer_set_text_alignment(&FaceLabel, GTextAlignmentCenter);
-  text_layer_set_background_color(&FaceLabel, GColorBlack);
-  text_layer_set_text_color(&FaceLabel, GColorWhite);
-  text_layer_set_font(&FaceLabel, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text(&FaceLabel, "local");
-  layer_add_child(&window.layer, &FaceLabel.layer);
+  FaceLabel = text_layer_create(GRect(52, 8, 40, 15));
+  text_layer_set_text_alignment(FaceLabel, GTextAlignmentCenter);
+  text_layer_set_background_color(FaceLabel, GColorBlack);
+  text_layer_set_text_color(FaceLabel, GColorWhite);
+  text_layer_set_font(FaceLabel, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text(FaceLabel, "local");
+  layer_add_chld(window_get_root_layer(window),
+		 text_layer_get_layer(FaceLabel));xs
 
   // init analogue hands
   init_layer_path_and_center(&AnalogueMinuteLayer, &AnalogueMinutePath,
@@ -292,11 +304,11 @@ void display_init(AppContextRef *ctx) {
   layer_add_child(&window.layer, &AnalogueHourLayer);
 }
 
-void handle_init(AppContextRef ctx) {
+void handle_init() {
   // Math says a 128px box should be offset 8 pixels to be centred
   // in a 144px display. Pebble seems to say otherwise, though.
   AnalogueGRect = GRect(4, 0, 128, 128);
-  display_init(&ctx);
+  display_init();
 
   strcpy(DisplayTZ.tz_name, "UTC");
   DisplayTZ.tz_hours = 0;
@@ -321,9 +333,7 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
   text_layer_set_text(&TZName, "local time");
   text_layer_set_text(&TZOffset, " ");
-  text_layer_set_text(&Date, DateText);
-
-  // draw analogue hands
+  text_layer_set_text(&Date, DateText);  // draw analogue hands
   layer_mark_dirty(&AnalogueMinuteLayer);
   layer_mark_dirty(&AnalogueHourLayer);
 
@@ -338,26 +348,29 @@ void handle_init(AppContextRef ctx) {
   if (x == HTTP_BUSY) {
     text_layer_set_text(&TZName, "boom");
   }
+
+  tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
+}
+
+handle_deinit() {
+  text_layer_destroy(FaceLabel);
+  bitmap_layer_destroy(DigitalWindow);
+  if (!clock_is_24h_style()) {
+    text_layer_destroy(AmPm);
+  text_layer_destroy(Date);
+  text_layer_destroy(TZOffset);
+  text_layer_destroy(TZName);
+  text_layer_destroy(DigitalTimeS);
+  text_layer_destroy(DigitalTime);
+  window_destroy(window);
 }
 
 void handle_deinit(AppContextRef ctx) {
   bmp_deinit_container(&DigitalWindow);
 }
 
-void pbl_main(void *params) {
-  PebbleAppHandlers handlers = {
-    .init_handler = &handle_init,
-    .deinit_handler = &handle_deinit,
-    .messaging_info = {
-      .buffer_sizes = {
-	.inbound = 124,
-	.outbound = 256
-      }
-    },
-    .tick_info = {
-      .tick_handler = &handle_second_tick,
-      .tick_units = SECOND_UNIT
-    }
-  };
-  app_event_loop(params, &handlers);
+int main() {
+  handle_init();
+  app_event_loop();
+  handle_deinit();
 }
