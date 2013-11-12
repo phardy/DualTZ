@@ -27,7 +27,8 @@
 		"type": "png",
 		"name": "IMAGE_MENU_ICON",
 		"file": "images/appicon.png",
-		"menuIcon": "yes"
+		"menuIcon": true
 	    }
+	]
     }
 }
