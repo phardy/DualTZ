@@ -183,7 +183,7 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
   }
   if (now->tm_hour == 0 && now->tm_min == 0) {
     strftime(DateText, sizeof(DateText),
-	     "%e", t);
+	     "%e", now);
     text_layer_set_text(Date, DateText);
   }
 }
