@@ -312,7 +312,7 @@ void handle_init() {
   strftime(DigitalTimeText, sizeof(DigitalTimeText),
 	   DigitalTimeFormat, now);
   strftime(DateText, sizeof(DateText), 
-	   "%e", &now);
+	   "%e", now);
   text_layer_set_text(DigitalTime, DigitalTimeText);
   text_layer_set_text(DigitalTimeS, DigitalTimeSText);
   text_layer_set_text(TZName, "local time");
