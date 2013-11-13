@@ -306,13 +306,13 @@ void handle_init() {
 
   // write current time to display
   time_t t = time(NULL);
-  struct tm curTime = localtime(&t);
+  struct tm *now = localtime(&t);
   strftime(DigitalTimeSText, sizeof(DigitalTimeSText),
-	   "%S", &curTime);
+	   "%S", now);
   strftime(DigitalTimeText, sizeof(DigitalTimeText),
-	   DigitalTimeFormat, &curTime);
+	   DigitalTimeFormat, now);
   strftime(DateText, sizeof(DateText), 
-	   "%e", &curTime);
+	   "%e", &now);
   text_layer_set_text(DigitalTime, DigitalTimeText);
   text_layer_set_text(DigitalTimeS, DigitalTimeSText);
   text_layer_set_text(TZName, "local time");
@@ -321,17 +321,18 @@ void handle_init() {
   layer_mark_dirty(AnalogueMinuteLayer);
   layer_mark_dirty(AnalogueHourLayer);
 
-  http_set_app_id(HTTP_APP_ID);
-  HTTPCallbacks callbacks = {
-    .failure = http_cookie_failed_callback,
-    .cookie_get = http_cookie_get_callback,
-    .time = &http_time_callback
-  };
-  http_register_callbacks(callbacks, ctx);
-  HTTPResult x = http_time_request();
-  if (x == HTTP_BUSY) {
-    text_layer_set_text(&TZName, "boom");
-  }
+  // TODO: Replace with JS configuration.
+  /* http_set_app_id(HTTP_APP_ID); */
+  /* HTTPCallbacks callbacks = { */
+  /*   .failure = http_cookie_failed_callback, */
+  /*   .cookie_get = http_cookie_get_callback, */
+  /*   .time = &http_time_callback */
+  /* }; */
+  /* http_register_callbacks(callbacks, ctx); */
+  /* HTTPResult x = http_time_request(); */
+  /* if (x == HTTP_BUSY) { */
+  /*   text_layer_set_text(&TZName, "boom"); */
+  /* } */
 
   tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
 }
