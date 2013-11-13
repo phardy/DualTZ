@@ -4,6 +4,7 @@
 
   This code is released to the public domain.
 */
+#include <pebble.h>
 
 char *pstrtok(char *s1, const char *s2) {
   static char *old = NULL;
