@@ -262,7 +262,7 @@ void display_init(AppContextRef *ctx) {
     text_layer_set_text_color(AmPm, GTextAlignmentLeft);
     text_layer_set_font(AmPm, TZFont);
     layer_add_child(window_get_root_layer(window),
-		    text_layer_get_layer(AmPm));xs
+		    text_layer_get_layer(AmPm));
   }
 
   // load background image
@@ -297,7 +297,7 @@ void display_init(AppContextRef *ctx) {
   gpath_move_to(AnalogueHourPath,
 		grect_center_point(AnalogueGRect));
   layer_add_child(window_get_root_layer(window), AnalogueMinuteLayer);
-  layer_add_child(window_get_root_layer(window), AnalogueHourLayer);xs
+  layer_add_child(window_get_root_layer(window), AnalogueHourLayer);
 }
 
 void handle_init() {
