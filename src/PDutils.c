@@ -60,7 +60,7 @@ static void scalar_to_ymd (long scalar,
   return;
 }
 
-time_t pmktime (PblTm *timeptr) {
+time_t pmktime (struct tm *timeptr) {
   time_t tt;
 
   if ((timeptr->tm_year < 70) || (timeptr->tm_year > 120)) {
