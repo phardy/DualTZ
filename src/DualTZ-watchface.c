@@ -11,6 +11,7 @@ GRect AnalogueGRect;
 BitmapLayer *DigitalWindow;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
+static GBitmap *Background;
 TextLayer *TZName;
 TextLayer *TZOffset;
 TextLayer *DigitalTime;
@@ -255,7 +256,8 @@ void display_init() {
   // (it goes over the top to prevent clipping that was happening in old SDK)
   DigitalWindow = bitmap_layer_create(window_bounds);
   // TODO: Make sure this resource is the actual GBitmap.
-  bitmap_layer_set_bitmap(DigitalWindow, RESOURCE_ID_IMAGE_DIGITAL_BG);
+  Background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DIGITAL_BG);
+  bitmap_layer_set_bitmap(DigitalWindow, Background);
   bitmap_layer_set_compositing_mode(DigitalWindow, GCompOpAnd);
   layer_add_child(window_get_root_layer(window),
 		  bitmap_layer_get_layer(DigitalWindow));
@@ -267,7 +269,7 @@ void display_init() {
   text_layer_set_text_color(FaceLabel, GColorWhite);
   text_layer_set_font(FaceLabel, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text(FaceLabel, "local");
-  layer_add_chld(window_get_root_layer(window),
+  layer_add_child(window_get_root_layer(window),
 		 text_layer_get_layer(FaceLabel));
 
   // init analogue hands
