@@ -1,8 +1,4 @@
 #include <pebble.h>
-#include "stdlib.h"
-#include "stdint.h"
-#include "stdbool.h"
-#include "string.h"
 
 #include "xprintf.h"
 #include "PDutils.h"
