@@ -275,15 +275,15 @@ void display_init() {
   // init analogue hands
   AnalogueMinuteLayer = layer_create(AnalogueGRect);
   layer_set_update_proc(AnalogueMinuteLayer, minute_display_layer_update_callback);
-  AnalogueMinutePath = gpath_create(MINUTE_HAND_PATH_POINTS);
+  AnalogueMinutePath = gpath_create(&MINUTE_HAND_PATH_POINTS);
   gpath_move_to(AnalogueMinutePath,
-		grect_center_point(AnalogueGRect));
+		grect_center_point(&AnalogueGRect));
 
   AnalogueHourLayer = layer_create(AnalogueGRect);
   layer_set_update_proc(AnalogueHourLayer, hour_display_layer_update_callback);
-  AnalogueHourPath = gpath_create(HOUR_HAND_PATH_POINTS);
+  AnalogueHourPath = gpath_create(&HOUR_HAND_PATH_POINTS);
   gpath_move_to(AnalogueHourPath,
-		grect_center_point(AnalogueGRect));
+		grect_center_point(&AnalogueGRect));
   layer_add_child(window_get_root_layer(window), AnalogueMinuteLayer);
   layer_add_child(window_get_root_layer(window), AnalogueHourLayer);
 }
