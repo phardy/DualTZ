@@ -72,11 +72,11 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
 };
 
 void update_digital_time(PblTm *time) {
-  time_t t1 = pmktime(time);
+  time_t t1 = mktime(time);
   int32_t t = (int32_t)t1 + localTZOffset;
 
   PblTm *adjTime;
-  adjTime = pgmtime(&t);
+  adjTime = gmtime(&t);
   string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
 		     DigitalTimeFormat, adjTime);
   if (!clock_is_24h_style()) {
