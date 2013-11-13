@@ -10,12 +10,12 @@ Window window;
 GRect AnalogueGRect;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
-TextLayer TZName;
-TextLayer TZOffset;
-TextLayer DigitalTime;
-TextLayer DigitalTimeS;
-TextLayer Date;
-TextLayer AmPm;
+TextLayer *TZName;
+TextLayer *TZOffset;
+TextLayer *DigitalTime;
+TextLayer *DigitalTimeS;
+TextLayer *Date;
+TextLayer *AmPm;
 TextLayer FaceLabel;
 static GFont TZFont;
 static GFont DigitalTimeFont;
@@ -74,7 +74,7 @@ void update_digital_time(struct tm *time) {
   /*     text_layer_set_text(&AmPm, "PM"); */
   /*   } */
   /* } */
-  text_layer_set_text(&DigitalTime, DigitalTimeText);
+  text_layer_set_text(DigitalTime, DigitalTimeText);
 }
 
 // TODO: Replace these old httpebble callback with a new JS one.
@@ -171,20 +171,20 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
 void handle_second_tick(struct tm *now, TimeUnits units_changed) {
   strftime(DigitalTimeSText, sizeof(DigitalTimeSText),
 	   "%S", now);
-  text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
+  text_layer_set_text(DigitalTimeS, DigitalTimeSText);
 
-  if (t->tm_sec % 30 == 0) {
-    layer_mark_dirty(&AnalogueMinuteLayer);
-    if (t->tm_min % 2 == 0) {
-      layer_mark_dirty(&AnalogueHourLayer);
+  if (now->tm_sec % 30 == 0) {
+    layer_mark_dirty(AnalogueMinuteLayer);
+    if (now->tm_min % 2 == 0) {
+      layer_mark_dirty(AnalogueHourLayer);
     }
 
-    update_digital_time(t);
+    update_digital_time(now);
   }
-  if (t->tm_hour == 0 && t->tm_min == 0) {
+  if (now->tm_hour == 0 && now->tm_min == 0) {
     strftime(DateText, sizeof(DateText),
 	     "%e", t);
-    text_layer_set_text(&Date, DateText);
+    text_layer_set_text(Date, DateText);
   }
 }
 
