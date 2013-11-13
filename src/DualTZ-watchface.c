@@ -297,9 +297,7 @@ void display_init(AppContextRef *ctx) {
   gpath_move_to(AnalogueHourPath,
 		grect_center_point(AnalogueGRect));
   layer_add_child(window_get_root_layer(window), AnalogueMinuteLayer);
-  layer_add_child(window_get_root_layer(window), AnalogueHourLayer);
-  layer_add_child(&window.layer, &AnalogueMinuteLayer);
-  layer_add_child(&window.layer, &AnalogueHourLayer);
+  layer_add_child(window_get_root_layer(window), AnalogueHourLayer);xs
 }
 
 void handle_init() {
