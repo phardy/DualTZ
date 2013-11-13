@@ -6,8 +6,9 @@
 #include "common.h"
 
 // Layout stuff
-Window window;
+Window *window;
 GRect AnalogueGRect;
+BitmapLayer *DigitalWindow;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
 TextLayer *TZName;
@@ -16,7 +17,7 @@ TextLayer *DigitalTime;
 TextLayer *DigitalTimeS;
 TextLayer *Date;
 TextLayer *AmPm;
-TextLayer FaceLabel;
+TextLayer *FaceLabel;
 static GFont TZFont;
 static GFont DigitalTimeFont;
 static GFont DigitalTimeSFont;
@@ -188,9 +189,8 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
   }
 }
 
-void display_init(AppContextRef *ctx) {
+void display_init() {
   // load resources
-  resource_init_current_app(&APP_RESOURCES);
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));
   DigitalTimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
   DigitalTimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
