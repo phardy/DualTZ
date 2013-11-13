@@ -59,20 +59,21 @@ void update_digital_time(struct tm *time) {
 
   struct tm *adjTime;
   adjTime = gmtime(&t);
-  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-		     DigitalTimeFormat, adjTime);
-  if (!clock_is_24h_style()) {
-    // Remove leading zero by overwriting it with a space
-    if (DigitalTimeText[0] == '0') {
-      DigitalTimeText[0] = ' ';
-    }
-    if (adjTime->tm_hour < 12) {
-      // Nothing at all for AM
-      text_layer_set_text(&AmPm, "  ");
-    } else {
-      text_layer_set_text(&AmPm, "PM");
-    }
-  }
+  strftime(DigitalTimeText, sizeof(DigitalTimeText),
+	   DigitalTimeFormat, adjTime);
+  // TODO: Find out if this overwriting-leading-zero hack is still required.
+  /* if (!clock_is_24h_style()) { */
+  /*   // Remove leading zero by overwriting it with a space */
+  /*   if (DigitalTimeText[0] == '0') { */
+  /*     DigitalTimeText[0] = ' '; */
+  /*   } */
+  /*   if (adjTime->tm_hour < 12) { */
+  /*     // Nothing at all for AM */
+  /*     text_layer_set_text(&AmPm, "  "); */
+  /*   } else { */
+  /*     text_layer_set_text(&AmPm, "PM"); */
+  /*   } */
+  /* } */
   text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
@@ -127,60 +128,62 @@ void update_digital_time(struct tm *time) {
 
 void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
   (void)me;
+  time_t now = time(NULL);
+  struct tm *t = localtime(&now);
 
-  PblTm t;
-  get_time(&t);
-
-  unsigned int angle = (t.tm_hour * 30) + (t.tm_min / 2);
-  gpath_rotate_to(&AnalogueHourPath, (TRIG_MAX_ANGLE / 360) * angle);
+  unsigned int angle = (t->tm_hour * 30) + (t->tm_min / 2);
+  gpath_rotate_to(AnalogueHourPath, (TRIG_MAX_ANGLE / 360) * angle);
 
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_stroke_color(ctx, GColorBlack);
-  gpath_draw_filled(ctx, &AnalogueHourPath);
-  gpath_draw_outline(ctx, &AnalogueHourPath);
+  gpath_draw_filled(ctx, AnalogueHourPath);
+  gpath_draw_outline(ctx, AnalogueHourPath);
 
-  graphics_fill_circle(ctx, grect_center_point(&me->frame), 6);
-  graphics_draw_circle(ctx, grect_center_point(&me->frame), 6);
+  GRect my_frame = layer_get_frame(me);
+  GPoint my_centre = grect_center_point(&my_frame);
+  graphics_fill_circle(ctx, my_centre, 6);
+  graphics_draw_circle(ctx, my_centre, 6);
   graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_circle(ctx, grect_center_point(&me->frame), 1);
+  graphics_fill_circle(ctx, my_centre, 1);
 }
 
 void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   (void)me;
+  time_t now = time(NULL);
+  struct tm *t = localtime(&now);
 
-  PblTm t;
-  get_time(&t);
-
-  unsigned int angle = (t.tm_min * 6) + (t.tm_sec / 10);
-  gpath_rotate_to(&AnalogueMinutePath, (TRIG_MAX_ANGLE / 360) * angle);
+  unsigned int angle = (t->tm_min * 6) + (t->tm_sec / 10);
+  gpath_rotate_to(AnalogueMinutePath, (TRIG_MAX_ANGLE / 360) * angle);
 
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_stroke_color(ctx, GColorBlack);
-  gpath_draw_filled(ctx, &AnalogueMinutePath);
-  gpath_draw_outline(ctx, &AnalogueMinutePath);
+  gpath_draw_filled(ctx, AnalogueMinutePath);
+  gpath_draw_outline(ctx, AnalogueMinutePath);
 
-  graphics_fill_circle(ctx, grect_center_point(&me->frame), 6);
-  graphics_draw_circle(ctx, grect_center_point(&me->frame), 6);
+  GRect my_frame = layer_get_frame(me);
+  GPoint my_centre = grect_center_point(&my_frame);
+  graphics_fill_circle(ctx, my_centre, 6);
+  graphics_draw_circle(ctx, my_centre, 6);
   graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_circle(ctx, grect_center_point(&me->frame), 1);
+  graphics_fill_circle(ctx, my_centre, 1);
 }
 
-void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
-  string_format_time(DigitalTimeSText, sizeof(DigitalTimeSText),
-		     "%S", t->tick_time);
+void handle_second_tick(struct tm *now, TimeUnits units_changed) {
+  strftime(DigitalTimeSText, sizeof(DigitalTimeSText),
+	   "%S", now);
   text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
 
-  if (t->tick_time->tm_sec % 30 == 0) {
+  if (t->tm_sec % 30 == 0) {
     layer_mark_dirty(&AnalogueMinuteLayer);
-    if (t->tick_time->tm_min % 2 == 0) {
+    if (t->tm_min % 2 == 0) {
       layer_mark_dirty(&AnalogueHourLayer);
     }
 
-    update_digital_time(t->tick_time);
+    update_digital_time(t);
   }
-  if (t->tick_time->tm_hour == 0 && t->tick_time->tm_min == 0) {
-    string_format_time(DateText, sizeof(DateText),
-		       "%e", t->tick_time);
+  if (t->tm_hour == 0 && t->tm_min == 0) {
+    strftime(DateText, sizeof(DateText),
+	     "%e", t);
     text_layer_set_text(&Date, DateText);
   }
 }
