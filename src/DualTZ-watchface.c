@@ -7,7 +7,6 @@
 
 // Layout stuff
 Window window;
-BmpContainer DigitalWindow;
 GRect AnalogueGRect;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
@@ -54,11 +53,11 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
-void update_digital_time(PblTm *time) {
+void update_digital_time(struct tm *time) {
   time_t t1 = mktime(time);
   int32_t t = (int32_t)t1 + localTZOffset;
 
-  PblTm *adjTime;
+  struct tm *adjTime;
   adjTime = gmtime(&t);
   string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
 		     DigitalTimeFormat, adjTime);
@@ -77,53 +76,54 @@ void update_digital_time(PblTm *time) {
   text_layer_set_text(&DigitalTime, DigitalTimeText);
 }
 
-void http_cookie_failed_callback(int32_t cookie, int http_status,
-			      void* context) {
-  // Bam. If we successfully got UTC time, may as well show it.
-  if (DigitalTZState == utc) {
-    text_layer_set_text(&TZName, "UTC (error)");
-    text_layer_set_text(&TZOffset, "+0");
+// TODO: Replace these old httpebble callback with a new JS one.
+/* void http_cookie_failed_callback(int32_t cookie, int http_status, */
+/* 			      void* context) { */
+/*   // Bam. If we successfully got UTC time, may as well show it. */
+/*   if (DigitalTZState == utc) { */
+/*     text_layer_set_text(&TZName, "UTC (error)"); */
+/*     text_layer_set_text(&TZOffset, "+0"); */
 
-    PblTm now;
-    get_time(&now);
-    update_digital_time(&now);
-  }
-}
+/*     PblTm now; */
+/*     get_time(&now); */
+/*     update_digital_time(&now); */
+/*   } */
+/* } */
 
-void http_cookie_get_callback (int32_t request_id, Tuple* result,
-			       void* context) {
-  if (request_id != HTTP_TZINFO_GET_REQ) return;
-  if (result->key == HTTP_COOKIE_TZINFO) {
-    parse_timezone((char *)result->value, &DisplayTZ);
+/* void http_cookie_get_callback (int32_t request_id, Tuple* result, */
+/* 			       void* context) { */
+/*   if (request_id != HTTP_TZINFO_GET_REQ) return; */
+/*   if (result->key == HTTP_COOKIE_TZINFO) { */
+/*     parse_timezone((char *)result->value, &DisplayTZ); */
 
-    // Start displaying the TZ we just received
-    DigitalTZState = remote;
-    format_timezone(&DisplayTZ, DigitalTZOffset);
-    text_layer_set_text(&TZName, DisplayTZ.tz_name);
-    text_layer_set_text(&TZOffset, DigitalTZOffset);
+/*     // Start displaying the TZ we just received */
+/*     DigitalTZState = remote; */
+/*     format_timezone(&DisplayTZ, DigitalTZOffset); */
+/*     text_layer_set_text(&TZName, DisplayTZ.tz_name); */
+/*     text_layer_set_text(&TZOffset, DigitalTZOffset); */
 
-    localTZOffset = localTZOffset + (DisplayTZ.tz_hours * 3600);
-    if (DisplayTZ.tz_hours < 0) {
-      localTZOffset = localTZOffset - (DisplayTZ.tz_minutes * 60);
-    } else {
-      localTZOffset = localTZOffset + (DisplayTZ.tz_minutes * 60);
-    }
-    PblTm now;
-    get_time(&now);
-    update_digital_time(&now);
-  }
-}
+/*     localTZOffset = localTZOffset + (DisplayTZ.tz_hours * 3600); */
+/*     if (DisplayTZ.tz_hours < 0) { */
+/*       localTZOffset = localTZOffset - (DisplayTZ.tz_minutes * 60); */
+/*     } else { */
+/*       localTZOffset = localTZOffset + (DisplayTZ.tz_minutes * 60); */
+/*     } */
+/*     PblTm now; */
+/*     get_time(&now); */
+/*     update_digital_time(&now); */
+/*   } */
+/* } */
     
-void http_time_callback (int32_t utc_offset_seconds, bool is_dst,
-			 uint32_t unixtime, const char* tz_name,
-			 void* context) {
-  DigitalTZState = utc;
-  localTZOffset =  -utc_offset_seconds;
-  text_layer_set_text(&TZName, "UTC (fetching)");
-  text_layer_set_text(&TZOffset, "+0");
+/* void http_time_callback (int32_t utc_offset_seconds, bool is_dst, */
+/* 			 uint32_t unixtime, const char* tz_name, */
+/* 			 void* context) { */
+/*   DigitalTZState = utc; */
+/*   localTZOffset =  -utc_offset_seconds; */
+/*   text_layer_set_text(&TZName, "UTC (fetching)"); */
+/*   text_layer_set_text(&TZOffset, "+0"); */
 
-  http_cookie_get(HTTP_TZINFO_GET_REQ, HTTP_COOKIE_TZINFO);
-}
+/*   http_cookie_get(HTTP_TZINFO_GET_REQ, HTTP_COOKIE_TZINFO); */
+/* } */
 
 void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
   (void)me;
