@@ -305,21 +305,21 @@ void handle_init() {
   }
 
   // write current time to display
-  PblTm curTime;
-  get_time(&curTime);
-  string_format_time(DigitalTimeSText, sizeof(DigitalTimeSText),
-		     "%S", &curTime);
-  string_format_time(DigitalTimeText, sizeof(DigitalTimeText),
-		     DigitalTimeFormat, &curTime);
-  string_format_time(DateText, sizeof(DateText), 
-		     "%e", &curTime);
-  text_layer_set_text(&DigitalTime, DigitalTimeText);
-  text_layer_set_text(&DigitalTimeS, DigitalTimeSText);
-  text_layer_set_text(&TZName, "local time");
-  text_layer_set_text(&TZOffset, " ");
-  text_layer_set_text(&Date, DateText);  // draw analogue hands
-  layer_mark_dirty(&AnalogueMinuteLayer);
-  layer_mark_dirty(&AnalogueHourLayer);
+  time_t t = time(NULL);
+  struct tm curTime = localtime(&t);
+  strftime(DigitalTimeSText, sizeof(DigitalTimeSText),
+	   "%S", &curTime);
+  strftime(DigitalTimeText, sizeof(DigitalTimeText),
+	   DigitalTimeFormat, &curTime);
+  strftime(DateText, sizeof(DateText), 
+	   "%e", &curTime);
+  text_layer_set_text(DigitalTime, DigitalTimeText);
+  text_layer_set_text(DigitalTimeS, DigitalTimeSText);
+  text_layer_set_text(TZName, "local time");
+  text_layer_set_text(TZOffset, " ");
+  text_layer_set_text(Date, DateText);  // draw analogue hands
+  layer_mark_dirty(AnalogueMinuteLayer);
+  layer_mark_dirty(AnalogueHourLayer);
 
   http_set_app_id(HTTP_APP_ID);
   HTTPCallbacks callbacks = {
