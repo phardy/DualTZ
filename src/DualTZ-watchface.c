@@ -2,22 +2,8 @@
 
 #include "PDutils.h"
 
-#include "../../common/config.h"
+#include "config.h"
 #include "common.h"
-
-#ifdef ANDROID
-PBL_APP_INFO(WATCHFACE_APP_UUID,
-             "DualTZ", "Kids, Inc.",
-             2, 0, /* App version */
-             RESOURCE_ID_IMAGE_MENU_ICON,
-             APP_INFO_WATCH_FACE);
-#else
-PBL_APP_INFO(HTTP_UUID,
-	     "DualTZ", "Kids, Inc.",
-	     2, 0, /* App version */
-	     RESOURCE_ID_IMAGE_MENU_ICON,
-	     APP_INFO_WATCH_FACE);
-#endif
 
 // Layout stuff
 Window window;
