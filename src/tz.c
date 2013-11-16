@@ -3,7 +3,7 @@
 #include "xprintf.h"
 #include "PDutils.h"
 
-#include "common.h"
+#include "tz.h"
 
 void format_timezone(TZInfo *tz, char *str) {
   // xprintf doesn't seem to support the + formatting flag

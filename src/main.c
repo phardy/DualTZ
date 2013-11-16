@@ -3,7 +3,7 @@
 #include "PDutils.h"
 
 #include "config.h"
-#include "common.h"
+#include "tz.h"
 
 // Layout stuff
 Window *window;
@@ -337,7 +337,7 @@ void handle_init() {
   tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
 }
 
-handle_deinit() {
+void handle_deinit() {
   gpath_destroy(AnalogueHourPath);
   layer_destroy(AnalogueHourLayer);
   gpath_destroy(AnalogueMinutePath);
@@ -346,6 +346,7 @@ handle_deinit() {
   bitmap_layer_destroy(DigitalWindow);
   if (!clock_is_24h_style()) {
     text_layer_destroy(AmPm);
+  }
   text_layer_destroy(Date);
   text_layer_destroy(TZOffset);
   text_layer_destroy(TZName);
