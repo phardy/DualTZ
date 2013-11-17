@@ -4,6 +4,10 @@ This project uses code from a few different sources with different licenses.
   [PDPCLIB](http://pdos.sourceforge.net/), the Public Domain Project
   C Library. I've made very minor changes to these functions to work with
   Pebble OS, and have released these back to the public domain.
+* I've included an unmodified copy of the
+  [timezonepicker](https://github.com/quicksketch/timezonepicker/]
+  jQuery timezone picker library. There's no license specified in this
+  library. I hope they don't mind me including it.
 * The font, [Digital-7](http://www.styleseven.com/php/get_product.php?product=Digital-7) is freeware.
 
 All other code is provided under the MIT License.
