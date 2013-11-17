@@ -481,7 +481,8 @@
 	</div>
 	<label for="detect-remote-button">Detect position</label>
 	<a data-role="button" href="#page1" data-icon="home" data-iconpos="left" data-inline="true" id="detect-remote-button">Detect</a>
-	<label for="remote-location-name" data-inline="true">Custom name</label>
+	<input type="hidden" name="remote-tz-name" id="remote-tz-name" value="">
+	<label for="remote-location-name" data-inline="true">Location</label>
 	<input type="text" data-clear-btn="true" name="remote-location-name" data-inline="true" id="remote-location-name" value="">
         <div class="ui-grid-a">
           <div class="ui-block-a">
@@ -497,13 +498,23 @@
       $().ready(function() {
         // Set up the picker to update target timezone and country select lists.
         $('#timezone-image').timezonePicker({
-          target: '#select-remote-timezone',
-          countryTarget: '#select-remote-country'
+          target: '#remote-tz-name'
         });
 
         // Optionally an auto-detect button to trigger JavaScript geolocation.
         $('#detect-remote-button').click(function() {
           $('#timezone-image').timezonePicker('detectLocation');
+        });
+
+        // Changes performed by JS don't trigger .change(),
+        // so bind to clicks on the imagemap.
+        $('#timezone-map area').click(function() {
+          $('#remote-location-name').val($('#remote-tz-name').val());
+        });
+
+        $('#detect-remote-button').click(function() {
+          $('#remote-location-name').val($('#remote-tz-name').val());
+          $('#detect-remote-button').removeClass('ui-btn-active ui-focus');
         });
 
         $('#b-cancel').click(function() {
