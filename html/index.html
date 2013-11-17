@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
     <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
+    <script src="http://tzdata-javascript.org/tzdata-javascript.js"></script>
     <script src="lib/jquery.maphilight.min.js"></script>
     <script src="lib/jquery.timezone-picker.min.js"></script>
   </head>
@@ -495,13 +496,25 @@
       </div>
     </div>
     <script>
+      var remote_offset = null;
+
+      function updateZone(name) {
+        remote_offset = null;
+        var city = name.split('/')[1];
+        $('#remote-location-name').val(city);
+        var tz = new tzdata_javascript.zoneinfo(name);
+        now = new Date();
+        tz.strftime('', now);
+        console.log(JSON.stringify(tz, null, 4));
+        remote_offset = tz.last_ttinfo.offset / 1000;
+        console.log(remote_offset);
+      }
+
       $().ready(function() {
-        // Set up the picker to update target timezone and country select lists.
         $('#timezone-image').timezonePicker({
           target: '#remote-tz-name'
         });
 
-        // Optionally an auto-detect button to trigger JavaScript geolocation.
         $('#detect-remote-button').click(function() {
           $('#timezone-image').timezonePicker('detectLocation');
         });
@@ -509,11 +522,11 @@
         // Changes performed by JS don't trigger .change(),
         // so bind to clicks on the imagemap.
         $('#timezone-map area').click(function() {
-          $('#remote-location-name').val($('#remote-tz-name').val());
+          updateZone($('#remote-tz-name').val());
         });
 
         $('#detect-remote-button').click(function() {
-          $('#remote-location-name').val($('#remote-tz-name').val());
+          updateZone($('#remote-tz-name').val());
           $('#detect-remote-button').removeClass('ui-btn-active ui-focus');
         });
 
