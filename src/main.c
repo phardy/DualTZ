@@ -30,7 +30,6 @@ static char DigitalTimeSText[] = "  ";
 static char DateText[] = "  ";
 static char DigitalTZOffset[] = "      ";
 static char *DigitalTimeFormat;
-TZState DigitalTZState = local;
 int32_t localTZOffset = 0;
 
 static const GPathInfo HOUR_HAND_PATH_POINTS = {
