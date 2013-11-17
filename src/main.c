@@ -62,19 +62,6 @@ void update_digital_time(struct tm *time) {
   adjTime = gmtime(&t);
   strftime(DigitalTimeText, sizeof(DigitalTimeText),
 	   DigitalTimeFormat, adjTime);
-  // TODO: Find out if this overwriting-leading-zero hack is still required.
-  /* if (!clock_is_24h_style()) { */
-  /*   // Remove leading zero by overwriting it with a space */
-  /*   if (DigitalTimeText[0] == '0') { */
-  /*     DigitalTimeText[0] = ' '; */
-  /*   } */
-  /*   if (adjTime->tm_hour < 12) { */
-  /*     // Nothing at all for AM */
-  /*     text_layer_set_text(&AmPm, "  "); */
-  /*   } else { */
-  /*     text_layer_set_text(&AmPm, "PM"); */
-  /*   } */
-  /* } */
   text_layer_set_text(DigitalTime, DigitalTimeText);
 }
 
