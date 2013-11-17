@@ -300,7 +300,7 @@ void handle_init() {
   if (clock_is_24h_style()) {
     DigitalTimeFormat = "%H:%M";
   } else {
-    DigitalTimeFormat = "%I:%M";
+    DigitalTimeFormat = "%l:%M";
   }
 
   // write current time to display
