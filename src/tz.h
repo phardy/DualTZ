@@ -1,5 +1,3 @@
-// Functions and structures used by both apps
-
 #define TZ_NAME_LEN 15
 #define TZ_OFFSET_LEN 6
 typedef struct {

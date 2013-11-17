@@ -1,8 +1,6 @@
 #include <pebble.h>
 
 #include "PDutils.h"
-
-#include "config.h"
 #include "tz.h"
 
 // Layout stuff
