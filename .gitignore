@@ -13,3 +13,7 @@ pebble_app.ld
 
 # Ignore other generated files
 serial_dump.txt
+
+# Ignore OSX and editor files.
+*~
+.DS_Store
