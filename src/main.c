@@ -55,7 +55,7 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
 };
 
 void update_digital_time(struct tm *time) {
-  time_t t1 = pmktime(time);
+  time_t t1 = p_mktime(time);
   int32_t t = (int32_t)t1 + localTZOffset;
 
   struct tm *adjTime;

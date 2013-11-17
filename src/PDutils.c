@@ -5,6 +5,7 @@
   This code is released to the public domain.
 */
 #include <pebble.h>
+#include <ctype.h>
 
 /* scalar date routines    --    public domain by Ray Gardner
 ** These will work over the range 1-01-01 thru 14699-12-31
@@ -60,7 +61,7 @@ static void scalar_to_ymd (long scalar,
   return;
 }
 
-time_t pmktime (struct tm *timeptr) {
+time_t p_mktime (struct tm *timeptr) {
   time_t tt;
 
   if ((timeptr->tm_year < 70) || (timeptr->tm_year > 120)) {
@@ -77,7 +78,7 @@ time_t pmktime (struct tm *timeptr) {
   return tt;
 }
 
-char *pstrtok(char *s1, const char *s2) {
+char *p_strtok(char *s1, const char *s2) {
   static char *old = NULL;
   char *p;
   size_t len;
@@ -96,4 +97,77 @@ char *pstrtok(char *s1, const char *s2) {
   *(p + len) = '\0';
   old = p + len + 1;
   return(p);
+}
+
+unsigned long int strtoul(const char *nptr, char **endptr, int base) {
+  unsigned long x = 0;
+  int undecided = 0;
+
+  if (base == 0) {
+    undecided = 1;
+  }
+  while (isspace((unsigned char)*nptr)) {
+    nptr++;
+  }
+  while (1) {
+    if (isdigit((unsigned char)*nptr)) {
+      if (base == 0) {
+	if (*nptr == '0') {
+	  base = 8;
+	} else {
+	  base = 10;
+	  undecided = 0;
+	}
+      }
+      x = x * base + (*nptr - '0');
+      nptr++;
+    } else if (isalpha((unsigned char)*nptr)) {
+      if ((*nptr == 'X') || (*nptr == 'x')) {
+	if ((base == 0) || ((base == 8) && undecided)) {
+	  base = 16;
+	  undecided = 0;
+	  nptr++;
+	} else if (base == 16) {
+	  /* hex values are allowed to have an optional 0x */
+	  nptr++;
+	} else {
+	  break;
+	}
+      } else if (base <= 10) {
+	break;
+      } else {
+	x = x * base + (toupper((unsigned char)*nptr) - 'A') + 10;
+	nptr++;
+      }
+    } else {
+      break;
+    }
+  }
+  if (endptr != NULL) {
+    *endptr = (char *)nptr;
+  }
+  return (x);
+}
+
+long int strtol(const char *nptr, char **endptr, int base) {
+  unsigned long y;
+  long x;
+  int neg = 0;
+
+  while (isspace((unsigned char)*nptr)) {
+    nptr++;
+  }
+  if (*nptr == '-') {
+    neg = 1;
+    nptr++;
+  } else if (*nptr == '+') {
+    nptr++;
+  }
+  y = strtoul(nptr, endptr, base);
+  if (neg) {
+    x = (long)-y;
+  } else {
+    x = (long)y;
+  }
+  return (x);
 }
