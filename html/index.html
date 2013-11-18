@@ -18,9 +18,8 @@
     <!-- Home -->
     <div data-theme="c" data-role="page" id="page1">
       <div data-theme="c" data-role="header">
-        <h3>
-          DualTZ config
-        </h3>
+        <h3>DualTZ config</h3>
+	<a href="#help" data-icon="info" class="ui-btn-right">Help</a>
       </div>
       <div data-theme="c" data-role="content">
 	<div id="timezone-picker" style="overflow: auto;">
@@ -483,25 +482,52 @@
 	<div class="ui-grid-a">
 	  <div class="ui-block-a">
 	    <label for="detect-remote-button" class="ui-hidden-accessible">Detect position</label>
-	    <a data-role="button" href="#page1" data-icon="home" data-iconpos="left" id="detect-remote-button">Detect</a>
+	    <a data-role="button" href="#settings" data-icon="home" data-iconpos="left" id="detect-remote-button">Detect</a>
 	  </div>
 	  <div class="ui-block-b">
 	    <label for="utc-button" class="ui-hidden-accessible">Use UTC time</label>
-	    <a data-role="button" href="#page1" id="utc-button">Use UTC</a>
+	    <a data-role="button" href="#settings" id="utc-button">Use UTC</a>
 	  </div>
 	</div>
 	<input type="hidden" name="remote-tz-location" id="remote-tz-location" value="">
-	<label for="remote-tz-name" data-inline="true">Location</label>
+	<label for="remote-tz-name" data-inline="true">Location name</label>
 	<input type="text" data-clear-btn="true" name="remote-tz-name" data-inline="true" id="remote-tz-name" value="">
         <div class="ui-grid-a">
           <div class="ui-block-a">
-            <a data-role="button" href="#page1" data-icon="delete" data-iconpos="left" id="b-cancel">Cancel</a>
+            <a data-role="button" href="#settings" data-icon="delete" data-iconpos="left" id="b-cancel">Cancel</a>
           </div>
           <div class="ui-block-b">
-            <a data-role="button" href="#page1" data-icon="check" data-iconpos="left" id="b-submit">Submit</a>
+            <a data-role="button" href="#settings" data-icon="check" data-iconpos="left" id="b-submit">Submit</a>
           </div>
         </div>
       </div>
+    </div>
+    <div data-theme="c" data-role="page" id="help" data-add-back-btn="true">
+      <div data-theme="c" data-role="header">
+	<h3>DualTZ help</h3>
+      </div>
+      <h3>Configuration</h3>
+      <p>To configure the timezone to display, you can:
+      <ul>
+	<li>Select a region from the map.</li>
+	<li>Hit the Detect button to select your current location.</li>
+	<li>Hit the UTC button to select UTC.</li>
+      </ul>
+      <p>Once selected, the location name field will be filled with a large
+	city in the region selected. If desired, this name can be altered,
+	to match a smaller town in the region for example.</p>
+      <p>Finally, hit the Submit button to send the new details to the watch
+	app, or Cancel to quit without saving new zone.</p>
+      <h3>Usage</h3>
+      <p>The analogue face shows the time and date in the current time zone.
+	The digital portion will show the time in the configured time zone.</p>
+      <p>When the watch face starts running, it will attempt to fetch the
+	current time zone from its paired phone. If this fails (the phone
+	is switched off, for example), then it will fall back on the time
+	zone that was last retrieved from the phone.</p>
+      <p>In case of failure, ensure your phone is set to the correct time
+	zone, and then restart the watch app by entering the menu and
+	exiting again.</p>
     </div>
     <script>
       tzdata_javascript.settings.baseURL = 'http://hardy.dropbear.id.au/DualTZ/zoneinfo/';
