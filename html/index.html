@@ -543,6 +543,7 @@
         });
 
         $('#detect-remote-button').click(function() {
+          console.log('Detecting location');
           $('#timezone-image').timezonePicker('detectLocation');
         });
 
@@ -553,7 +554,7 @@
         });
 
         $('#detect-remote-button').click(function() {
-          updateZone($('#remote-tz-name').val());
+          // updateZone($('#remote-tz-name').val());
           $('#detect-remote-button').removeClass('ui-btn-active ui-focus');
         });
 
