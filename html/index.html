@@ -525,7 +525,7 @@
           if (query_in_progress > 0 && timezone == query_timezone) {
             now = new Date();
             zoneinfo.strftime('', now);
-            remote_offset = zoneinfo.last_ttinfo.offset / 10000;
+            remote_offset = zoneinfo.last_ttinfo.offset / 1000;
             console.log('Remote TZ: ' + remote_offset);
             query_in_progress = 0;
             $('#b-submit .ui-btn-text').text('Submit');
@@ -546,6 +546,18 @@
           $('#b-submit').addClass('ui-disabled');
           $('#b-submit .ui-btn-text').text('Fetching data...');
           new tzdata_javascript.zoneinfo(name, tzCallback);
+        }
+
+        function saveParams() {
+          var now = new Date();
+          // Wow, getTimezoneOffset() is the weirdest thing ever.
+          var localtzoffset = now.getTimezoneOffset() * -60;
+          var params = {
+            'remote-tz-name': $('#remote-tz-name').val(),
+            'remote-tz-offset': remote_offset,
+            'local-tz-offset': localtzoffset
+          }
+          return params;
         }
 
         $('#timezone-image').timezonePicker({
@@ -583,6 +595,8 @@
         });
 
         $('#b-submit').click(function() {
+          var params = saveParams();
+          console.log(params['local-tz-offset']);
           var location = 'pebblejs://close#';
           console.log('Submit: '+location);
           document.location = location;
