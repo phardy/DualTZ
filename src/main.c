@@ -52,6 +52,36 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
+// data received from the config page
+enum {
+  CONFIG_KEY_REMOTE_TZ_NAME = 0x5D,
+  CONFIG_KEY_REMOTE_TZ_OFFSET = 0x5E,
+  CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F
+};
+
+void in_received_handler(DictionaryIterator *received, void *context) {
+  Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
+  Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
+  Tuple *local_tz_offset_tuple = dict_find(received, CONFIG_KEY_LOCAL_TZ_OFFSET);
+
+  // Right now we only ever get all three in one packet
+  if (remote_tz_name_tuple && remote_tz_offset_tuple && local_tz_offset_tuple) {
+    persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME,
+			 remote_tz_name_tuple->value->cstring);
+    persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET,
+		      remote_tz_offset_tuple->value->int32);
+    persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET,
+		      local_tz_offset_tuple->value->int32);
+    strncpy(DisplayTZ.tz_name, remote_tz_name_tuple->value->cstring, TZ_NAME_LEN);
+    DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
+    DisplayTZ.tz_offset = remote_tz_offset_tuple->value->int32;
+
+    format_timezone(&DisplayTZ, DigitalTZOffset);
+    text_layer_set_text(TZName, DisplayTZ.tz_name);
+    text_layer_set_text(TZOffset, DigitalTZOffset);
+  }
+}
+
 void update_digital_time(struct tm *time) {
   time_t t1 = p_mktime(time);
   int32_t t = (int32_t)t1 + localTZOffset;
@@ -279,8 +309,7 @@ void handle_init() {
   display_init();
 
   strcpy(DisplayTZ.tz_name, "UTC");
-  DisplayTZ.tz_hours = 0;
-  DisplayTZ.tz_minutes = 0;
+  DisplayTZ.tz_offset = 0;
 
   if (clock_is_24h_style()) {
     DigitalTimeFormat = "%H:%M";

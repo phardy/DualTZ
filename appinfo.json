@@ -12,7 +12,9 @@
 	"configurable"
     ],
     "appKeys": {
-	"dummy": 0
+	"remote-tz-name": 93,
+	"remote-tz-offset": 94,
+	"local-tz-offset": 95
     },
     "resources": {
 	"media": [
