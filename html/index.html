@@ -480,8 +480,16 @@
 	    <area data-timezone="Pacific/Wallis" data-country="WF" data-pin="9,230" data-offset="12" shape="rect" coords="-1,237,14,224" />
 	  </map>
 	</div>
-	<label for="detect-remote-button">Detect position</label>
-	<a data-role="button" href="#page1" data-icon="home" data-iconpos="left" data-inline="true" id="detect-remote-button">Detect</a>
+	<div class="ui-grid-a">
+	  <div class="ui-block-a">
+	    <label for="detect-remote-button" class="ui-hidden-accessible">Detect position</label>
+	    <a data-role="button" href="#page1" data-icon="home" data-iconpos="left" id="detect-remote-button">Detect</a>
+	  </div>
+	  <div class="ui-block-b">
+	    <label for="utc-button" class="ui-hidden-accessible">Use UTC time</label>
+	    <a data-role="button" href="#page1" id="utc-button">Use UTC</a>
+	  </div>
+	</div>
 	<input type="hidden" name="remote-tz-name" id="remote-tz-name" value="">
 	<label for="remote-location-name" data-inline="true">Location</label>
 	<input type="text" data-clear-btn="true" name="remote-location-name" data-inline="true" id="remote-location-name" value="">
