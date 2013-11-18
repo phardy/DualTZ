@@ -597,7 +597,7 @@
         $('#b-submit').click(function() {
           var params = saveParams();
           console.log(params['local-tz-offset']);
-          var location = 'pebblejs://close#';
+          var location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(params));
           console.log('Submit: '+location);
           document.location = location;
         });
