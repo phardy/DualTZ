@@ -569,13 +569,10 @@
           console.log('Detecting location');
           $('#timezone-image').timezonePicker('detectLocation');
           setTimeout(function(){updateZone($('#remote-tz-location').val())}, 5000);
+          $('#b-submit').addClass('ui-disabled');
+          $('#b-submit .ui-btn-text').text('Finding...');
         });
 
-        // $('#detect-remote-button').click(function() {
-        //   console.log('Detecting location');
-        //   $('#timezone-image').timezonePicker('detectLocation');
-        //   updateZone($('#remote-tz-location').val());
-        // });
 
         $('#utc-button').click(function() {
           console.log('UTC selected');
@@ -589,11 +586,6 @@
         // so bind to clicks on the imagemap.
         $('#timezone-map area').click(function() {
           updateZone($('#remote-tz-location').val());
-        });
-
-        $('#detect-remote-button').click(function() {
-          // updateZone($('#remote-tz-name').val());
-          $('#detect-remote-button').removeClass('ui-btn-active ui-focus');
         });
 
         $('#b-cancel').click(function() {
