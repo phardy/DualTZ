@@ -490,9 +490,9 @@
 	    <a data-role="button" href="#page1" id="utc-button">Use UTC</a>
 	  </div>
 	</div>
-	<input type="hidden" name="remote-tz-name" id="remote-tz-name" value="">
-	<label for="remote-location-name" data-inline="true">Location</label>
-	<input type="text" data-clear-btn="true" name="remote-location-name" data-inline="true" id="remote-location-name" value="">
+	<input type="hidden" name="remote-tz-location" id="remote-tz-location" value="">
+	<label for="remote-tz-name" data-inline="true">Location</label>
+	<input type="text" data-clear-btn="true" name="remote-tz-name" data-inline="true" id="remote-tz-name" value="">
         <div class="ui-grid-a">
           <div class="ui-block-a">
             <a data-role="button" href="#page1" data-icon="delete" data-iconpos="left" id="b-cancel">Cancel</a>
@@ -504,13 +504,14 @@
       </div>
     </div>
     <script>
-      tzdata_javascript.settings.baseURL='http://hardy.dropbear.id.au/DualTZ/zoneinfo/';
+      tzdata_javascript.settings.baseURL = 'http://hardy.dropbear.id.au/DualTZ/zoneinfo/';
 
       var remote_offset = null;
       var query_in_progress = 0;
       var query_timezone = '';
 
-      $().ready(function() {
+      $().ready(function () {
+
         function requestTimeout() {
           if (query_in_progress > 0) {
             console.log('TZ request timeout: ' + query_timezone);
@@ -522,8 +523,8 @@
 
         function tzCallback(timezone, zoneinfo) {
           console.log('Got TZ info: ' + timezone);
-          if (query_in_progress > 0 && timezone == query_timezone) {
-            now = new Date();
+          if (query_in_progress > 0 && timezone === query_timezone) {
+            var now = new Date();
             zoneinfo.strftime('', now);
             remote_offset = zoneinfo.last_ttinfo.offset / 1000;
             console.log('Remote TZ: ' + remote_offset);
@@ -536,7 +537,7 @@
         function updateZone(name) {
           console.log('Requesting TZ info: ' + name);
           var city = name.split('/')[1];
-          $('#remote-location-name').val(city);
+          $('#remote-tz-name').val(city);
           if (query_in_progress > 0) {
             window.clearTimeout(query_in_progress);
             query_in_progress = 0;
@@ -561,27 +562,33 @@
         }
 
         $('#timezone-image').timezonePicker({
-          target: '#remote-tz-name'
+          target: '#remote-tz-location'
         });
 
         $('#detect-remote-button').click(function() {
           console.log('Detecting location');
           $('#timezone-image').timezonePicker('detectLocation');
-          updateZone($('#remote-tz-name').val());
+          setTimeout(function(){updateZone($('#remote-tz-location').val())}, 5000);
         });
+
+        // $('#detect-remote-button').click(function() {
+        //   console.log('Detecting location');
+        //   $('#timezone-image').timezonePicker('detectLocation');
+        //   updateZone($('#remote-tz-location').val());
+        // });
 
         $('#utc-button').click(function() {
           console.log('UTC selected');
           // Update #remote-tz-name and #remote-location-name
+          $('#remote-tz-location').val('UTC');
           $('#remote-tz-name').val('UTC');
-          $('#remote-location-name').val('UTC');
           remote_offset = 0;
         });
 
         // Changes performed by JS don't trigger .change(),
         // so bind to clicks on the imagemap.
         $('#timezone-map area').click(function() {
-          updateZone($('#remote-tz-name').val());
+          updateZone($('#remote-tz-location').val());
         });
 
         $('#detect-remote-button').click(function() {
