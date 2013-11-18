@@ -496,6 +496,8 @@
       </div>
     </div>
     <script>
+      tzdata_javascript.settings.baseURL='http://hardy.dropbear.id.au/DualTZ/zoneinfo/';
+
       var remote_offset = null;
       var query_in_progress = 0;
       var query_timezone = '';
@@ -503,7 +505,7 @@
       $().ready(function() {
         function requestTimeout() {
           if (query_in_progress > 0) {
-            console.log('TZ request timed out');
+            console.log('TZ request timeout: ' + query_timezone);
             // TODO: Alert user here.
             window.clear_timeout(query_in_progress);
             query_in_progress = 0;
@@ -545,6 +547,7 @@
         $('#detect-remote-button').click(function() {
           console.log('Detecting location');
           $('#timezone-image').timezonePicker('detectLocation');
+          updateZone($('#remote-tz-name').val());
         });
 
         // Changes performed by JS don't trigger .change(),
