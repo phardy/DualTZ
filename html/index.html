@@ -526,7 +526,7 @@
             now = new Date();
             zoneinfo.strftime('', now);
             remote_offset = zoneinfo.last_ttinfo.offset / 10000;
-            console.log(remote_offset);
+            console.log('Remote TZ: ' + remote_offset);
             query_in_progress = 0;
             $('#b-submit .ui-btn-text').text('Submit');
             $('#b-submit').removeClass('ui-disabled');
@@ -556,6 +556,14 @@
           console.log('Detecting location');
           $('#timezone-image').timezonePicker('detectLocation');
           updateZone($('#remote-tz-name').val());
+        });
+
+        $('#utc-button').click(function() {
+          console.log('UTC selected');
+          // Update #remote-tz-name and #remote-location-name
+          $('#remote-tz-name').val('UTC');
+          $('#remote-location-name').val('UTC');
+          remote_offset = 0;
         });
 
         // Changes performed by JS don't trigger .change(),
