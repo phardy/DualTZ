@@ -515,7 +515,8 @@
         function requestTimeout() {
           if (query_in_progress > 0) {
             console.log('TZ request timeout: ' + query_timezone);
-            // TODO: Alert user here.
+            // TODO: better notification
+            $('#b-submit .ui-btn-text').text('TZ timeout');
             window.clear_timeout(query_in_progress);
             query_in_progress = 0;
           }
