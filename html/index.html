@@ -497,20 +497,47 @@
     </div>
     <script>
       var remote_offset = null;
-
-      function updateZone(name) {
-        remote_offset = null;
-        var city = name.split('/')[1];
-        $('#remote-location-name').val(city);
-        var tz = new tzdata_javascript.zoneinfo(name);
-        now = new Date();
-        tz.strftime('', now);
-        console.log(JSON.stringify(tz, null, 4));
-        remote_offset = tz.last_ttinfo.offset / 1000;
-        console.log(remote_offset);
-      }
+      var query_in_progress = 0;
+      var query_timezone = '';
 
       $().ready(function() {
+        function requestTimeout() {
+          if (query_in_progress > 0) {
+            console.log('TZ request timed out');
+            // TODO: Alert user here.
+            window.clear_timeout(query_in_progress);
+            query_in_progress = 0;
+          }
+        }
+
+        function tzCallback(timezone, zoneinfo) {
+          console.log('Got TZ info: ' + timezone);
+          if (query_in_progress > 0 && timezone == query_timezone) {
+            now = new Date();
+            zoneinfo.strftime('', now);
+            remote_offset = zoneinfo.last_ttinfo.offset / 10000;
+            console.log(remote_offset);
+            query_in_progress = 0;
+            $('#b-submit .ui-btn-text').text('Submit');
+            $('#b-submit').removeClass('ui-disabled');
+          }
+        }
+
+        function updateZone(name) {
+          console.log('Requesting TZ info: ' + name);
+          var city = name.split('/')[1];
+          $('#remote-location-name').val(city);
+          if (query_in_progress > 0) {
+            window.clearTimeout(query_in_progress);
+            query_in_progress = 0;
+          }
+          query_timezone = name;
+          query_in_progress = window.setTimeout(requestTimeout, 10000);
+          $('#b-submit').addClass('ui-disabled');
+          $('#b-submit .ui-btn-text').text('Fetching data...');
+          new tzdata_javascript.zoneinfo(name, tzCallback);
+        }
+
         $('#timezone-image').timezonePicker({
           target: '#remote-tz-name'
         });
