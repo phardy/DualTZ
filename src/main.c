@@ -59,6 +59,10 @@ enum {
   CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F
 };
 
+void in_dropped_handler(AppMessageResult reason, void *context) {
+  // stub. request again?
+}
+
 void in_received_handler(DictionaryIterator *received, void *context) {
   Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
   Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
@@ -67,11 +71,11 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   // Right now we only ever get all three in one packet
   if (remote_tz_name_tuple && remote_tz_offset_tuple && local_tz_offset_tuple) {
     persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME,
-			 remote_tz_name_tuple->value->cstring);
+  			 remote_tz_name_tuple->value->cstring);
     persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET,
-		      remote_tz_offset_tuple->value->int32);
+  		      remote_tz_offset_tuple->value->int32);
     persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET,
-		      local_tz_offset_tuple->value->int32);
+  		      local_tz_offset_tuple->value->int32);
     strncpy(DisplayTZ.tz_name, remote_tz_name_tuple->value->cstring, TZ_NAME_LEN);
     DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
     DisplayTZ.tz_offset = remote_tz_offset_tuple->value->int32;
@@ -334,18 +338,11 @@ void handle_init() {
   layer_mark_dirty(AnalogueMinuteLayer);
   layer_mark_dirty(AnalogueHourLayer);
 
-  // TODO: Replace with JS configuration.
-  /* http_set_app_id(HTTP_APP_ID); */
-  /* HTTPCallbacks callbacks = { */
-  /*   .failure = http_cookie_failed_callback, */
-  /*   .cookie_get = http_cookie_get_callback, */
-  /*   .time = &http_time_callback */
-  /* }; */
-  /* http_register_callbacks(callbacks, ctx); */
-  /* HTTPResult x = http_time_request(); */
-  /* if (x == HTTP_BUSY) { */
-  /*   text_layer_set_text(&TZName, "boom"); */
-  /* } */
+  app_message_register_inbox_received(in_received_handler);
+  app_message_register_inbox_dropped(in_dropped_handler);
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
 
   tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
 }
