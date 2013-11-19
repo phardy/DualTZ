@@ -1,8 +1,0 @@
-The files in this directory are generated from utils/parse-zones.sh.
-
-Lines are tab-separated, and go
-
-TZName	TZOffset
-
-The format of TZOffset is pretty finicky too. Must have no leading zeroes.
-Positive offsets shouldn't have a plus.
