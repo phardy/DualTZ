@@ -19,7 +19,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	window.localStorage.setItem('remote-tz-name' + params['remote-tz-name']);
 	window.localStorage.setItem('remote-tz-offset' + params['remote-tz-offset']);
 	window.localStorage.setItem('local-tz-offset' + params['local-tz-offset']);
-	Pebble.sendAppMessage(options, appMessageAck, appMessageNack);
+	Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
     } else {
 	console.log('no options received');
     }
