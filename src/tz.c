@@ -6,8 +6,10 @@
 #include "tz.h"
 
 void format_timezone(TZInfo *tz, char *str) {
-  int tz_hours = tz->tz_offset / 60;
-  int tz_minutes = tz->tz_offset % 60;
+  int tz_hours = tz->tz_offset / 3600;
+  // TODO: test this - not sure if 3600 or 60.
+  int tz_minutes = tz->tz_offset % 3600;
+  // TODO: Update these. Probably not requried any more.
   // xprintf doesn't seem to support the + formatting flag
   if (tz_hours < 0) {
     if (tz_minutes == 0) {
