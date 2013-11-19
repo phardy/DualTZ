@@ -300,6 +300,7 @@ void handle_init() {
   apply_stored_config();
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
+  strftime(DateText, sizeof(DateText), "%e", now);
   text_layer_set_text(Date, DateText);  // draw analogue hands
   layer_mark_dirty(AnalogueMinuteLayer);
   layer_mark_dirty(AnalogueHourLayer);
