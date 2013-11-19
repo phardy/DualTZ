@@ -59,6 +59,17 @@ enum {
   CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F
 };
 
+void update_digital_time(struct tm *time) {
+  time_t t1 = p_mktime(time);
+  int32_t t = (int32_t)t1 + localTZOffset;
+
+  struct tm *adjTime;
+  adjTime = gmtime(&t);
+  strftime(DigitalTimeText, sizeof(DigitalTimeText),
+	   DigitalTimeFormat, adjTime);
+  text_layer_set_text(DigitalTime, DigitalTimeText);
+}
+
 void in_dropped_handler(AppMessageResult reason, void *context) {
   // stub. request again?
 }
@@ -83,18 +94,14 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     format_timezone(&DisplayTZ, DigitalTZOffset);
     text_layer_set_text(TZName, DisplayTZ.tz_name);
     text_layer_set_text(TZOffset, DigitalTZOffset);
+    localTZOffset = remote_tz_offset_tuple->value->int32 - 
+      local_tz_offset_tuple->value->int32;
+
+    time_t t = time(NULL);
+    struct tm *now;
+    now = localtime(&t);
+    update_digital_time(now);
   }
-}
-
-void update_digital_time(struct tm *time) {
-  time_t t1 = p_mktime(time);
-  int32_t t = (int32_t)t1 + localTZOffset;
-
-  struct tm *adjTime;
-  adjTime = gmtime(&t);
-  strftime(DigitalTimeText, sizeof(DigitalTimeText),
-	   DigitalTimeFormat, adjTime);
-  text_layer_set_text(DigitalTime, DigitalTimeText);
 }
 
 // TODO: Replace these old httpebble callback with a new JS one.
