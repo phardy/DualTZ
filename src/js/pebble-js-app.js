@@ -15,6 +15,10 @@ Pebble.addEventListener("webviewclosed", function(e) {
     console.log('configuration closed');
     if (e.response != '') {
 	var params = JSON.parse(decodeURIComponent(e.response));
+	// decodeURIComponent seems to have trouble with spaces,
+	// leaving them as a plus. So we remove them here.
+	var name = params['remote-tz-name'].replace('+', ' ');
+	params['remote-tz-name'] = name;
 	console.log(JSON.stringify(params));
 	window.localStorage.setItem('remote-tz-name' + params['remote-tz-name']);
 	window.localStorage.setItem('remote-tz-offset' + params['remote-tz-offset']);
