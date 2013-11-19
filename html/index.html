@@ -491,7 +491,7 @@
 	</div>
 	<input type="hidden" name="remote-tz-location" id="remote-tz-location" value="">
 	<label for="remote-tz-name" data-inline="true">Location name</label>
-	<input type="text" data-clear-btn="true" name="remote-tz-name" data-inline="true" id="remote-tz-name" value="">
+	<input type="text" data-clear-btn="true" name="remote-tz-name" data-inline="true" id="remote-tz-name" maxlength="15" value="">
         <div class="ui-grid-a">
           <div class="ui-block-a">
             <a data-role="button" href="#settings" data-icon="delete" data-iconpos="left" id="b-cancel">Cancel</a>
@@ -515,7 +515,9 @@
       </ul>
       <p>Once selected, the location name field will be filled with a large
 	city in the region selected. If desired, this name can be altered,
-	to match a smaller town in the region for example.</p>
+	to match a smaller town in the region for example. The maximum length
+        for the name field is 15 characters.
+      </p>
       <p>Finally, hit the Submit button to send the new details to the watch
 	app, or Cancel to quit without saving new zone.</p>
       <h3>Usage</h3>
@@ -563,7 +565,7 @@
 
         function updateZone(name) {
           console.log('Requesting TZ info: ' + name);
-          var city = name.split('/')[1];
+          var city = name.split('/')[1].replace('_', ' ');
           $('#remote-tz-name').val(city);
           if (query_in_progress > 0) {
             window.clearTimeout(query_in_progress);
