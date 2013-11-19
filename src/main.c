@@ -74,6 +74,36 @@ void in_dropped_handler(AppMessageResult reason, void *context) {
   // stub. request again?
 }
 
+void apply_stored_config() {
+  if (persist_exists(CONFIG_KEY_REMOTE_TZ_NAME)) {
+    persist_read_string(CONFIG_KEY_REMOTE_TZ_NAME,
+			DisplayTZ.tz_name, TZ_NAME_LEN);
+    DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
+  } else {
+    strncpy(DisplayTZ.tz_name, "local time", TZ_NAME_LEN);
+  }
+  text_layer_set_text(TZName, DisplayTZ.tz_name);
+  if (persist_exists(CONFIG_KEY_REMOTE_TZ_OFFSET)) {
+    DisplayTZ.tz_offset = persist_read_int(CONFIG_KEY_REMOTE_TZ_OFFSET);
+    format_timezone(&DisplayTZ, DigitalTZOffset);
+    text_layer_set_text(TZOffset, DigitalTZOffset);
+  } else {
+    // Don't write a timezone to the display here.
+    DisplayTZ.tz_offset = 0;
+  }
+  if (persist_exists(CONFIG_KEY_LOCAL_TZ_OFFSET)) {
+    localTZOffset = DisplayTZ.tz_offset - 
+      persist_read_int(CONFIG_KEY_LOCAL_TZ_OFFSET);
+  } else {
+    localTZOffset = 0;
+  }
+
+  time_t t = time(NULL);
+  struct tm *now;
+  now = localtime(&t);
+  update_digital_time(now);
+}
+
 void in_received_handler(DictionaryIterator *received, void *context) {
   Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
   Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
@@ -87,20 +117,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   		      remote_tz_offset_tuple->value->int32);
     persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET,
   		      local_tz_offset_tuple->value->int32);
-    strncpy(DisplayTZ.tz_name, remote_tz_name_tuple->value->cstring, TZ_NAME_LEN);
-    DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
-    DisplayTZ.tz_offset = remote_tz_offset_tuple->value->int32;
-
-    format_timezone(&DisplayTZ, DigitalTZOffset);
-    text_layer_set_text(TZName, DisplayTZ.tz_name);
-    text_layer_set_text(TZOffset, DigitalTZOffset);
-    localTZOffset = remote_tz_offset_tuple->value->int32 - 
-      local_tz_offset_tuple->value->int32;
-
-    time_t t = time(NULL);
-    struct tm *now;
-    now = localtime(&t);
-    update_digital_time(now);
+    apply_stored_config();
   }
 }
 
@@ -329,18 +346,9 @@ void handle_init() {
   }
 
   // write current time to display
+  apply_stored_config();
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
-  strftime(DigitalTimeSText, sizeof(DigitalTimeSText),
-	   "%S", now);
-  strftime(DigitalTimeText, sizeof(DigitalTimeText),
-	   DigitalTimeFormat, now);
-  strftime(DateText, sizeof(DateText), 
-	   "%e", now);
-  text_layer_set_text(DigitalTime, DigitalTimeText);
-  text_layer_set_text(DigitalTimeS, DigitalTimeSText);
-  text_layer_set_text(TZName, "local time");
-  text_layer_set_text(TZOffset, " ");
   text_layer_set_text(Date, DateText);  // draw analogue hands
   layer_mark_dirty(AnalogueMinuteLayer);
   layer_mark_dirty(AnalogueHourLayer);
