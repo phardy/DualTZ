@@ -11,15 +11,15 @@ void format_timezone(TZInfo *tz, char *str) {
   // xprintf doesn't seem to support the + formatting flag
   if (tz_hours < 0) {
     if (tz_minutes == 0) {
-      sprintf(str, "%02d", tz_hours);
+      snprintf(str, TZ_OFFSET_LEN, "%02d", tz_hours);
     } else {
-      sprintf(str, "%02d:%02d", tz_hours, tz_minutes);
+      snprintf(str, TZ_OFFSET_LEN, "%02d:%02d", tz_hours, tz_minutes);
     }
   } else {
     if (tz_minutes == 0) {
-      sprintf(str, "+%02d", tz_hours);
+      snprintf(str, TZ_OFFSET_LEN, "+%02d", tz_hours);
     } else {
-      sprintf(str, "+%02d:%02d", tz_hours, tz_minutes);
+      snprintf(str, TZ_OFFSET_LEN, "+%02d:%02d", tz_hours, tz_minutes);
     }
   }
 }
