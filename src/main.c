@@ -61,8 +61,8 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
 // data received from the config page
 enum {
   CONFIG_KEY_REMOTE_TZ_NAME = 0x5D,
-  CONFIG_KEY_REMOTE_TZ_OFFSET = 0x5E,
-  CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F
+  CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET = 0x5E,
+  CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET = 0x5F
 };
 
 void update_digital_time(struct tm *time) {
@@ -89,17 +89,17 @@ void apply_stored_config() {
     strncpy(DisplayTZ.tz_name, "local time", TZ_NAME_LEN);
   }
   text_layer_set_text(TZName, DisplayTZ.tz_name);
-  if (persist_exists(CONFIG_KEY_REMOTE_TZ_OFFSET)) {
-    DisplayTZ.tz_offset = persist_read_int(CONFIG_KEY_REMOTE_TZ_OFFSET);
+  if (persist_exists(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET)) {
+    DisplayTZ.remote_tz_offset = persist_read_int(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET);
     format_timezone(&DisplayTZ, DigitalTZOffset);
     text_layer_set_text(TZOffset, DigitalTZOffset);
   } else {
     // Don't write a timezone to the display here.
-    DisplayTZ.tz_offset = 0;
+    DisplayTZ.remote_tz_offset = 0;
   }
-  if (persist_exists(CONFIG_KEY_LOCAL_TZ_OFFSET)) {
-    localTZOffset = DisplayTZ.tz_offset - 
-      persist_read_int(CONFIG_KEY_LOCAL_TZ_OFFSET);
+  if (persist_exists(CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET)) {
+    localTZOffset = DisplayTZ.remote_tz_offset - 
+      persist_read_int(CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET);
   } else {
     localTZOffset = 0;
   }
@@ -112,21 +112,21 @@ void apply_stored_config() {
 
 void in_received_handler(DictionaryIterator *received, void *context) {
   Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
-  Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
-  Tuple *local_tz_offset_tuple = dict_find(received, CONFIG_KEY_LOCAL_TZ_OFFSET);
+  Tuple *remote_remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET);
+  Tuple *local_remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET);
 
   // Right now we only ever get all three in one packet
-  if (remote_tz_name_tuple && remote_tz_offset_tuple && local_tz_offset_tuple) {
+  if (remote_tz_name_tuple && remote_remote_tz_offset_tuple && local_remote_tz_offset_tuple) {
     int remote_tz_name_write = persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME,
 						    remote_tz_name_tuple->value->cstring);
-    int remote_tz_offset_write = persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET,
-						   remote_tz_offset_tuple->value->int32);
-    int local_tz_offset_write = persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET,
-						  local_tz_offset_tuple->value->int32);
+    int remote_remote_tz_offset_write = persist_write_int(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET,
+						   remote_remote_tz_offset_tuple->value->int32);
+    int local_remote_tz_offset_write = persist_write_int(CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET,
+						  local_remote_tz_offset_tuple->value->int32);
 #ifdef DEBUG
     debug_storage_write(remote_tz_name_write);
-    debug_storage_write(remote_tz_offset_write);
-    debug_storage_write(local_tz_offset_write);
+    debug_storage_write(remote_remote_tz_offset_write);
+    debug_storage_write(local_remote_tz_offset_write);
 #endif
 
     apply_stored_config();
@@ -300,7 +300,7 @@ void handle_init() {
   display_init();
 
   strcpy(DisplayTZ.tz_name, "UTC");
-  DisplayTZ.tz_offset = 0;
+  DisplayTZ.remote_tz_offset = 0;
 
   if (clock_is_24h_style()) {
     DigitalTimeFormat = "%H:%M";
