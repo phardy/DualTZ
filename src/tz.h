@@ -5,6 +5,6 @@ typedef struct {
   int32_t tz_offset;
 } TZInfo;
 
-// static TZInfo UTC = {"UTC", 0, 0, NULL};
+
 
 void format_timezone(TZInfo *tz, char *str);

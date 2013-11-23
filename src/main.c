@@ -1,7 +1,13 @@
+#define DEBUG 1
+
 #include <pebble.h>
 
 #include "PDutils.h"
 #include "tz.h"
+
+#ifdef DEBUG
+#include "debug.h"
+#endif
 
 // Layout stuff
 Window *window;
@@ -111,12 +117,18 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
   // Right now we only ever get all three in one packet
   if (remote_tz_name_tuple && remote_tz_offset_tuple && local_tz_offset_tuple) {
-    persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME,
-  			 remote_tz_name_tuple->value->cstring);
-    persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET,
-  		      remote_tz_offset_tuple->value->int32);
-    persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET,
-  		      local_tz_offset_tuple->value->int32);
+    int remote_tz_name_write = persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME,
+						    remote_tz_name_tuple->value->cstring);
+    int remote_tz_offset_write = persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET,
+						   remote_tz_offset_tuple->value->int32);
+    int local_tz_offset_write = persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET,
+						  local_tz_offset_tuple->value->int32);
+#ifdef DEBUG
+    debug_storage_write(remote_tz_name_write);
+    debug_storage_write(remote_tz_offset_write);
+    debug_storage_write(local_tz_offset_write);
+#endif
+
     apply_stored_config();
   }
 }
