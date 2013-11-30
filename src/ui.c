@@ -63,6 +63,7 @@ void set_date_text(char *DateText) {
 }
 
 void update_minute_hand() {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "In update_minute_hand.");
   layer_mark_dirty(AnalogueMinuteLayer);
 }
 
@@ -72,9 +73,6 @@ void update_hour_hand() {
 
 void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
   (void)me;
-  // Math says a 128px box should be offset 8 pixels to be centred
-  // in a 144px display. Pebble seems to say otherwise, though.
-  AnalogueGRect = GRect(4, 0, 128, 128);
   time_t now = time(NULL);
   struct tm *t = localtime(&now);
 
@@ -95,6 +93,7 @@ void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
 }
 
 void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "In minute_display_layer_update_callback.");
   (void)me;
   time_t now = time(NULL);
   struct tm *t = localtime(&now);
@@ -121,6 +120,10 @@ void display_init() {
   DigitalTimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
   DigitalTimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
   DateFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
+
+  // Math says a 128px box should be offset 8 pixels to be centred
+  // in a 144px display. Pebble seems to say otherwise, though.
+  AnalogueGRect = GRect(4, 0, 128, 128);
 
   // init root window
   window = window_create();
