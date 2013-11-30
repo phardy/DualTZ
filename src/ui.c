@@ -63,7 +63,6 @@ void set_date_text(char *DateText) {
 }
 
 void update_minute_hand() {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "In update_minute_hand.");
   layer_mark_dirty(AnalogueMinuteLayer);
 }
 
@@ -93,7 +92,6 @@ void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
 }
 
 void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "In minute_display_layer_update_callback.");
   (void)me;
   time_t now = time(NULL);
   struct tm *t = localtime(&now);
