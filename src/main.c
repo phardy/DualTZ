@@ -50,7 +50,7 @@ void apply_stored_config() {
   set_tzname_text(DisplayTZ.tz_name);
   if (persist_exists(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET)) {
     DisplayTZ.remote_tz_offset = persist_read_int(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET);
-    format_timezone(&DisplayTZ, DigitalTZOffset);
+    format_timezone(DisplayTZ.remote_tz_offset, DigitalTZOffset);
     set_tzoffset_text(DigitalTZOffset);
   } else {
     // Don't write a timezone to the display here.

@@ -8,4 +8,4 @@ typedef struct {
 
 
 
-void format_timezone(TZInfo *tz, char *str);
+void format_timezone(int32_t offset, char *str);
