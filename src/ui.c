@@ -187,7 +187,7 @@ void display_init() {
     DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_0);
     bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
   }
-  ColonLayer = bitmap_layer_create(GRect(65, 141, 16, 26)); // TODO: Shrink this image
+  ColonLayer = bitmap_layer_create(GRect(64, 141, 16, 26)); // TODO: Shrink this image
   GBitmap *colon;
   colon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
   bitmap_layer_set_bitmap(ColonLayer, colon);
