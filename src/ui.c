@@ -29,12 +29,10 @@ static BitmapLayer *DigitalTime[6];
 static BitmapLayer *ColonLayer;
 TextLayer *TZName;
 TextLayer *TZOffset;
-TextLayer *DigitalTimeS;
 TextLayer *Date;
 TextLayer *AmPm;
 TextLayer *FaceLabel;
 static GFont TZFont;
-static GFont DigitalTimeSFont;
 static GFont DateFont;
 
 
@@ -164,7 +162,6 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
 void display_init() {
   // load resources
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));
-  DigitalTimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
   DateFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
 
   // Math says a 128px box should be offset 8 pixels to be centred
