@@ -59,7 +59,16 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
     {-4, -50}
   }
 };
-  
+
+void load_image_into_layer(uint32_t resource, GBitmap bitmap, BitmapLayer layer) {
+  GBitmap *newbitmap, *oldbitmap;
+  newbitmap = gbitmap_create_with_resource(resource);
+  bitmap_layer_set_bitmap(layer, newbitmap);
+  oldbitmap = bitmap;
+  bitmap = newbitmap;
+  gbitmap_destroy(oldbitmap);
+}
+
 void set_tzname_text(char *TZNameText) {
   text_layer_set_text(TZName, TZNameText);
 }
@@ -69,7 +78,7 @@ void set_tzoffset_text(char *TZOffsetText) {
 }
 
 void set_digital_text(char *DigitalTimeText) {
-  // no updating yet
+  
 }
 
 void set_digitals_text(char *DigitalTimeSText) {
