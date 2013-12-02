@@ -60,7 +60,7 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
-void load_image_into_layer(uint32_t resource, GBitmap bitmap, BitmapLayer layer) {
+void load_image_into_layer(uint32_t resource, GBitmap *bitmap, BitmapLayer *layer) {
   GBitmap *newbitmap, *oldbitmap;
   newbitmap = gbitmap_create_with_resource(resource);
   bitmap_layer_set_bitmap(layer, newbitmap);
@@ -77,8 +77,20 @@ void set_tzoffset_text(char *TZOffsetText) {
   text_layer_set_text(TZOffset, TZOffsetText);
 }
 
-void set_digital_text(char *DigitalTimeText) {
-  
+void set_digital_text(struct tm *time) {
+    // only 24 hour for now
+  int hourtens = time->tm_hour / 10;
+  load_image_into_layer(LARGE_NUMS[hourtens], DigitalTimeImages[0],
+			DigitalTime[0]);
+  int hourunits = time->tm_hour % 10;
+  load_image_into_layer(LARGE_NUMS[hourunits], DigitalTimeImages[1],
+			DigitalTime[1]);
+  int minutetens = time->tm_min / 10;
+  load_image_into_layer(LARGE_NUMS[minutetens], DigitalTimeImages[2],
+			DigitalTime[2]);
+  int minuteunits = time->tm_min % 10;
+  load_image_into_layer(LARGE_NUMS[minuteunits], DigitalTimeImages[3],
+			DigitalTime[3]);
 }
 
 void set_digitals_text(char *DigitalTimeSText) {

@@ -11,11 +11,9 @@
 static TZInfo DisplayTZ;
 int32_t localTZOffset;
 
-static char DigitalTimeText[] = "  :  ";
 static char DigitalTimeSText[] = "  ";
 static char DateText[] = "  ";
 static char DigitalTZOffset[] = "      ";
-static char *DigitalTimeFormat;
 
 // data received from the config page
 enum {
@@ -30,9 +28,7 @@ void update_digital_time(struct tm *time) {
 
   struct tm *adjTime;
   adjTime = gmtime(&t);
-  strftime(DigitalTimeText, sizeof(DigitalTimeText),
-	   DigitalTimeFormat, adjTime);
-  set_digital_text(DigitalTimeText);
+  set_digital_text(adjTime);
 }
 
 void in_dropped_handler(AppMessageResult reason, void *context) {
@@ -119,12 +115,6 @@ void handle_init() {
 
   strcpy(DisplayTZ.tz_name, "UTC");
   DisplayTZ.remote_tz_offset = 0;
-
-  if (clock_is_24h_style()) {
-    DigitalTimeFormat = "%H:%M";
-  } else {
-    DigitalTimeFormat = "%l:%M";
-  }
 
   // write current time to display
   apply_stored_config();
