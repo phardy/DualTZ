@@ -26,6 +26,7 @@ static GPath *AnalogueHourPath, *AnalogueMinutePath;
 static GBitmap *Background;
 static GBitmap *DigitalTimeImages[4];
 static BitmapLayer *DigitalTime[4];
+static BitmapLayer *ColonLayer;
 TextLayer *TZName;
 TextLayer *TZOffset;
 TextLayer *DigitalTimeS;
@@ -171,9 +172,9 @@ void display_init() {
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // main time display
-  DigitalTime[0] = bitmap_layer_create(GRect(18, 141, 16, 26)); // no margin/padding yet
-  DigitalTime[1] = bitmap_layer_create(GRect(37, 141, 16, 26));
-  DigitalTime[2] = bitmap_layer_create(GRect(72, 141, 16, 26));
+  DigitalTime[0] = bitmap_layer_create(GRect(30, 141, 16, 26)); // no margin/padding yet
+  DigitalTime[1] = bitmap_layer_create(GRect(48, 141, 16, 26));
+  DigitalTime[2] = bitmap_layer_create(GRect(71, 141, 16, 26));
   DigitalTime[3] = bitmap_layer_create(GRect(90, 141, 16, 26));
   for (int i=0; i< 4; i++) {
     layer_add_child(window_get_root_layer(window),
@@ -181,6 +182,12 @@ void display_init() {
     DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_0);
     bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
   }
+  ColonLayer = bitmap_layer_create(GRect(65, 141, 16, 26)); // TODO: Shrink this image
+  GBitmap *colon;
+  colon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
+  bitmap_layer_set_bitmap(ColonLayer, colon);
+  layer_add_child(window_get_root_layer(window),
+		  bitmap_layer_get_layer(ColonLayer));
 
   // seconds display
   DigitalTimeS = text_layer_create(GRect(109, 147, 20, 20)); // sizing made me cry
