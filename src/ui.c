@@ -262,6 +262,7 @@ void display_deinit() {
   gpath_destroy(AnalogueMinutePath);
   layer_destroy(AnalogueMinuteLayer);
   text_layer_destroy(FaceLabel);
+  gbitmap_destroy(Background);
   bitmap_layer_destroy(DigitalWindow);
   if (!clock_is_24h_style()) {
     text_layer_destroy(AmPm);
@@ -271,7 +272,8 @@ void display_deinit() {
   text_layer_destroy(TZName);
   text_layer_destroy(DigitalTimeS);
   for (int i=0; i< 4; i++) {
-    // clean up bitmap layers here.
+    gbitmap_destroy(DigitalTimeImages[i]);
+    bitmap_layer_destroy(DigitalTime[i]);
   }
   window_destroy(window);
 }
