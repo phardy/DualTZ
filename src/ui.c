@@ -61,12 +61,16 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
 };
 
 void load_image_into_layer(uint32_t resource, GBitmap *bitmap, BitmapLayer *layer) {
-  GBitmap *newbitmap, *oldbitmap;
-  newbitmap = gbitmap_create_with_resource(resource);
-  bitmap_layer_set_bitmap(layer, newbitmap);
-  oldbitmap = bitmap;
-  bitmap = newbitmap;
-  gbitmap_destroy(oldbitmap);
+
+  GRect pos = layer_get_frame(bitmap_layer_get_layer(layer));
+  layer_remove_from_parent(bitmap_layer_get_layer(layer));
+  gbitmap_destroy(bitmap);
+  bitmap_layer_destroy(layer);
+
+  layer = bitmap_layer_create(pos);
+  bitmap = gbitmap_create_with_resource(resource);
+  bitmap_layer_set_bitmap(layer, bitmap);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(layer));
 }
 
 void set_tzname_text(char *TZNameText) {
