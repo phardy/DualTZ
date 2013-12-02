@@ -67,6 +67,7 @@ void load_image_into_layer(uint32_t resource, GBitmap *bitmap, BitmapLayer *laye
   bitmap_layer_destroy(layer);
 
   layer = bitmap_layer_create(pos);
+  bitmap_layer_set_compositing_mode(layer, GCompOpAnd);
   bitmap = gbitmap_create_with_resource(resource);
   bitmap_layer_set_bitmap(layer, bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(layer));
@@ -81,11 +82,26 @@ void set_tzoffset_text(char *TZOffsetText) {
 }
 
 void set_digital_text(struct tm *time) {
-    // only 24 hour for now
-  int hourtens = time->tm_hour / 10;
-  load_image_into_layer(LARGE_NUMS[hourtens], DigitalTimeImages[0],
-			DigitalTime[0]);
-  int hourunits = time->tm_hour % 10;
+  int hourtens, hourunits;
+  if (clock_is_24h_style()) {
+    hourtens = time->tm_hour / 10;
+    hourunits = time->tm_hour % 10;
+  } else {
+    hourtens = (time->tm_hour % 12) /10;
+    hourunits = (time->tm_hour % 12) % 10;
+    if (time->tm_hour > 11) {
+      text_layer_set_text(AmPm, "PM");
+    } else {
+      text_layer_set_text(AmPm, "");
+    }
+  }
+  if (clock_is_24h_style() || hourtens == 1) {
+    load_image_into_layer(LARGE_NUMS[hourtens], DigitalTimeImages[0],
+			  DigitalTime[0]);
+  } else {
+    load_image_into_layer(RESOURCE_ID_IMAGE_LARGE_BLANK, DigitalTimeImages[0],
+			  DigitalTime[0]);
+  }
   load_image_into_layer(LARGE_NUMS[hourunits], DigitalTimeImages[1],
 			DigitalTime[1]);
   int minutetens = time->tm_min / 10;
@@ -227,7 +243,7 @@ void display_init() {
 
   // AM/PM display
   if (!clock_is_24h_style()) {
-    AmPm = text_layer_create(GRect(7, 153, 20, 20));
+    AmPm = text_layer_create(GRect(20, 153, 20, 20));
     text_layer_set_text_alignment(AmPm, GTextAlignmentLeft);
     text_layer_set_text_color(AmPm, GTextAlignmentLeft);
     text_layer_set_font(AmPm, TZFont);
