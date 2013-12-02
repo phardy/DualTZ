@@ -1,20 +1,38 @@
 #include <pebble.h>
 
+const int TINY_NUMS[10] = {
+  RESOURCE_ID_IMAGE_TINY_0, RESOURCE_ID_IMAGE_TINY_1, RESOURCE_ID_IMAGE_TINY_2,
+  RESOURCE_ID_IMAGE_TINY_3, RESOURCE_ID_IMAGE_TINY_4, RESOURCE_ID_IMAGE_TINY_5,
+  RESOURCE_ID_IMAGE_TINY_6, RESOURCE_ID_IMAGE_TINY_7, RESOURCE_ID_IMAGE_TINY_8,
+  RESOURCE_ID_IMAGE_TINY_9};
+const int MID_NUMS[10] = {
+  RESOURCE_ID_IMAGE_MID_0, RESOURCE_ID_IMAGE_MID_1, RESOURCE_ID_IMAGE_MID_2,
+  RESOURCE_ID_IMAGE_MID_3, RESOURCE_ID_IMAGE_MID_4, RESOURCE_ID_IMAGE_MID_5,
+  RESOURCE_ID_IMAGE_MID_6, RESOURCE_ID_IMAGE_MID_7, RESOURCE_ID_IMAGE_MID_8,
+  RESOURCE_ID_IMAGE_MID_9};
+const int LARGE_NUMS[10] = {
+  RESOURCE_ID_IMAGE_LARGE_0, RESOURCE_ID_IMAGE_LARGE_1,
+  RESOURCE_ID_IMAGE_LARGE_2, RESOURCE_ID_IMAGE_LARGE_3,
+  RESOURCE_ID_IMAGE_LARGE_4, RESOURCE_ID_IMAGE_LARGE_5,
+  RESOURCE_ID_IMAGE_LARGE_6, RESOURCE_ID_IMAGE_LARGE_7,
+  RESOURCE_ID_IMAGE_LARGE_8, RESOURCE_ID_IMAGE_LARGE_9};
+
 Window *window;
 GRect AnalogueGRect;
 BitmapLayer *DigitalWindow;
+
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
 static GBitmap *Background;
+static GBitmap *DigitalTimeImages[4];
+static BitmapLayer *DigitalTime[4];
 TextLayer *TZName;
 TextLayer *TZOffset;
-TextLayer *DigitalTime;
 TextLayer *DigitalTimeS;
 TextLayer *Date;
 TextLayer *AmPm;
 TextLayer *FaceLabel;
 static GFont TZFont;
-static GFont DigitalTimeFont;
 static GFont DigitalTimeSFont;
 static GFont DateFont;
 
@@ -41,7 +59,7 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
     {-4, -50}
   }
 };
-
+  
 void set_tzname_text(char *TZNameText) {
   text_layer_set_text(TZName, TZNameText);
 }
@@ -51,7 +69,7 @@ void set_tzoffset_text(char *TZOffsetText) {
 }
 
 void set_digital_text(char *DigitalTimeText) {
-  text_layer_set_text(DigitalTime, DigitalTimeText);
+  // no updating yet
 }
 
 void set_digitals_text(char *DigitalTimeSText) {
@@ -115,7 +133,6 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
 void display_init() {
   // load resources
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));
-  DigitalTimeFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_40));
   DigitalTimeSFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_20));
   DateFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
 
@@ -129,12 +146,16 @@ void display_init() {
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // main time display
-  DigitalTime = text_layer_create(GRect(17, 127, 90, 40)); // Size guess!
-  text_layer_set_text_alignment(DigitalTime, GTextAlignmentRight);
-  text_layer_set_text_color(DigitalTime, GColorBlack);
-  text_layer_set_font(DigitalTime, DigitalTimeFont);
-  layer_add_child(window_get_root_layer(window),
-		  text_layer_get_layer(DigitalTime));
+  DigitalTime[0] = bitmap_layer_create(GRect(18, 141, 16, 26)); // no margin/padding yet
+  DigitalTime[1] = bitmap_layer_create(GRect(37, 141, 16, 26));
+  DigitalTime[2] = bitmap_layer_create(GRect(72, 141, 16, 26));
+  DigitalTime[3] = bitmap_layer_create(GRect(90, 141, 16, 26));
+  for (int i=0; i< 4; i++) {
+    layer_add_child(window_get_root_layer(window),
+		    bitmap_layer_get_layer(DigitalTime[i]));
+    DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_0);
+    bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
+  }
 
   // seconds display
   DigitalTimeS = text_layer_create(GRect(109, 147, 20, 20)); // sizing made me cry
@@ -228,6 +249,8 @@ void display_deinit() {
   text_layer_destroy(TZOffset);
   text_layer_destroy(TZName);
   text_layer_destroy(DigitalTimeS);
-  text_layer_destroy(DigitalTime);
+  for (int i=0; i< 4; i++) {
+    // clean up bitmap layers here.
+  }
   window_destroy(window);
 }
