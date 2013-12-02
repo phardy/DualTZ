@@ -278,6 +278,7 @@ void display_deinit() {
   if (!clock_is_24h_style()) {
     text_layer_destroy(AmPm);
   }
+  bitmap_layer_destroy(ColonLayer);
   text_layer_destroy(Date);
   text_layer_destroy(TZOffset);
   text_layer_destroy(TZName);
