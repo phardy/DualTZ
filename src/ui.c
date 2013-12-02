@@ -24,8 +24,8 @@ BitmapLayer *DigitalWindow;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
 static GBitmap *Background;
-static GBitmap *DigitalTimeImages[4];
-static BitmapLayer *DigitalTime[4];
+static GBitmap *DigitalTimeImages[6];
+static BitmapLayer *DigitalTime[6];
 static BitmapLayer *ColonLayer;
 TextLayer *TZName;
 TextLayer *TZOffset;
@@ -98,8 +98,13 @@ void set_digital_text(struct tm *time) {
 			DigitalTime[3]);
 }
 
-void set_digitals_text(char *DigitalTimeSText) {
-  text_layer_set_text(DigitalTimeS, DigitalTimeSText);
+void set_digitals_text(struct tm *time) {
+  int secondtens = time->tm_sec / 10;
+  load_image_into_layer(MID_NUMS[secondtens], DigitalTimeImages[4],
+			DigitalTime[4]);
+  int secondunits = time->tm_sec % 10;
+  load_image_into_layer(MID_NUMS[secondunits], DigitalTimeImages[5],
+			DigitalTime[5]);
 }
 
 void set_date_text(char *DateText) {
@@ -190,12 +195,14 @@ void display_init() {
 		  bitmap_layer_get_layer(ColonLayer));
 
   // seconds display
-  DigitalTimeS = text_layer_create(GRect(109, 147, 20, 20)); // sizing made me cry
-  text_layer_set_text_alignment(DigitalTimeS, GTextAlignmentLeft);
-  text_layer_set_text_color(DigitalTimeS, GColorBlack);
-  text_layer_set_font(DigitalTimeS, DigitalTimeSFont);
-  layer_add_child(window_get_root_layer(window), 
-		  text_layer_get_layer(DigitalTimeS));
+  DigitalTime[4] = bitmap_layer_create(GRect(110, 153, 8, 14));
+  DigitalTime[5] = bitmap_layer_create(GRect(120, 153, 8, 14));
+  for (int i=4; i< 6; i++) {
+    layer_add_child(window_get_root_layer(window),
+		    bitmap_layer_get_layer(DigitalTime[i]));
+    DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MID_0);
+    bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
+  }
 
   // timezone name display
   TZName = text_layer_create(GRect(14, 125, 95, 15));
@@ -282,8 +289,7 @@ void display_deinit() {
   text_layer_destroy(Date);
   text_layer_destroy(TZOffset);
   text_layer_destroy(TZName);
-  text_layer_destroy(DigitalTimeS);
-  for (int i=0; i< 4; i++) {
+  for (int i=0; i< 6; i++) {
     gbitmap_destroy(DigitalTimeImages[i]);
     bitmap_layer_destroy(DigitalTime[i]);
   }

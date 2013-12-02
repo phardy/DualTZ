@@ -11,7 +11,6 @@
 static TZInfo DisplayTZ;
 int32_t localTZOffset;
 
-static char DigitalTimeSText[] = "  ";
 static char DateText[] = "  ";
 static char DigitalTZOffset[] = "      ";
 
@@ -90,9 +89,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
 
 void handle_second_tick(struct tm *now, TimeUnits units_changed) {
-  strftime(DigitalTimeSText, sizeof(DigitalTimeSText),
-	   "%S", now);
-  set_digitals_text(DigitalTimeSText);
+  set_digitals_text(now);
 
   if (now->tm_sec % 30 == 0) {
     update_minute_hand();
