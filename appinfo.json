@@ -205,6 +205,11 @@
 	    },
 	    {
 		"type": "png",
+		"name": "IMAGE_LARGE_BLANK",
+		"file": "images/large/blank.png"
+	    },
+	    {
+		"type": "png",
 		"name": "IMAGE_MENU_ICON",
 		"file": "images/appicon.png",
 		"menuIcon": true
