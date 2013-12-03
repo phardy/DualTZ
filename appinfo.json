@@ -2,9 +2,9 @@
     "uuid": "9141be28-bc89-498e-b147-e27c6cdb4473",
     "shortName": "DualTZ",
     "longName": "DualTZ",
-    "companyName": "Kids, Inc.",
-    "versionCode": 2,
-    "versionLabel": "2.0.0",
+    "companyName": "Peter Hardy",
+    "versionCode": 3,
+    "versionLabel": "2.1.0",
     "watchapp": {
 	"watchface": true
     },
