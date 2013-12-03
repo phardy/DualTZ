@@ -100,113 +100,13 @@
 	    },
 	    {
 		"type": "png",
-		"name": "IMAGE_MID_0",
-		"file": "images/mid/0.png"
+		"name": "IMAGE_MID_NUMS",
+		"file": "images/mid-numbers.png"
 	    },
 	    {
 		"type": "png",
-		"name": "IMAGE_MID_1",
-		"file": "images/mid/1.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_2",
-		"file": "images/mid/2.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_3",
-		"file": "images/mid/3.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_4",
-		"file": "images/mid/4.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_5",
-		"file": "images/mid/5.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_6",
-		"file": "images/mid/6.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_7",
-		"file": "images/mid/7.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_8",
-		"file": "images/mid/8.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_MID_9",
-		"file": "images/mid/9.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_0",
-		"file": "images/large/0.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_1",
-		"file": "images/large/1.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_2",
-		"file": "images/large/2.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_3",
-		"file": "images/large/3.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_4",
-		"file": "images/large/4.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_5",
-		"file": "images/large/5.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_6",
-		"file": "images/large/6.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_7",
-		"file": "images/large/7.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_8",
-		"file": "images/large/8.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_9",
-		"file": "images/large/9.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_COLON",
-		"file": "images/large/colon.png"
-	    },
-	    {
-		"type": "png",
-		"name": "IMAGE_LARGE_BLANK",
-		"file": "images/large/blank.png"
+		"name": "IMAGE_LARGE_NUMS",
+		"file": "images/large-numbers.png"
 	    },
 	    {
 		"type": "png",

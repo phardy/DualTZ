@@ -5,17 +5,6 @@ const int TINY_NUMS[10] = {
   RESOURCE_ID_IMAGE_TINY_3, RESOURCE_ID_IMAGE_TINY_4, RESOURCE_ID_IMAGE_TINY_5,
   RESOURCE_ID_IMAGE_TINY_6, RESOURCE_ID_IMAGE_TINY_7, RESOURCE_ID_IMAGE_TINY_8,
   RESOURCE_ID_IMAGE_TINY_9};
-const int MID_NUMS[10] = {
-  RESOURCE_ID_IMAGE_MID_0, RESOURCE_ID_IMAGE_MID_1, RESOURCE_ID_IMAGE_MID_2,
-  RESOURCE_ID_IMAGE_MID_3, RESOURCE_ID_IMAGE_MID_4, RESOURCE_ID_IMAGE_MID_5,
-  RESOURCE_ID_IMAGE_MID_6, RESOURCE_ID_IMAGE_MID_7, RESOURCE_ID_IMAGE_MID_8,
-  RESOURCE_ID_IMAGE_MID_9};
-const int LARGE_NUMS[10] = {
-  RESOURCE_ID_IMAGE_LARGE_0, RESOURCE_ID_IMAGE_LARGE_1,
-  RESOURCE_ID_IMAGE_LARGE_2, RESOURCE_ID_IMAGE_LARGE_3,
-  RESOURCE_ID_IMAGE_LARGE_4, RESOURCE_ID_IMAGE_LARGE_5,
-  RESOURCE_ID_IMAGE_LARGE_6, RESOURCE_ID_IMAGE_LARGE_7,
-  RESOURCE_ID_IMAGE_LARGE_8, RESOURCE_ID_IMAGE_LARGE_9};
 
 Window *window;
 GRect AnalogueGRect;
@@ -24,6 +13,7 @@ BitmapLayer *DigitalWindow;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
 static GBitmap *Background;
+static GBitmap *LARGE_NUMS, *MID_NUMS;
 static GBitmap *DigitalTimeImages[6];
 static BitmapLayer *DigitalTime[6];
 static BitmapLayer *ColonLayer;
@@ -59,7 +49,8 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
-void load_image_into_layer(uint32_t resource, GBitmap *bitmap, BitmapLayer *layer) {
+void load_image_into_layer(GBitmap *source, GRect offset,
+			   GBitmap *bitmap, BitmapLayer *layer) {
 
   GRect pos = layer_get_frame(bitmap_layer_get_layer(layer));
   layer_remove_from_parent(bitmap_layer_get_layer(layer));
@@ -68,7 +59,7 @@ void load_image_into_layer(uint32_t resource, GBitmap *bitmap, BitmapLayer *laye
 
   layer = bitmap_layer_create(pos);
   bitmap_layer_set_compositing_mode(layer, GCompOpAnd);
-  bitmap = gbitmap_create_with_resource(resource);
+  bitmap = gbitmap_create_as_sub_bitmap(source, offset);
   bitmap_layer_set_bitmap(layer, bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(layer));
 }
@@ -95,30 +86,31 @@ void set_digital_text(struct tm *time) {
       text_layer_set_text(AmPm, "");
     }
   }
+  GRect hourtensnum;
   if (clock_is_24h_style() || hourtens == 1) {
-    load_image_into_layer(LARGE_NUMS[hourtens], DigitalTimeImages[0],
-			  DigitalTime[0]);
+    hourtensnum = GRect(16*hourtens, 0, 16, 26);
   } else {
-    load_image_into_layer(RESOURCE_ID_IMAGE_LARGE_BLANK, DigitalTimeImages[0],
-			  DigitalTime[0]);
+    hourtensnum = GRect(176, 0, 16, 26);
   }
-  load_image_into_layer(LARGE_NUMS[hourunits], DigitalTimeImages[1],
-			DigitalTime[1]);
+  load_image_into_layer(LARGE_NUMS, hourtensnum,
+			DigitalTimeImages[0], DigitalTime[0]);
+  load_image_into_layer(LARGE_NUMS, GRect(16*hourunits, 0, 16, 26),
+			DigitalTimeImages[1], DigitalTime[1]);
   int minutetens = time->tm_min / 10;
-  load_image_into_layer(LARGE_NUMS[minutetens], DigitalTimeImages[2],
-			DigitalTime[2]);
+  load_image_into_layer(LARGE_NUMS, GRect(16*minutetens, 0, 16, 26),
+			DigitalTimeImages[2], DigitalTime[2]);
   int minuteunits = time->tm_min % 10;
-  load_image_into_layer(LARGE_NUMS[minuteunits], DigitalTimeImages[3],
-			DigitalTime[3]);
+  load_image_into_layer(LARGE_NUMS, GRect(16*minuteunits, 0, 16, 26),
+			DigitalTimeImages[3], DigitalTime[3]);
 }
 
 void set_digitals_text(struct tm *time) {
   int secondtens = time->tm_sec / 10;
-  load_image_into_layer(MID_NUMS[secondtens], DigitalTimeImages[4],
-			DigitalTime[4]);
+  load_image_into_layer(MID_NUMS, GRect(8*secondtens, 0, 8, 14),
+			DigitalTimeImages[4], DigitalTime[4]);
   int secondunits = time->tm_sec % 10;
-  load_image_into_layer(MID_NUMS[secondunits], DigitalTimeImages[5],
-			DigitalTime[5]);
+  load_image_into_layer(MID_NUMS, GRect(8*secondunits, 0, 8, 14),
+			DigitalTimeImages[5], DigitalTime[5]);
 }
 
 void set_date_text(char *DateText) {
@@ -179,6 +171,8 @@ void display_init() {
   // load resources
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));
   DateFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
+  LARGE_NUMS = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_NUMS);
+  MID_NUMS = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MID_NUMS);
 
   // Math says a 128px box should be offset 8 pixels to be centred
   // in a 144px display. Pebble seems to say otherwise, though.
@@ -197,12 +191,13 @@ void display_init() {
   for (int i=0; i< 4; i++) {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(DigitalTime[i]));
-    DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_0);
+    DigitalTimeImages[i] = gbitmap_create_as_sub_bitmap(LARGE_NUMS,
+							 GRect(176, 0, 16, 26));
     bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
   }
   ColonLayer = bitmap_layer_create(GRect(64, 141, 16, 26)); // TODO: Shrink this image
   GBitmap *colon;
-  colon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
+  colon = gbitmap_create_as_sub_bitmap(LARGE_NUMS, GRect(160, 0, 16, 26));
   bitmap_layer_set_bitmap(ColonLayer, colon);
   layer_add_child(window_get_root_layer(window),
 		  bitmap_layer_get_layer(ColonLayer));
@@ -213,7 +208,8 @@ void display_init() {
   for (int i=4; i< 6; i++) {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(DigitalTime[i]));
-    DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MID_0);
+    DigitalTimeImages[i] = gbitmap_create_as_sub_bitmap(MID_NUMS,
+							GRect(0, 0, 8, 14));
     bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
   }
 
@@ -294,6 +290,8 @@ void display_deinit() {
   layer_destroy(AnalogueMinuteLayer);
   text_layer_destroy(FaceLabel);
   gbitmap_destroy(Background);
+  gbitmap_destroy(LARGE_NUMS);
+  gbitmap_destroy(MID_NUMS);
   bitmap_layer_destroy(DigitalWindow);
   if (!clock_is_24h_style()) {
     text_layer_destroy(AmPm);
