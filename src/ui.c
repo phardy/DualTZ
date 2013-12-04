@@ -127,15 +127,10 @@ void set_tzoffset_text(char *TZOffsetText) {
   text_layer_set_text(TZOffset, TZOffsetText);
 }
 
-void set_digital_text(struct tm *time) {
-  int hour = time->tm_hour;
-  int minute = time->tm_min;
+void set_digital_text(struct tm *t) {
+  int hour = t->tm_hour;
+  int minute = t->tm_min;
   if (!clock_is_24h_style()) {
-    if (hour < 12) {
-      text_layer_set_text(AmPm, "");
-    } else {
-      text_layer_set_text(AmPm, "PM");
-    }
     if (hour > 12) {
       hour = hour - 12;
     }
@@ -155,6 +150,12 @@ void set_digital_text(struct tm *time) {
   load_image_into_slot(LARGE_NUMS[minutetens], 2);
   int minuteunits = minute % 10;
   load_image_into_slot(LARGE_NUMS[minuteunits], 3);
+
+  if (!clock_is_24h_style() && t->tm_hour >= 12) {
+    layer_remove_from_parent(text_layer_get_layer(AmPm));
+    layer_add_child(window_get_root_layer(window),
+		    text_layer_get_layer(AmPm));
+  }
 }
 
 void set_digitals_text(struct tm *time) {
@@ -240,8 +241,6 @@ void display_init() {
   for (int i=0; i< 4; i++) {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
-    DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_0);
-    bitmap_layer_set_bitmap(DigitalTimeLayers[i], DigitalTimeImages[i]);
   }
   ColonLayer = bitmap_layer_create(GRect(64, 141, 16, 26)); // TODO: Shrink this image
   GBitmap *colon;
@@ -256,8 +255,6 @@ void display_init() {
   for (int i=4; i< 6; i++) {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
-    DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MID_0);
-    bitmap_layer_set_bitmap(DigitalTimeLayers[i], DigitalTimeImages[i]);
   }
 
   // timezone name display
@@ -284,16 +281,6 @@ void display_init() {
   layer_add_child(window_get_root_layer(window),
 		  text_layer_get_layer(Date));
 
-  // AM/PM display
-  if (!clock_is_24h_style()) {
-    AmPm = text_layer_create(GRect(20, 153, 20, 20));
-    text_layer_set_text_alignment(AmPm, GTextAlignmentLeft);
-    text_layer_set_text_color(AmPm, GTextAlignmentLeft);
-    text_layer_set_font(AmPm, TZFont);
-    layer_add_child(window_get_root_layer(window),
-		    text_layer_get_layer(AmPm));
-  }
-
   // load background image
   // (it goes over the top to prevent clipping that was happening in old SDK)
   DigitalWindow = bitmap_layer_create(window_bounds);
@@ -303,6 +290,14 @@ void display_init() {
   bitmap_layer_set_compositing_mode(DigitalWindow, GCompOpAnd);
   layer_add_child(window_get_root_layer(window),
 		  bitmap_layer_get_layer(DigitalWindow));
+  // AM/PM display
+  if (!clock_is_24h_style()) {
+    AmPm = text_layer_create(GRect(20, 153, 20, 20));
+    text_layer_set_text_alignment(AmPm, GTextAlignmentLeft);
+    text_layer_set_text_color(AmPm, GTextAlignmentLeft);
+    text_layer_set_font(AmPm, TZFont);
+    text_layer_set_text(AmPm, "PM");
+  }
 
   // static face stuff
   FaceLabel = text_layer_create(GRect(52, 8, 40, 15));
