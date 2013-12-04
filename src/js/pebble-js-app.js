@@ -20,9 +20,9 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	var name = params['remote-tz-name'].replace('+', ' ');
 	params['remote-tz-name'] = name;
 	console.log(JSON.stringify(params));
-	window.localStorage.setItem('remote-tz-name' + params['remote-tz-name']);
-	window.localStorage.setItem('remote-tz-offset' + params['remote-tz-offset']);
-	window.localStorage.setItem('local-tz-offset' + params['local-tz-offset']);
+	window.localStorage.setItem('remote-tz-name', params['remote-tz-name']);
+	window.localStorage.setItem('remote-tz-offset', params['remote-tz-offset']);
+	window.localStorage.setItem('local-tz-offset', params['local-tz-offset']);
 	Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
     } else {
 	console.log('no options received');
