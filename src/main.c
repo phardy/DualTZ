@@ -11,8 +11,7 @@
 static TZInfo DisplayTZ;
 
 static char DateText[] = "  ";
-static char DigitalTZOffset[] = "      ";
-
+static char TZOffset[] = "      ";
 // data received from the config page
 enum {
   CONFIG_KEY_REMOTE_TZ_NAME = 0x5D,
@@ -71,6 +70,10 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
 void handle_init() {
   read_config(&DisplayTZ);
   display_init();
+
+  set_tzname_text(DisplayTZ.tz_name);
+  format_timezone(DisplayTZ.remote_tz_offset, TZOffset);
+  set_tzoffset_text(TZOffset);
 
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
