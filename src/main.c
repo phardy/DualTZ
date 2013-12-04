@@ -92,22 +92,26 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
 }
 
 void in_dropped_handler(AppMessageResult reason, void *context) {
-  // stub. request again?
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Data from phone dropped");
 }
 
 void in_received_handler(DictionaryIterator *received, void *context) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Data packet received");
   Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
   Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
   Tuple *local_tz_offset_tuple = dict_find(received, CONFIG_KEY_LOCAL_TZ_OFFSET);
 
   if (remote_tz_name_tuple) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got tz_name");
     strncpy(DisplayTZ.tz_name, remote_tz_name_tuple->value->cstring,
 	    TZ_NAME_LEN);
   }
   if (remote_tz_offset_tuple) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got local_tz_offset");
     DisplayTZ.remote_tz_offset = remote_tz_offset_tuple->value->int32;
   }
   if (local_tz_offset_tuple) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got remote_tz_offset");
     DisplayTZ.local_tz_offset = local_tz_offset_tuple->value->int32;
   }
   set_tzname_text(DisplayTZ.tz_name);
