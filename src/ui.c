@@ -344,5 +344,6 @@ void display_deinit() {
     gbitmap_destroy(DigitalTimeImages[i]);
     bitmap_layer_destroy(DigitalTimeLayers[i]);
   }
+  fonts_unload_custom_font(TZFont);
   window_destroy(window);
 }
