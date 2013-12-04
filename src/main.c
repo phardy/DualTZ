@@ -58,7 +58,8 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
     if (now->tm_min % 2 == 0) {
       update_hour_hand();
     }
-
+  }
+  if (now->tm_sec == 0) {
     update_digital_time(now);
   }
   if (now->tm_hour == 0 && now->tm_min == 0) {
