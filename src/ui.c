@@ -234,15 +234,15 @@ void display_init() {
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // main time display
-  DigitalTimeLayers[0] = bitmap_layer_create(GRect(30, 141, 16, 26)); // no margin/padding yet
-  DigitalTimeLayers[1] = bitmap_layer_create(GRect(48, 141, 16, 26));
-  DigitalTimeLayers[2] = bitmap_layer_create(GRect(71, 141, 16, 26));
-  DigitalTimeLayers[3] = bitmap_layer_create(GRect(90, 141, 16, 26));
+  DigitalTimeLayers[0] = bitmap_layer_create(GRect(35, 141, 16, 26)); // no margin/padding yet
+  DigitalTimeLayers[1] = bitmap_layer_create(GRect(53, 141, 16, 26));
+  DigitalTimeLayers[2] = bitmap_layer_create(GRect(76, 141, 16, 26));
+  DigitalTimeLayers[3] = bitmap_layer_create(GRect(95, 141, 16, 26));
   for (int i=0; i< 4; i++) {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
   }
-  ColonLayer = bitmap_layer_create(GRect(64, 141, 16, 26)); // TODO: Shrink this image
+  ColonLayer = bitmap_layer_create(GRect(69, 141, 16, 26)); // TODO: Shrink this image
   GBitmap *colon;
   colon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
   bitmap_layer_set_bitmap(ColonLayer, colon);
@@ -250,8 +250,8 @@ void display_init() {
 		  bitmap_layer_get_layer(ColonLayer));
 
   // seconds display
-  DigitalTimeLayers[4] = bitmap_layer_create(GRect(110, 153, 8, 14));
-  DigitalTimeLayers[5] = bitmap_layer_create(GRect(120, 153, 8, 14));
+  DigitalTimeLayers[4] = bitmap_layer_create(GRect(115, 153, 8, 14));
+  DigitalTimeLayers[5] = bitmap_layer_create(GRect(125, 153, 8, 14));
   for (int i=4; i< 6; i++) {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
