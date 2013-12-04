@@ -17,9 +17,29 @@ static char DigitalTZOffset[] = "      ";
 // data received from the config page
 enum {
   CONFIG_KEY_REMOTE_TZ_NAME = 0x5D,
-  CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET = 0x5E,
-  CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET = 0x5F
+  CONFIG_KEY_REMOTE_TZ_OFFSET = 0x5E,
+  CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F
 };
+
+void read_config(TZInfo *tzinfo) {
+  if (persist_exists(CONFIG_KEY_REMOTE_TZ_NAME)) {
+    persist_read_string(CONFIG_KEY_REMOTE_TZ_NAME,
+			tzinfo->tz_name, TZ_NAME_LEN);
+    tzinfo->tz_name[TZ_NAME_LEN] = '\0';
+  } else {
+    strncpy(tzinfo->tz_name, "local time", TZ_NAME_LEN);
+  }
+  if (persist_exists(CONFIG_KEY_REMOTE_TZ_OFFSET)) {
+    tzinfo->remote_tz_offset = persist_read_int(CONFIG_KEY_REMOTE_TZ_OFFSET);
+  } else {
+    tzinfo->remote_tz_offset = 0;
+  }
+  if (persist_exists(CONFIG_KEY_LOCAL_TZ_OFFSET)) {
+    tzinfo->local_tz_offset = persist_read_int(CONFIG_KEY_LOCAL_TZ_OFFSET);
+  } else {
+    tzinfo->local_tz_offset = 0;
+  }
+}
 
 void update_digital_time(struct tm *time) {
   time_t t1 = p_mktime(time);
@@ -29,64 +49,6 @@ void update_digital_time(struct tm *time) {
   adjTime = gmtime(&t);
   set_digital_text(adjTime);
 }
-
-void in_dropped_handler(AppMessageResult reason, void *context) {
-  // stub. request again?
-}
-
-void apply_stored_config() {
-  if (persist_exists(CONFIG_KEY_REMOTE_TZ_NAME)) {
-    persist_read_string(CONFIG_KEY_REMOTE_TZ_NAME,
-			DisplayTZ.tz_name, TZ_NAME_LEN);
-    DisplayTZ.tz_name[TZ_NAME_LEN] = '\0';
-  } else {
-    strncpy(DisplayTZ.tz_name, "local time", TZ_NAME_LEN);
-  }
-  set_tzname_text(DisplayTZ.tz_name);
-  if (persist_exists(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET)) {
-    DisplayTZ.remote_tz_offset = persist_read_int(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET);
-    format_timezone(DisplayTZ.remote_tz_offset, DigitalTZOffset);
-    set_tzoffset_text(DigitalTZOffset);
-  } else {
-    // Don't write a timezone to the display here.
-    DisplayTZ.remote_tz_offset = 0;
-  }
-  if (persist_exists(CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET)) {
-    localTZOffset = DisplayTZ.remote_tz_offset - 
-      persist_read_int(CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET);
-  } else {
-    localTZOffset = 0;
-  }
-
-  time_t t = time(NULL);
-  struct tm *now;
-  now = localtime(&t);
-  update_digital_time(now);
-}
-
-void in_received_handler(DictionaryIterator *received, void *context) {
-  Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
-  Tuple *remote_remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET);
-  Tuple *local_remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET);
-
-  // Right now we only ever get all three in one packet
-  if (remote_tz_name_tuple && remote_remote_tz_offset_tuple && local_remote_tz_offset_tuple) {
-    int remote_tz_name_write = persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME,
-						    remote_tz_name_tuple->value->cstring);
-    int remote_remote_tz_offset_write = persist_write_int(CONFIG_KEY_REMOTE_REMOTE_TZ_OFFSET,
-						   remote_remote_tz_offset_tuple->value->int32);
-    int local_remote_tz_offset_write = persist_write_int(CONFIG_KEY_LOCAL_REMOTE_TZ_OFFSET,
-						  local_remote_tz_offset_tuple->value->int32);
-#ifdef DEBUG
-    debug_storage_write(remote_tz_name_write);
-    debug_storage_write(remote_remote_tz_offset_write);
-    debug_storage_write(local_remote_tz_offset_write);
-#endif
-
-    apply_stored_config();
-  }
-}
-
 
 void handle_second_tick(struct tm *now, TimeUnits units_changed) {
   set_digitals_text(now);
@@ -107,26 +69,22 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
 }
 
 void handle_init() {
-
+  read_config(&DisplayTZ);
   display_init();
 
-  strcpy(DisplayTZ.tz_name, "UTC");
-  DisplayTZ.remote_tz_offset = 0;
-
-  // write current time to display
-  apply_stored_config();
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
   strftime(DateText, sizeof(DateText), "%e", now);
   set_date_text(DateText);
   update_minute_hand();
   update_hour_hand();
+  update_digital_time(now);
 
-  app_message_register_inbox_received(in_received_handler);
-  app_message_register_inbox_dropped(in_dropped_handler);
-  const uint32_t inbound_size = 64;
-  const uint32_t outbound_size = 64;
-  app_message_open(inbound_size, outbound_size);
+  /* app_message_register_inbox_received(in_received_handler); */
+  /* app_message_register_inbox_dropped(in_dropped_handler); */
+  /* const uint32_t inbound_size = 64; */
+  /* const uint32_t outbound_size = 64; */
+  /* app_message_open(inbound_size, outbound_size); */
 
   tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
 }
