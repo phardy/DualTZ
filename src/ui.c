@@ -17,6 +17,14 @@ const int LARGE_NUMS[10] = {
   RESOURCE_ID_IMAGE_LARGE_6, RESOURCE_ID_IMAGE_LARGE_7,
   RESOURCE_ID_IMAGE_LARGE_8, RESOURCE_ID_IMAGE_LARGE_9};
 
+#define TOTAL_IMAGE_SLOTS 6
+#define EMPTY_SLOT -1
+static int image_slot_state[TOTAL_IMAGE_SLOTS] = {EMPTY_SLOT, EMPTY_SLOT,
+					      EMPTY_SLOT, EMPTY_SLOT,
+					      EMPTY_SLOT, EMPTY_SLOT};
+static GBitmap *DigitalTimeImages[TOTAL_IMAGE_SLOTS];
+static BitmapLayer *DigitalTimeLayers[TOTAL_IMAGE_SLOTS];
+
 Window *window;
 GRect AnalogueGRect;
 BitmapLayer *DigitalWindow;
@@ -24,8 +32,6 @@ BitmapLayer *DigitalWindow;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
 static GBitmap *Background;
-static GBitmap *DigitalTimeImages[6];
-static BitmapLayer *DigitalTime[6];
 static BitmapLayer *ColonLayer;
 TextLayer *TZName;
 TextLayer *TZOffset;
@@ -34,8 +40,6 @@ TextLayer *AmPm;
 TextLayer *FaceLabel;
 static GFont TZFont;
 static GFont DateFont;
-
-
 
 static const GPathInfo HOUR_HAND_PATH_POINTS = {
   .num_points = 5,
@@ -59,18 +63,60 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
-void load_image_into_layer(uint32_t resource, GBitmap *bitmap, BitmapLayer *layer) {
+static void load_digit_image_into_slot(int slot_number, uint32_t resource_id,
+				       GRect frame) {
+  /*
 
-  GRect pos = layer_get_frame(bitmap_layer_get_layer(layer));
-  layer_remove_from_parent(bitmap_layer_get_layer(layer));
-  gbitmap_destroy(bitmap);
-  bitmap_layer_destroy(layer);
+     Loads the digit image from the application's resources and
+     displays it on-screen in the correct location.
 
-  layer = bitmap_layer_create(pos);
-  bitmap_layer_set_compositing_mode(layer, GCompOpAnd);
-  bitmap = gbitmap_create_with_resource(resource);
-  bitmap_layer_set_bitmap(layer, bitmap);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(layer));
+     Each slot is a quarter of the screen.
+
+   */
+
+  // TODO: Signal these error(s)?
+
+  if ((slot_number < 0) || (slot_number >= TOTAL_IMAGE_SLOTS)) {
+    return;
+  }
+
+  if (image_slot_state[slot_number] != EMPTY_SLOT) {
+    return;
+  }
+  image_slot_state[slot_number] = resource_id;
+  DigitalTimeImages[slot_number] = gbitmap_create_with_resource(resource_id);
+
+  BitmapLayer *bitmap_layer = bitmap_layer_create(frame);
+  DigitalTimeLayers[slot_number] = bitmap_layer;
+  bitmap_layer_set_bitmap(bitmap_layer, DigitalTimeImages[slot_number]);
+  Layer *window_layer = window_get_root_layer(window);
+  layer_add_child(window_layer, bitmap_layer_get_layer(bitmap_layer));
+}
+
+static void unload_digit_image_from_slot(int slot_number) {
+  /*
+
+     Removes the digit from the display and unloads the image resource
+     to free up RAM.
+
+     Can handle being called on an already empty slot.
+
+   */
+
+  if (image_slot_state[slot_number] != EMPTY_SLOT) {
+    layer_remove_from_parent(bitmap_layer_get_layer(DigitalTimeLayers[slot_number]));
+    bitmap_layer_destroy(DigitalTimeLayers[slot_number]);
+    gbitmap_destroy(DigitalTimeImages[slot_number]);
+    image_slot_state[slot_number] = EMPTY_SLOT;
+  }
+
+}
+
+void load_image_into_slot(uint32_t resource, int slot) {
+  GRect pos = layer_get_frame(bitmap_layer_get_layer(DigitalTimeLayers[slot]));
+
+  unload_digit_image_from_slot(slot);
+  load_digit_image_into_slot(slot, resource, pos);
 }
 
 void set_tzname_text(char *TZNameText) {
@@ -100,29 +146,22 @@ void set_digital_text(struct tm *time) {
   int hourtens = hour / 10;
   int hourunits = hour % 10;
   if (clock_is_24h_style() || hourtens == 1) {
-    load_image_into_layer(LARGE_NUMS[hourtens], DigitalTimeImages[0],
-			  DigitalTime[0]);
+    load_image_into_slot(LARGE_NUMS[hourtens], 0);
   } else {
-    load_image_into_layer(RESOURCE_ID_IMAGE_LARGE_BLANK, DigitalTimeImages[0],
-			  DigitalTime[0]);
+    load_image_into_slot(RESOURCE_ID_IMAGE_LARGE_BLANK, 0);
   }
-  load_image_into_layer(LARGE_NUMS[hourunits], DigitalTimeImages[1],
-			DigitalTime[1]);
+  load_image_into_slot(LARGE_NUMS[hourunits], 1);
   int minutetens = minute / 10;
-  load_image_into_layer(LARGE_NUMS[minutetens], DigitalTimeImages[2],
-			DigitalTime[2]);
+  load_image_into_slot(LARGE_NUMS[minutetens], 2);
   int minuteunits = minute % 10;
-  load_image_into_layer(LARGE_NUMS[minuteunits], DigitalTimeImages[3],
-			DigitalTime[3]);
+  load_image_into_slot(LARGE_NUMS[minuteunits], 3);
 }
 
 void set_digitals_text(struct tm *time) {
   int secondtens = time->tm_sec / 10;
-  load_image_into_layer(MID_NUMS[secondtens], DigitalTimeImages[4],
-			DigitalTime[4]);
+  load_image_into_slot(MID_NUMS[secondtens], 4);
   int secondunits = time->tm_sec % 10;
-  load_image_into_layer(MID_NUMS[secondunits], DigitalTimeImages[5],
-			DigitalTime[5]);
+  load_image_into_slot(MID_NUMS[secondunits], 5);
 }
 
 void set_date_text(char *DateText) {
@@ -194,15 +233,15 @@ void display_init() {
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // main time display
-  DigitalTime[0] = bitmap_layer_create(GRect(30, 141, 16, 26)); // no margin/padding yet
-  DigitalTime[1] = bitmap_layer_create(GRect(48, 141, 16, 26));
-  DigitalTime[2] = bitmap_layer_create(GRect(71, 141, 16, 26));
-  DigitalTime[3] = bitmap_layer_create(GRect(90, 141, 16, 26));
+  DigitalTimeLayers[0] = bitmap_layer_create(GRect(30, 141, 16, 26)); // no margin/padding yet
+  DigitalTimeLayers[1] = bitmap_layer_create(GRect(48, 141, 16, 26));
+  DigitalTimeLayers[2] = bitmap_layer_create(GRect(71, 141, 16, 26));
+  DigitalTimeLayers[3] = bitmap_layer_create(GRect(90, 141, 16, 26));
   for (int i=0; i< 4; i++) {
     layer_add_child(window_get_root_layer(window),
-		    bitmap_layer_get_layer(DigitalTime[i]));
+		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
     DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_0);
-    bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
+    bitmap_layer_set_bitmap(DigitalTimeLayers[i], DigitalTimeImages[i]);
   }
   ColonLayer = bitmap_layer_create(GRect(64, 141, 16, 26)); // TODO: Shrink this image
   GBitmap *colon;
@@ -212,13 +251,13 @@ void display_init() {
 		  bitmap_layer_get_layer(ColonLayer));
 
   // seconds display
-  DigitalTime[4] = bitmap_layer_create(GRect(110, 153, 8, 14));
-  DigitalTime[5] = bitmap_layer_create(GRect(120, 153, 8, 14));
+  DigitalTimeLayers[4] = bitmap_layer_create(GRect(110, 153, 8, 14));
+  DigitalTimeLayers[5] = bitmap_layer_create(GRect(120, 153, 8, 14));
   for (int i=4; i< 6; i++) {
     layer_add_child(window_get_root_layer(window),
-		    bitmap_layer_get_layer(DigitalTime[i]));
+		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
     DigitalTimeImages[i] = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MID_0);
-    bitmap_layer_set_bitmap(DigitalTime[i], DigitalTimeImages[i]);
+    bitmap_layer_set_bitmap(DigitalTimeLayers[i], DigitalTimeImages[i]);
   }
 
   // timezone name display
@@ -308,7 +347,7 @@ void display_deinit() {
   text_layer_destroy(TZName);
   for (int i=0; i< 6; i++) {
     gbitmap_destroy(DigitalTimeImages[i]);
-    bitmap_layer_destroy(DigitalTime[i]);
+    bitmap_layer_destroy(DigitalTimeLayers[i]);
   }
   window_destroy(window);
 }
