@@ -9,7 +9,6 @@
 #endif
 
 static TZInfo DisplayTZ;
-int32_t localTZOffset;
 
 static char DateText[] = "  ";
 static char DigitalTZOffset[] = "      ";
@@ -43,7 +42,7 @@ void read_config(TZInfo *tzinfo) {
 
 void update_digital_time(struct tm *time) {
   time_t t1 = p_mktime(time);
-  int32_t t = (int32_t)t1 + localTZOffset;
+  time_t t = t1 - DisplayTZ.local_tz_offset + DisplayTZ.remote_tz_offset;
 
   struct tm *adjTime;
   adjTime = gmtime(&t);
