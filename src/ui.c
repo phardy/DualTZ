@@ -23,6 +23,7 @@ static int image_slot_state[TOTAL_IMAGE_SLOTS] = {EMPTY_SLOT, EMPTY_SLOT,
 					      EMPTY_SLOT, EMPTY_SLOT,
 					      EMPTY_SLOT, EMPTY_SLOT};
 static GBitmap *DigitalTimeImages[TOTAL_IMAGE_SLOTS];
+static GBitmap *ColonBitmap;
 static GRect DigitalTimeDigits[TOTAL_IMAGE_SLOTS];
 static Layer *DigitalTimeLayer;
 struct tm *DigitalTime;
@@ -105,6 +106,7 @@ void update_digital_digit(int slot, int digit) {
 }
 
 void digital_layer_update_callback(Layer *me, GContext* ctx) {
+  graphics_draw_bitmap_in_rect(ctx, ColonBitmap, GRect(69, 13, 16, 26));
   // Splitting the seconds layer off is probably more efficient.
   int hour = DigitalTime->tm_hour;
   int minute = DigitalTime->tm_min;
@@ -137,8 +139,6 @@ void digital_layer_update_callback(Layer *me, GContext* ctx) {
     update_digital_digit(i, displaytime[i]);
     graphics_draw_bitmap_in_rect(ctx, DigitalTimeImages[i], DigitalTimeDigits[i]);
   }
-
-  // Draw colon
 
   // TODO: Replace this with a bitmap?
   if (!clock_is_24h_style() && DigitalTime->tm_hour >= 12) {
@@ -215,6 +215,7 @@ void display_init() {
   DigitalTimeDigits[4] = GRect(115, 25, 8, 14);
   DigitalTimeDigits[5] = GRect(125, 25, 8, 14);
 
+  ColonBitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
   // TODO: Move to the update. But I want to remember this GRect
   // ColonLayer = bitmap_layer_create(GRect(69, 141, 16, 26)); // TODO: Shrink this image
 
@@ -305,6 +306,7 @@ void display_deinit() {
       gbitmap_destroy(DigitalTimeImages[i]);
     }
   }
+  gbitmap_destroy(ColonBitmap);
   layer_destroy(DigitalTimeLayer);
   window_destroy(window);
   fonts_unload_custom_font(TZFont);
