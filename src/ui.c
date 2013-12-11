@@ -205,17 +205,16 @@ void display_init() {
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // digital time display
-  DigitalTimeDigits[0] = GRect(35, 141, 16, 26);
-  DigitalTimeDigits[1] = GRect(53, 141, 16, 26);
-  DigitalTimeDigits[2] = GRect(76, 141, 16, 26);
-  DigitalTimeDigits[3] = GRect(95, 141, 16, 26);
-  DigitalTimeDigits[4] = GRect(115, 153, 8, 14);
-  DigitalTimeDigits[5] = GRect(125, 153, 8, 14);
-
-  // DigitalTimeLayer = layer_create(GRect(0, 128, 144, 40)); // Just the window
-  DigitalTimeLayer = layer_create(GRect(0, 0, 144, 168));
+  DigitalTimeLayer = layer_create(GRect(0, 128, 144, 40));
   layer_set_update_proc(DigitalTimeLayer, digital_layer_update_callback);
   layer_add_child(window_get_root_layer(window), DigitalTimeLayer);
+  DigitalTimeDigits[0] = GRect(35, 13, 16, 26);
+  DigitalTimeDigits[1] = GRect(53, 13, 16, 26);
+  DigitalTimeDigits[2] = GRect(76, 13, 16, 26);
+  DigitalTimeDigits[3] = GRect(95, 13, 16, 26);
+  DigitalTimeDigits[4] = GRect(115, 25, 8, 14);
+  DigitalTimeDigits[5] = GRect(125, 25, 8, 14);
+
   // TODO: Move to the update. But I want to remember this GRect
   // ColonLayer = bitmap_layer_create(GRect(69, 141, 16, 26)); // TODO: Shrink this image
 
