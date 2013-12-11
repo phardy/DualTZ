@@ -24,16 +24,6 @@
 		"file": "fonts/digital-7.ttf"
 	    },
 	    {
-		"type": "font",
-		"name": "FONT_DIGITAL_20",
-		"file": "fonts/digital-7.ttf"
-	    },
-	    {
-		"type": "font",
-		"name": "FONT_DIGITAL_40",
-		"file": "fonts/digital-7.ttf"
-	    },
-	    {
 		"type": "png",
 		"name": "IMAGE_DIGITAL_BG",
 		"file": "images/digital-display.png"
