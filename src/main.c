@@ -69,20 +69,17 @@ void update_digital_time(struct tm *time) {
 
   struct tm *adjTime;
   adjTime = gmtime(&t);
-  set_digital_text(adjTime);
+  set_digital_time(adjTime);
 }
 
 void handle_second_tick(struct tm *now, TimeUnits units_changed) {
-  set_digitals_text(now);
+  update_digital_time(now);
 
   if (now->tm_sec % 30 == 0) {
     update_minute_hand();
     if (now->tm_min % 2 == 0) {
       update_hour_hand();
     }
-  }
-  if (now->tm_sec == 0) {
-    update_digital_time(now);
   }
   if (now->tm_hour == 0 && now->tm_min == 0) {
     strftime(DateText, sizeof(DateText),

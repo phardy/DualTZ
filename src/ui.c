@@ -23,7 +23,9 @@ static int image_slot_state[TOTAL_IMAGE_SLOTS] = {EMPTY_SLOT, EMPTY_SLOT,
 					      EMPTY_SLOT, EMPTY_SLOT,
 					      EMPTY_SLOT, EMPTY_SLOT};
 static GBitmap *DigitalTimeImages[TOTAL_IMAGE_SLOTS];
-static BitmapLayer *DigitalTimeLayers[TOTAL_IMAGE_SLOTS];
+static GRect DigitalTimeDigits[TOTAL_IMAGE_SLOTS];
+static Layer *DigitalTimeLayer;
+struct tm *DigitalTime;
 
 Window *window;
 GRect AnalogueGRect;
@@ -32,7 +34,6 @@ BitmapLayer *DigitalWindow;
 Layer *AnalogueHourLayer, *AnalogueMinuteLayer;
 static GPath *AnalogueHourPath, *AnalogueMinutePath;
 static GBitmap *Background;
-static BitmapLayer *ColonLayer;
 TextLayer *TZName;
 TextLayer *TZOffset;
 TextLayer *Date;
@@ -63,62 +64,6 @@ static const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
-static void load_digit_image_into_slot(int slot_number, uint32_t resource_id,
-				       GRect frame) {
-  /*
-
-     Loads the digit image from the application's resources and
-     displays it on-screen in the correct location.
-
-     Each slot is a quarter of the screen.
-
-   */
-
-  // TODO: Signal these error(s)?
-
-  if ((slot_number < 0) || (slot_number >= TOTAL_IMAGE_SLOTS)) {
-    return;
-  }
-
-  if (image_slot_state[slot_number] != EMPTY_SLOT) {
-    return;
-  }
-  image_slot_state[slot_number] = resource_id;
-  DigitalTimeImages[slot_number] = gbitmap_create_with_resource(resource_id);
-
-  BitmapLayer *bitmap_layer = bitmap_layer_create(frame);
-  DigitalTimeLayers[slot_number] = bitmap_layer;
-  bitmap_layer_set_bitmap(bitmap_layer, DigitalTimeImages[slot_number]);
-  Layer *window_layer = window_get_root_layer(window);
-  layer_add_child(window_layer, bitmap_layer_get_layer(bitmap_layer));
-}
-
-static void unload_digit_image_from_slot(int slot_number) {
-  /*
-
-     Removes the digit from the display and unloads the image resource
-     to free up RAM.
-
-     Can handle being called on an already empty slot.
-
-   */
-
-  if (image_slot_state[slot_number] != EMPTY_SLOT) {
-    layer_remove_from_parent(bitmap_layer_get_layer(DigitalTimeLayers[slot_number]));
-    bitmap_layer_destroy(DigitalTimeLayers[slot_number]);
-    gbitmap_destroy(DigitalTimeImages[slot_number]);
-    image_slot_state[slot_number] = EMPTY_SLOT;
-  }
-
-}
-
-void load_image_into_slot(uint32_t resource, int slot) {
-  GRect pos = layer_get_frame(bitmap_layer_get_layer(DigitalTimeLayers[slot]));
-
-  unload_digit_image_from_slot(slot);
-  load_digit_image_into_slot(slot, resource, pos);
-}
-
 void set_tzname_text(char *TZNameText) {
   text_layer_set_text(TZName, TZNameText);
 }
@@ -127,42 +72,9 @@ void set_tzoffset_text(char *TZOffsetText) {
   text_layer_set_text(TZOffset, TZOffsetText);
 }
 
-void set_digital_text(struct tm *t) {
-  int hour = t->tm_hour;
-  int minute = t->tm_min;
-  if (!clock_is_24h_style()) {
-    if (hour > 12) {
-      hour = hour - 12;
-    }
-    if (hour == 0) {
-      hour = 12;
-    }
-  }
-  int hourtens = hour / 10;
-  int hourunits = hour % 10;
-  if (clock_is_24h_style() || hourtens == 1) {
-    load_image_into_slot(LARGE_NUMS[hourtens], 0);
-  } else {
-    load_image_into_slot(RESOURCE_ID_IMAGE_LARGE_BLANK, 0);
-  }
-  load_image_into_slot(LARGE_NUMS[hourunits], 1);
-  int minutetens = minute / 10;
-  load_image_into_slot(LARGE_NUMS[minutetens], 2);
-  int minuteunits = minute % 10;
-  load_image_into_slot(LARGE_NUMS[minuteunits], 3);
-
-  if (!clock_is_24h_style() && t->tm_hour >= 12) {
-    layer_remove_from_parent(text_layer_get_layer(AmPm));
-    layer_add_child(window_get_root_layer(window),
-		    text_layer_get_layer(AmPm));
-  }
-}
-
-void set_digitals_text(struct tm *time) {
-  int secondtens = time->tm_sec / 10;
-  load_image_into_slot(MID_NUMS[secondtens], 4);
-  int secondunits = time->tm_sec % 10;
-  load_image_into_slot(MID_NUMS[secondunits], 5);
+void set_digital_time(struct tm *t) {
+  DigitalTime = t;
+  layer_mark_dirty(DigitalTimeLayer);
 }
 
 void set_date_text(char *DateText) {
@@ -175,6 +87,65 @@ void update_minute_hand() {
 
 void update_hour_hand() {
   layer_mark_dirty(AnalogueHourLayer);
+}
+
+void update_digital_digit(int slot, int digit) {
+  if (image_slot_state[slot] != digit) {
+    if (image_slot_state[slot] != EMPTY_SLOT) {
+      gbitmap_destroy(DigitalTimeImages[slot]);
+    }
+    // 0-3 are large, 4,5 are smaller seconds digits
+    if (slot < 4) {
+      DigitalTimeImages[slot] = gbitmap_create_with_resource(LARGE_NUMS[digit]);
+    } else {
+      DigitalTimeImages[slot] = gbitmap_create_with_resource(MID_NUMS[digit]);
+    }
+    image_slot_state[slot] = digit;
+  }
+}
+
+void digital_layer_update_callback(Layer *me, GContext* ctx) {
+  // Splitting the seconds layer off is probably more efficient.
+  int hour = DigitalTime->tm_hour;
+  int minute = DigitalTime->tm_min;
+  int second = DigitalTime->tm_sec;
+  int displaytime[TOTAL_IMAGE_SLOTS];
+  if (!clock_is_24h_style()) {
+    if (hour > 12) {
+      hour = hour-12;
+    }
+    if (hour == 0) {
+      hour = 12;
+    }
+  }
+  displaytime[0] = hour / 10;
+  displaytime[1] = hour % 10;
+  displaytime[2] = minute / 10;
+  displaytime[3] = minute % 10;
+  displaytime[4] = second / 10;
+  displaytime[5] = second % 10;
+
+  if (clock_is_24h_style() || displaytime[0] == 1) {
+    update_digital_digit(0, displaytime[0]);
+    graphics_draw_bitmap_in_rect(ctx, DigitalTimeImages[0], DigitalTimeDigits[0]);
+  } else {
+    gbitmap_destroy(DigitalTimeImages[0]);
+    image_slot_state[0] = EMPTY_SLOT;
+  }
+
+  for (int i=1; i<TOTAL_IMAGE_SLOTS; i++) {
+    update_digital_digit(i, displaytime[i]);
+    graphics_draw_bitmap_in_rect(ctx, DigitalTimeImages[i], DigitalTimeDigits[i]);
+  }
+
+  // Draw colon
+
+  // TODO: Replace this with a bitmap?
+  if (!clock_is_24h_style() && DigitalTime->tm_hour >= 12) {
+    layer_remove_from_parent(text_layer_get_layer(AmPm));
+    layer_add_child(window_get_root_layer(window),
+		    text_layer_get_layer(AmPm));
+  }
 }
 
 void hour_display_layer_update_callback (Layer *me, GContext* ctx) {
@@ -233,29 +204,20 @@ void display_init() {
   window_stack_push(window, true /* Animated */);
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
-  // main time display
-  DigitalTimeLayers[0] = bitmap_layer_create(GRect(35, 141, 16, 26)); // no margin/padding yet
-  DigitalTimeLayers[1] = bitmap_layer_create(GRect(53, 141, 16, 26));
-  DigitalTimeLayers[2] = bitmap_layer_create(GRect(76, 141, 16, 26));
-  DigitalTimeLayers[3] = bitmap_layer_create(GRect(95, 141, 16, 26));
-  for (int i=0; i< 4; i++) {
-    layer_add_child(window_get_root_layer(window),
-		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
-  }
-  ColonLayer = bitmap_layer_create(GRect(69, 141, 16, 26)); // TODO: Shrink this image
-  GBitmap *colon;
-  colon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
-  bitmap_layer_set_bitmap(ColonLayer, colon);
-  layer_add_child(window_get_root_layer(window),
-		  bitmap_layer_get_layer(ColonLayer));
+  // digital time display
+  DigitalTimeDigits[0] = GRect(35, 141, 16, 26);
+  DigitalTimeDigits[1] = GRect(53, 141, 16, 26);
+  DigitalTimeDigits[2] = GRect(76, 141, 16, 26);
+  DigitalTimeDigits[3] = GRect(95, 141, 16, 26);
+  DigitalTimeDigits[4] = GRect(115, 153, 8, 14);
+  DigitalTimeDigits[5] = GRect(125, 153, 8, 14);
 
-  // seconds display
-  DigitalTimeLayers[4] = bitmap_layer_create(GRect(115, 153, 8, 14));
-  DigitalTimeLayers[5] = bitmap_layer_create(GRect(125, 153, 8, 14));
-  for (int i=4; i< 6; i++) {
-    layer_add_child(window_get_root_layer(window),
-		    bitmap_layer_get_layer(DigitalTimeLayers[i]));
-  }
+  // DigitalTimeLayer = layer_create(GRect(0, 128, 144, 40)); // Just the window
+  DigitalTimeLayer = layer_create(GRect(0, 0, 144, 168));
+  layer_set_update_proc(DigitalTimeLayer, digital_layer_update_callback);
+  layer_add_child(window_get_root_layer(window), DigitalTimeLayer);
+  // TODO: Move to the update. But I want to remember this GRect
+  // ColonLayer = bitmap_layer_create(GRect(69, 141, 16, 26)); // TODO: Shrink this image
 
   // timezone name display
   TZName = text_layer_create(GRect(14, 125, 95, 15));
@@ -331,19 +293,20 @@ void display_deinit() {
   gpath_destroy(AnalogueMinutePath);
   layer_destroy(AnalogueMinuteLayer);
   text_layer_destroy(FaceLabel);
-  gbitmap_destroy(Background);
-  bitmap_layer_destroy(DigitalWindow);
   if (!clock_is_24h_style()) {
     text_layer_destroy(AmPm);
   }
-  bitmap_layer_destroy(ColonLayer);
+  bitmap_layer_destroy(DigitalWindow);
+  gbitmap_destroy(Background);
   text_layer_destroy(Date);
   text_layer_destroy(TZOffset);
   text_layer_destroy(TZName);
   for (int i=0; i< 6; i++) {
-    gbitmap_destroy(DigitalTimeImages[i]);
-    bitmap_layer_destroy(DigitalTimeLayers[i]);
+    if (image_slot_state[i] != EMPTY_SLOT) {
+      gbitmap_destroy(DigitalTimeImages[i]);
+    }
   }
-  fonts_unload_custom_font(TZFont);
+  layer_destroy(DigitalTimeLayer);
   window_destroy(window);
+  fonts_unload_custom_font(TZFont);
 }
