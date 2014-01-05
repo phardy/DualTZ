@@ -123,6 +123,12 @@
 
       $().ready(function () {
 
+        function emptyFilterableList() {
+          $("#remotetz").html("");
+          $("#remotetz").listview("refresh");
+          $("#remotetz").trigger("updatelayout");
+        }
+
         function requestTimeout() {
           if (query_in_progress > 0) {
             console.log('TZ request timeout: ' + query_timezone);
@@ -173,15 +179,28 @@
         }
 
         $('#remotetz').on('click', 'li', function() {
-          var text = $(this).data("tz");
-          console.log(text);
+          var name = $(this).data("name"),
+              adminname = $(this).data("adminname"),
+              country = $(this).data("country"),
+              tz = $(this).data("tz");
+          var display = name+", "+adminname+", "+country;
+          var infield = $('#remotetz').filterable("option", "input");
+          $(infield).val(display);
+          emptyFilterableList();
         });
 
         $('#utc-enable').change(function() {
+          var infield = $("#remotetz").filterable("option", "input");
           if ($(this).is(':checked')) {
             console.log('UTC selected');
+            $(infield).val("");
+            $(infield).textinput("disable");
+            $("#remotetz").filterable("disable");
+            emptyFilterableList();
           } else {
             console.log('UTC deselected');
+            $("#remotetz").filterable("enable");
+            $(infield).textinput("enable");
           }
         });
 
