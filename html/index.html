@@ -29,7 +29,10 @@
 		<input type="checkbox" id="utc-enable" data-role="flipswitch" data-on-text="Yes" data-off-text="No">
 	      </div>
 	    </fieldset>
-	    <ul id="remotetz" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Find city..."></ul>
+	    <form class="ui-filterable">
+	      <input type="text" data-type="search" id="remotetz-input">
+	    </form>
+	    <ul id="remotetz" data-role="listview" data-filter="true" data-input="#remotetz-input" data-filter-placeholder="Find city..."></ul>
 	  </div>
 	  <div data-role="collapsible">
 	    <h3>Watchface configuration</h3>
