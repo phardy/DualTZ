@@ -1,4 +1,5 @@
 #include "config.h"
+#include "ui.h"
 
 static Config watch_config;
 
@@ -21,4 +22,9 @@ void set_lowbat_notification(bool state) {
 
 void set_btdisco_notification(bool state) {
   watch_config.btdisco = state;
+  if (state) {
+    bluetooth_connection_service_subscribe(bluetooth_connection_handler);
+  } else {
+    bluetooth_connection_service_unsubscribe();
+  }
 }

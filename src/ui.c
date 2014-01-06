@@ -193,6 +193,22 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   graphics_fill_circle(ctx, my_centre, 1);
 }
 
+void bluetooth_connection_handler(bool connected) {
+  if (connected) {
+    layer_remove_from_parent(bitmap_layer_get_layer(BTDiscoLayer));
+  } else {
+    layer_add_child(window_get_root_layer(window),
+		    bitmap_layer_get_layer(BTDiscoLayer));
+    static const uint32_t const segments[] = { 200, 100, 200 };
+    VibePattern blip = {
+      .durations = segments,
+      .num_segments = 3
+    };
+    vibes_enqueue_custom_pattern(blip);
+    light_enable_interaction();
+  }
+}
+
 void display_init() {
   // load resources
   TZFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_14));

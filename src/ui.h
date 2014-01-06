@@ -6,6 +6,7 @@ void update_minute_hand();
 void update_hour_hand();
 void hour_display_layer_update_callback (Layer *me, GContext* ctx);
 void minute_display_layer_update_callback (Layer *me, GContext* ctx);
+void bluetooth_connection_handler (bool connected);
 void display_init();
 void display_deinit();
 
