@@ -32,6 +32,16 @@
 	    },
 	    {
 		"type": "png",
+		"name": "IMAGE_LOWBAT",
+		"file": "images/batticon.png"
+	    },
+	    {
+		"type": "png",
+		"name": "IMAGE_BTDISCO",
+		"file": "images/bticon.png"
+	    },
+	    {
+		"type": "png",
 		"name": "IMAGE_TINY_0",
 		"file": "images/tiny/0.png"
 	    },

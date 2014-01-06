@@ -43,6 +43,9 @@ TextLayer *FaceLabel;
 static GFont TZFont;
 static GFont DateFont;
 
+BitmapLayer *LowBatLayer, *BTDiscoLayer;
+static GBitmap *LowBat, *BTDisco;
+
 static const GPathInfo HOUR_HAND_PATH_POINTS = {
   .num_points = 5,
   .points = (GPoint[]) {
@@ -285,9 +288,21 @@ void display_init() {
 		grect_center_point(&AnalogueGRect));
   layer_add_child(window_get_root_layer(window), AnalogueMinuteLayer);
   layer_add_child(window_get_root_layer(window), AnalogueHourLayer);
+
+  // init optional notification layers
+  LowBatLayer = bitmap_layer_create(GRect(7, 154, 13, 13));
+  BTDiscoLayer = bitmap_layer_create(GRect(7, 141, 13, 13));
+  LowBat = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LOWBAT);
+  BTDisco = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BTDISCO);
+  bitmap_layer_set_bitmap(LowBatLayer, LowBat);
+  bitmap_layer_set_bitmap(BTDiscoLayer, BTDisco);
 }
 
 void display_deinit() {
+  gbitmap_destroy(BTDisco);
+  gbitmap_destroy(LowBat);
+  bitmap_layer_destroy(BTDiscoLayer);
+  bitmap_layer_destroy(LowBatLayer);
   gpath_destroy(AnalogueHourPath);
   layer_destroy(AnalogueHourLayer);
   gpath_destroy(AnalogueMinutePath);
