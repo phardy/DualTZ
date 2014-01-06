@@ -21,7 +21,15 @@ function sendConfigToWatch(config) {
 
 Pebble.addEventListener("showConfiguration", function() {
     console.log('showing configuration');
-    Pebble.openURL('http://hardy.dropbear.id.au/DualTZ/config/3-0.html');
+    var currentconfig = window.localStorage.getItem("config");
+    var URL = "http://hardy.dropbear.id.au/DualTZ/config/3-0.html";
+    if (currentconfig == null) {
+	console.log("no stored data found");
+    } else {
+	console.log("calling config with " + currentconfig);
+	URL += "?data=" + encodeURIComponent(currentconfig);
+    }
+    Pebble.openURL(URL);
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
