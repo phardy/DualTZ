@@ -8,14 +8,14 @@ function appMessageNack(e) {
 
 function sendConfigToWatch(config) {
     var watchconfig = new Object();
-    watchconfig.remote-tz-name = config.timezone.name;
-    watchconfig.remote-tz-offset = config.timezone.remote-offset;
+    watchconfig.remote_tz_name = config.timezone.remote_tz_name;
+    watchconfig.remote_tz_offset = config.timezone.remote_tz_offset;
 
     var now = new Date();
     // Wow, getTimezoneOffset() is the weirdest thing ever.
     var localtzoffset = now.getTimezoneOffset() * -60;
-    watchconfig.local-tz-offset = localtzoffset;
-
+    watchconfig.local_tz_offset = localtzoffset;
+    console.log("sending config to watch");
     Pebble.sendAppMessage(watchconfig, appMessageAck, appMessageNack);
 }
 
@@ -67,7 +67,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	    newconfig.lowbat = lowbat;
 	}
 	console.log(JSON.stringify(newconfig));
-	window.localStorage.setItem('config', newconfig);
+	console.log("saving config");
+	window.localStorage.setItem('config', JSON.stringify(newconfig));
 
 	sendConfigToWatch(newconfig);
 	Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
