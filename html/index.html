@@ -220,10 +220,10 @@
         });
 
         $('#bluetooth-toggle').change(function() {
-          configuration.bluetooth = $(this.is(':checked'));
+          configuration.bluetooth = $(this).is(':checked');
         });
         $('#lowbat-toggle').change(function() {
-          configuration.lowbat = $(this.is(':checked'));
+          configuration.lowbat = $(this).is(':checked');
         });
 
         $('#b-cancel').click(function() {
@@ -232,10 +232,8 @@
         });
 
         $('#b-submit').click(function() {
-          var params = saveParams();
-          console.log(params['local-tz-offset']);
-          var location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(params));
-          console.log('Submit: '+location);
+          console.log(JSON.stringify(configuration));
+          var location = "pebblejs://close#" + encodeuriComponent(JSON.stringify(configuration));
           document.location = location;
         });
       });
