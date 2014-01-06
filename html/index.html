@@ -97,36 +97,7 @@
       }
 
       $(document).on("pageinit", "#page1", function() {
-        $("#remotetz").on("filterablebeforefilter", function ( e, data ) {
-          var $ul = $(this),
-                    $input = $(data.input),
-                    value = $input.val(),
-                    html = "";
-          $ul.html( "" );
-          if ( value && value.length > 2 ) {
-            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-            $ul.listview("refresh");
-            $.ajax({
-                    url: "http://ws.geonames.org/searchJSON",
-                    dataType: "jsonp",
-                    crossDomain: true,
-                    data: {
-                      featureClass: "P",
-                      style: "full",
-                      maxRows: 12,
-                      name_startsWith: $input.val()
-                    }
-            })
-            .then( function ( response ) {
-              $.each(response.geonames, function ( i, val ) {
-                html += "<li data-name='"+val.name+"' data-adminname='"+val.adminName1+"' data-country='"+val.countryName+"' data-tz='"+val.timezone.timeZoneId+"'><strong>" + val.name + "</strong>" + (val.adminName1 ? ", " + val.adminName1 : "") + ", " + val.countryName + "</li>";
-              });
-              $ul.html(html);
-              $ul.listview("refresh");
-              $ul.trigger("updatelayout");
-            });
-          }
-        });
+
       });
 
       $().ready(function () {
@@ -186,6 +157,37 @@
           return params;
         }
 
+        $("#remotetz").on("filterablebeforefilter", function ( e, data ) {
+          var $ul = $(this),
+                    $input = $(data.input),
+                    value = $input.val(),
+                    html = "";
+          $ul.html( "" );
+          if ( value && value.length > 2 ) {
+            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+            $ul.listview("refresh");
+            $.ajax({
+                    url: "http://ws.geonames.org/searchJSON",
+                    dataType: "jsonp",
+                    crossDomain: true,
+                    data: {
+                      featureClass: "P",
+                      style: "full",
+                      maxRows: 12,
+                      name_startsWith: $input.val()
+                    }
+            })
+            .then( function ( response ) {
+              $.each(response.geonames, function ( i, val ) {
+                html += "<li data-name='"+val.name+"' data-adminname='"+val.adminName1+"' data-country='"+val.countryName+"' data-tz='"+val.timezone.timeZoneId+"'><strong>" + val.name + "</strong>" + (val.adminName1 ? ", " + val.adminName1 : "") + ", " + val.countryName + "</li>";
+              });
+              $ul.html(html);
+              $ul.listview("refresh");
+              $ul.trigger("updatelayout");
+            });
+          }
+        });
+
         $('#remotetz').on('click', 'li', function() {
           var name = $(this).data("name"),
               adminname = $(this).data("adminname"),
@@ -196,6 +198,10 @@
           $(infield).val(display);
           emptyFilterableList();
           updateZone(tz);
+          configuration.timezone.name = name;
+          configuration.timezone.adminname = adminname;
+          configuration.timezone.country = country;
+          configuration.timezone.tz = tz;
         });
 
         $('#utc-enable').change(function() {
