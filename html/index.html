@@ -96,9 +96,39 @@
         return results[1] || 0;
       }
 
-      $(document).on("pageinit", "#page1", function() {
+      function updateControls() {
+        var options = JSON.parse(decodeURIComponent($.urlParam("data")));
+        if (options != null) {
+          if (options.hasOwnProperty("utc") && options.utc) {
+            $("#utc-enable").prop("checked", true);
+            $("#utc-enable").flipswitch("refresh");
+            var infield = $("#remotetz").filterable("option", "input");
+            $(infield).val("");
+            $(infield).textinput("disable");
+            $("#remotetz").filterable("disable");
+          } else {
+            configuration.timezone.remote_tz_name = options.timezone.remote_tz_name;
+            configuration.timezone.adminname = options.timezone.adminname;
+            configuration.timezone.country = options.timezone.country;
+            configuration.timezone.tz = options.timezone.tz;
+            configuration.timezone.remote_tz_offset = options.timezone.remote_tz_offset;
 
-      });
+            var display = options.timezone.remote_tz_name+", "+options.timezone.adminname+", "+options.timezone.country;
+            var infield = $("#remotetz").filterable("option", "input");
+            $(infield).val(display);
+          }
+          if (options.hasOwnProperty("bluetooth") && options.bluetooth) {
+            configuration.bluetooth = options.bluetooth;
+            $("#bluetooth-toggle").prop("checked", true);
+            $("#bluetooth-toggle").flipswitch("refresh");
+          }
+          if (options.hasOwnProperty("lowbat") && options.lowbat) {
+            configuration.lowbat = options.lowbat;
+            $("#lowbat-toggle").prop("checked", true);
+            $("#lowbat-toggle").flipswitch("refresh");
+          }
+        }
+      }
 
       $().ready(function () {
 
@@ -226,6 +256,8 @@
           document.location = location;
         });
       });
+
+      $('#page1').bind('pageinit', updateControls);
     </script>
   </body>
 </html>
