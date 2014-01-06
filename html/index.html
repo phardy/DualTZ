@@ -145,18 +145,6 @@
           new tzdata_javascript.zoneinfo(name, tzCallback);
         }
 
-        function saveParams() {
-          var now = new Date();
-          // Wow, getTimezoneOffset() is the weirdest thing ever.
-          var localtzoffset = now.getTimezoneOffset() * -60;
-          var params = {
-            'remote-tz-name': $('#remote-tz-name').val(),
-            'remote-tz-offset': remote_offset,
-            'local-tz-offset': localtzoffset
-          }
-          return params;
-        }
-
         $("#remotetz").on("filterablebeforefilter", function ( e, data ) {
           var $ul = $(this),
                     $input = $(data.input),
@@ -205,6 +193,7 @@
         });
 
         $('#utc-enable').change(function() {
+          configuration.utc = $(this).is(":checked");
           var infield = $("#remotetz").filterable("option", "input");
           if ($(this).is(':checked')) {
             console.log('UTC selected');
@@ -233,7 +222,7 @@
 
         $('#b-submit').click(function() {
           console.log(JSON.stringify(configuration));
-          var location = "pebblejs://close#" + encodeuriComponent(JSON.stringify(configuration));
+          var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(configuration));
           document.location = location;
         });
       });
