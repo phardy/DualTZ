@@ -14,7 +14,9 @@
     "appKeys": {
 	"remote_tz_name": 93,
 	"remote_tz_offset": 94,
-	"local_tz_offset": 95
+	"local_tz_offset": 95,
+	"btdisco_notification": 96,
+	"lowbat_notification": 97
     },
     "resources": {
 	"media": [

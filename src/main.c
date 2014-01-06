@@ -1,5 +1,5 @@
 #include <pebble.h>
-
+#include "config.h"
 #include "PDutils.h"
 #include "tz.h"
 #include "ui.h"
@@ -16,7 +16,9 @@ static char TZOffset[] = "      ";
 enum {
   CONFIG_KEY_REMOTE_TZ_NAME = 0x5D,
   CONFIG_KEY_REMOTE_TZ_OFFSET = 0x5E,
-  CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F
+  CONFIG_KEY_LOCAL_TZ_OFFSET = 0x5F,
+  CONFIG_KEY_BTDISCO_NOTIFICATION = 0x60,
+  CONFIG_KEY_LOWBAT_NOTIFICATION = 0x61
 };
 
 void read_config(TZInfo *tzinfo) {
@@ -40,12 +42,24 @@ void read_config(TZInfo *tzinfo) {
     APP_LOG(APP_LOG_LEVEL_INFO, "No local_tz_offset in storage");
     tzinfo->local_tz_offset = 0;
   }
+  if (persist_exists(CONFIG_KEY_BTDISCO_NOTIFICATION)) {
+    set_btdisco_notification(persist_read_bool(CONFIG_KEY_BTDISCO_NOTIFICATION));
+  } else {
+    APP_LOG(APP_LOG_LEVEL_INFO, "No btdisco_notification in storage");
+  }
+  if (persist_exists(CONFIG_KEY_LOWBAT_NOTIFICATION)) {
+    set_lowbat_notification(persist_read_bool(CONFIG_KEY_LOWBAT_NOTIFICATION));
+  } else {
+    APP_LOG(APP_LOG_LEVEL_INFO, "No lowbat_notification in storage");
+  }
 }
 
 void write_config(TZInfo *tzinfo) {
   int tz_name = persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME, tzinfo->tz_name);
   int remote_tz_offset = persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET, tzinfo->remote_tz_offset);
   int local_tz_offset = persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET, tzinfo->local_tz_offset);
+  int btdisco_notification = persist_write_bool(CONFIG_KEY_BTDISCO_NOTIFICATION, get_btdisco_notification());
+  int lowbat_notification = persist_write_bool(CONFIG_KEY_LOWBAT_NOTIFICATION, get_lowbat_notification());
   if (tz_name < 0) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing tz_name");
   } else {
@@ -60,6 +74,16 @@ void write_config(TZInfo *tzinfo) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing local_tz_offset");
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "local_tz_offset written successfully");
+  }
+  if (btdisco_notification < 0) {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing btdisco_notification");
+  } else {
+    APP_LOG(APP_LOG_LEVEL_INFO, "btdisco_notification written successfully");
+  }
+  if (lowbat_notification < 0) {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing lowbat_notification");
+  } else {
+    APP_LOG(APP_LOG_LEVEL_INFO, "lowbat_notification written successfully");
   }
 }
 
@@ -97,6 +121,8 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
   Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
   Tuple *local_tz_offset_tuple = dict_find(received, CONFIG_KEY_LOCAL_TZ_OFFSET);
+  Tuple *btdisco_notification_tuple = dict_find(received, CONFIG_KEY_BTDISCO_NOTIFICATION);
+  Tuple *lowbat_notification_tuple = dict_find(received, CONFIG_KEY_LOWBAT_NOTIFICATION);
 
   if (remote_tz_name_tuple) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got tz_name");
@@ -111,6 +137,14 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got remote_tz_offset");
     DisplayTZ.local_tz_offset = local_tz_offset_tuple->value->int32;
   }
+  if (btdisco_notification_tuple) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got btdisco_notification");
+    set_btdisco_notification(btdisco_notification_tuple->value->int8);
+  }
+  if (lowbat_notification_tuple) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got lowbat_notification");
+    set_lowbat_notification(lowbat_notification_tuple->value->int8);
+  }
   set_tzname_text(DisplayTZ.tz_name);
   format_timezone(DisplayTZ.remote_tz_offset, TZOffset);
   set_tzoffset_text(TZOffset);
@@ -123,6 +157,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 }
 
 void handle_init() {
+  config_init();
   read_config(&DisplayTZ);
   display_init();
 
