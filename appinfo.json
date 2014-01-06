@@ -3,8 +3,8 @@
     "shortName": "DualTZ",
     "longName": "DualTZ",
     "companyName": "Peter Hardy",
-    "versionCode": 4,
-    "versionLabel": "2.2.0",
+    "versionCode": 5,
+    "versionLabel": "3.0.0",
     "watchapp": {
 	"watchface": true
     },
@@ -12,9 +12,9 @@
 	"configurable"
     ],
     "appKeys": {
-	"remote-tz-name": 93,
-	"remote-tz-offset": 94,
-	"local-tz-offset": 95
+	"remote_tz_name": 93,
+	"remote_tz_offset": 94,
+	"local_tz_offset": 95
     },
     "resources": {
 	"media": [

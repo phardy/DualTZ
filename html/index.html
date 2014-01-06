@@ -181,7 +181,7 @@
               adminname = $(this).data("adminname"),
               country = $(this).data("country"),
               tz = $(this).data("tz");
-          var display = name+", "+adminname+", "+country;
+          var display = remote_tz_name+", "+adminname+", "+country;
           var infield = $('#remotetz').filterable("option", "input");
           $(infield).val(display);
           emptyFilterableList();
