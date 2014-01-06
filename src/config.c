@@ -18,6 +18,12 @@ bool get_btdisco_notification() {
 
 void set_lowbat_notification(bool state) {
   watch_config.lowbat = state;
+  if (state) {
+    battery_state_service_subscribe(battery_state_handler);
+  } else {
+    battery_state_service_unsubscribe();
+    lowbattery_handler(false);
+  }
 }
 
 void set_btdisco_notification(bool state) {

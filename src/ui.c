@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "ui.h"
 
 const int TINY_NUMS[10] = {
   RESOURCE_ID_IMAGE_TINY_0, RESOURCE_ID_IMAGE_TINY_1, RESOURCE_ID_IMAGE_TINY_2,
@@ -193,6 +194,12 @@ void minute_display_layer_update_callback (Layer *me, GContext* ctx) {
   graphics_fill_circle(ctx, my_centre, 1);
 }
 
+void battery_state_handler(BatteryChargeState state) {
+  if (state.is_charging) {
+    lowbattery_handler(false);
+  }
+}
+
 void bluetooth_connection_handler(bool connected) {
   if (connected) {
     layer_remove_from_parent(bitmap_layer_get_layer(BTDiscoLayer));
@@ -206,6 +213,15 @@ void bluetooth_connection_handler(bool connected) {
     };
     vibes_enqueue_custom_pattern(blip);
     light_enable_interaction();
+  }
+}
+
+void lowbattery_handler(bool islow) {
+  if (islow) {
+    layer_add_child(window_get_root_layer(window),
+		    bitmap_layer_get_layer(LowBatLayer));
+  } else {
+    layer_remove_from_parent(bitmap_layer_get_layer(LowBatLayer));
   }
 }
 

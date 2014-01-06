@@ -8,6 +8,8 @@
 #include "debug.h"
 #endif
 
+#define LOWBAT_LEVEL 110
+
 static TZInfo DisplayTZ;
 
 static char DateText[] = "  ";
@@ -109,6 +111,16 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
     strftime(DateText, sizeof(DateText),
 	     "%e", now);
     set_date_text(DateText);
+  }
+  if (now->tm_sec % 60 == 0) {
+    if (get_lowbat_notification()) {
+      BatteryChargeState state = battery_state_service_peek();
+      if ((state.charge_percent <= LOWBAT_LEVEL) && !state.is_charging) {
+	lowbattery_handler(true);
+      } else {
+	lowbattery_handler(false);
+      }
+    }
   }
 }
 
