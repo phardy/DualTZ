@@ -138,12 +138,27 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     DisplayTZ.local_tz_offset = local_tz_offset_tuple->value->int32;
   }
   if (btdisco_notification_tuple) {
+    // We're able to send these as bools, but can't receive them like that.
+    // Testing shows that a boolean true is cast to an int of 116 by
+    // AppMessage, and boolean false is cast to 102.
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got btdisco_notification");
-    set_btdisco_notification(btdisco_notification_tuple->value->int8);
+    if (btdisco_notification_tuple->value->int8 == 116) {
+      set_btdisco_notification(true);
+    } else {
+      set_btdisco_notification(false);
+    }
+  } else {
+    set_btdisco_notification(false);
   }
   if (lowbat_notification_tuple) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got lowbat_notification");
-    set_lowbat_notification(lowbat_notification_tuple->value->int8);
+    if (lowbat_notification_tuple->value->int8 == 116) {
+      set_lowbat_notification(true);
+    } else {
+      set_lowbat_notification(false);
+    }
+  } else {
+    set_lowbat_notification(false);
   }
   set_tzname_text(DisplayTZ.tz_name);
   format_timezone(DisplayTZ.remote_tz_offset, TZOffset);
