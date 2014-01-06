@@ -177,7 +177,7 @@
         });
 
         $('#remotetz').on('click', 'li', function() {
-          var name = $(this).data("name"),
+          var remote_tz_name = $(this).data("name"),
               adminname = $(this).data("adminname"),
               country = $(this).data("country"),
               tz = $(this).data("tz");
@@ -186,7 +186,7 @@
           $(infield).val(display);
           emptyFilterableList();
           updateZone(tz);
-          configuration.timezone.name = name;
+          configuration.timezone.remote_tz_name = remote_tz_name;
           configuration.timezone.adminname = adminname;
           configuration.timezone.country = country;
           configuration.timezone.tz = tz;
