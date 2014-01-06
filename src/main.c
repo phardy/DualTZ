@@ -8,7 +8,7 @@
 #include "debug.h"
 #endif
 
-#define LOWBAT_LEVEL 110
+#define LOWBAT_LEVEL 20
 
 static TZInfo DisplayTZ;
 
