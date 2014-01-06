@@ -107,15 +107,33 @@
             $(infield).textinput("disable");
             $("#remotetz").filterable("disable");
           } else {
-            configuration.timezone.remote_tz_name = options.timezone.remote_tz_name;
-            configuration.timezone.adminname = options.timezone.adminname;
-            configuration.timezone.country = options.timezone.country;
-            configuration.timezone.tz = options.timezone.tz;
-            configuration.timezone.remote_tz_offset = options.timezone.remote_tz_offset;
+            var remote_tz_name="", adminname="", country="";
+            if (options.hasOwnProperty("timezone")) {
+              if (options.timezone.hasOwnProperty("remote_tz_name")) {
+                remote_tz_name = options.timezone.remote_tz_name;
+                configuration.timezone.remote_tz_name = remote_tz_name;
+              }
+              if (options.timezone.hasOwnProperty("adminname")) {
+                adminname = options.timezone.adminname;
+                configuration.timezone.adminname = adminname;
+              }
+              if (options.timezone.hasOwnProperty("country")) {
+                country = options.timezone.country;
+                configuration.timezone.country = country;
+              }
+              if (options.timezone.hasOwnProperty("tz")) {
+                configuration.timezone.tz = options.timezone.tz;
+              }
+              if (options.timezone.hasOwnProperty("remote_tz_offset")) {
+                configuration.timezone.remote_tz_offset = options.timezone.remote_tz_offset;
+              }
+            }
 
-            var display = options.timezone.remote_tz_name+", "+options.timezone.adminname+", "+options.timezone.country;
-            var infield = $("#remotetz").filterable("option", "input");
-            $(infield).val(display);
+            if (remote_tz_name != "") {
+              var display = remote_tz_name+", "+adminname+", "+country;
+              var infield = $("#remotetz").filterable("option", "input");
+              $(infield).val(display);
+            }
           }
           if (options.hasOwnProperty("bluetooth") && options.bluetooth) {
             configuration.bluetooth = options.bluetooth;
