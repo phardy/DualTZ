@@ -26,7 +26,7 @@ void read_config(TZInfo *tzinfo) {
     tzinfo->tz_name[TZ_NAME_LEN] = '\0';
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "No tz_name in storage");
-    strncpy(tzinfo->tz_name, "local time", TZ_NAME_LEN);
+    strncpy(tzinfo->tz_name, "not configured", TZ_NAME_LEN);
   }
   if (persist_exists(CONFIG_KEY_REMOTE_TZ_OFFSET)) {
     tzinfo->remote_tz_offset = persist_read_int(CONFIG_KEY_REMOTE_TZ_OFFSET);
@@ -118,6 +118,8 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
   update_digital_time(now);
+
+  write_config(&DisplayTZ);
 }
 
 void handle_init() {
@@ -146,7 +148,6 @@ void handle_init() {
 }
 
 void handle_deinit() {
-  write_config(&DisplayTZ);
   display_deinit();
 }
 
