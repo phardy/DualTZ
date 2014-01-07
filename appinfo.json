@@ -4,7 +4,7 @@
     "longName": "DualTZ",
     "companyName": "Peter Hardy",
     "versionCode": 5,
-    "versionLabel": "3.0.0",
+    "versionLabel": "3.0.1",
     "watchapp": {
 	"watchface": true
     },
