@@ -10,8 +10,17 @@ function sendConfigToWatch(config) {
     var watchconfig = new Object();
     watchconfig.remote_tz_name = config.timezone.remote_tz_name;
     watchconfig.remote_tz_offset = config.timezone.remote_tz_offset;
-    watchconfig.btdisco_notification = config.bluetooth;
-    watchconfig.lowbat_notification = config.lowbat;
+    // Booleans not supported in AppMessages
+    if (config.bluetooth) {
+	watchconfig.btdisco_notification = 1;
+    } else {
+	watchconfig.btdisco_notification = 0;
+    }
+    if (config.lowbat) {
+	watchconfig.lowbat_notification = 1;
+    } else {
+	watchconfig.lowbat_notification = 0;
+    }
 
     var now = new Date();
     // Wow, getTimezoneOffset() is the weirdest thing ever.
