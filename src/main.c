@@ -57,33 +57,62 @@ void read_config(TZInfo *tzinfo) {
 }
 
 void write_config(TZInfo *tzinfo) {
+  if (persist_exists(CONFIG_KEY_REMOTE_TZ_NAME)) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Deleting tz_name");
+    persist_delete(CONFIG_KEY_REMOTE_TZ_NAME);
+  }
   int tz_name = persist_write_string(CONFIG_KEY_REMOTE_TZ_NAME, tzinfo->tz_name);
-  int remote_tz_offset = persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET, tzinfo->remote_tz_offset);
-  int local_tz_offset = persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET, tzinfo->local_tz_offset);
-  int btdisco_notification = persist_write_bool(CONFIG_KEY_BTDISCO_NOTIFICATION, get_btdisco_notification());
-  int lowbat_notification = persist_write_bool(CONFIG_KEY_LOWBAT_NOTIFICATION, get_lowbat_notification());
   if (tz_name < 0) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing tz_name");
+    set_tzname_text("save error");
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "tz_name written successfully");
   }
+
+  if (persist_exists(CONFIG_KEY_REMOTE_TZ_OFFSET)) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Deleting remote_tz_offset");
+    persist_delete(CONFIG_KEY_REMOTE_TZ_OFFSET);
+  }
+  int remote_tz_offset = persist_write_int(CONFIG_KEY_REMOTE_TZ_OFFSET, tzinfo->remote_tz_offset);
   if (remote_tz_offset < 0) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing remote_tz_offset");
+    set_tzname_text("save error");
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "remote_tz_offset written successfully");
   }
+
+  if (persist_exists(CONFIG_KEY_LOCAL_TZ_OFFSET)) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Deleting local_tz_offset");
+    persist_delete(CONFIG_KEY_LOCAL_TZ_OFFSET);
+  }
+  int local_tz_offset = persist_write_int(CONFIG_KEY_LOCAL_TZ_OFFSET, tzinfo->local_tz_offset);
   if (local_tz_offset < 0) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing local_tz_offset");
+    set_tzname_text("save error");
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "local_tz_offset written successfully");
   }
+
+  if (persist_exists(CONFIG_KEY_BTDISCO_NOTIFICATION)) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Deleting btdisco_notification");
+    persist_delete(CONFIG_KEY_BTDISCO_NOTIFICATION);
+  }
+  int btdisco_notification = persist_write_bool(CONFIG_KEY_BTDISCO_NOTIFICATION, get_btdisco_notification());
   if (btdisco_notification < 0) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing btdisco_notification");
+    set_tzname_text("save error");
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "btdisco_notification written successfully");
   }
+
+  if (persist_exists(CONFIG_KEY_LOWBAT_NOTIFICATION)) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Deleting lowbat_notification");
+    persist_delete(CONFIG_KEY_LOWBAT_NOTIFICATION);
+  }
+  int lowbat_notification = persist_write_bool(CONFIG_KEY_LOWBAT_NOTIFICATION, get_lowbat_notification());
   if (lowbat_notification < 0) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error writing lowbat_notification");
+    set_tzname_text("save error");
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "lowbat_notification written successfully");
   }
