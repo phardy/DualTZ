@@ -26,6 +26,7 @@ function sendConfigToWatch(config) {
     // Wow, getTimezoneOffset() is the weirdest thing ever.
     var localtzoffset = now.getTimezoneOffset() * -60;
     watchconfig.local_tz_offset = localtzoffset;
+    console.log("local_tz_offset from phone: " + localtzoffset);
     console.log("sending config to watch");
     Pebble.sendAppMessage(watchconfig, appMessageAck, appMessageNack);
 }
