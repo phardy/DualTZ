@@ -169,6 +169,12 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got tz_name");
     strncpy(DisplayTZ.tz_name, remote_tz_name_tuple->value->cstring,
 	    TZ_NAME_LEN);
+    // AppMessage seems to replace ' ' with '+'. Fix that now.
+    for (int i=0; i<TZ_NAME_LEN; i++) {
+      if (DisplayTZ.tz_name[i] == '+') {
+	DisplayTZ.tz_name[i] = ' ';
+      }
+    }
   }
   if (remote_tz_offset_tuple) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got local_tz_offset");
