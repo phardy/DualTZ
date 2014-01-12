@@ -1,25 +1,28 @@
-function appMessageAck(e) {
+function appMessageAck() {
+    "use strict";
     console.log('options sent to Pebble successfully');
 }
 
 function appMessageNack(e) {
+    "use strict";
     console.log('options not sent to Pebble: ' + e.error.message);
 }
 
 function sendConfigToWatch(config) {
-    var watchconfig = new Object();
+    "use strict";
+    var watchconfig = {};
     watchconfig.remote_tz_name = config.timezone.remote_tz_name;
     watchconfig.remote_tz_offset = config.timezone.remote_tz_offset;
     // Booleans not supported in AppMessages
     if (config.bluetooth) {
-	watchconfig.btdisco_notification = 1;
+        watchconfig.btdisco_notification = 1;
     } else {
-	watchconfig.btdisco_notification = 0;
+        watchconfig.btdisco_notification = 0;
     }
     if (config.lowbat) {
-	watchconfig.lowbat_notification = 1;
+        watchconfig.lowbat_notification = 1;
     } else {
-	watchconfig.lowbat_notification = 0;
+        watchconfig.lowbat_notification = 0;
     }
 
     var now = new Date();
@@ -32,67 +35,65 @@ function sendConfigToWatch(config) {
 }
 
 Pebble.addEventListener("showConfiguration", function() {
+    "use strict";
     console.log('showing configuration');
-    var currentconfig = window.localStorage.getItem("config");
-    var URL = "http://hardy.dropbear.id.au/DualTZ/config/3-0.html";
-    if (currentconfig == null) {
-	console.log("no stored data found");
+    var currentconfig = window.localStorage.getItem("config"),
+        URL = "http://hardy.dropbear.id.au/DualTZ/config/3-0.html";
+    if (currentconfig === null) {
+        console.log("no stored data found");
     } else {
-	console.log("calling config with " + currentconfig);
-	URL += "?data=" + encodeURIComponent(currentconfig);
+        console.log("calling config with " + currentconfig);
+        URL += "?data=" + encodeURIComponent(currentconfig);
     }
     Pebble.openURL(URL);
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
+    "use strict";
     console.log('configuration closed');
-    if (e.response != '') {
-	var params = JSON.parse(decodeURIComponent(e.response));
-	var newconfig = new Object();
-	newconfig.timezone = new Object();
-	if (params.hasOwnProperty("utc") && params.utc) {
-	    newconfig.utc = params.utc;
-	    newconfig.timezone.remote_tz_name = "UTC";
-	    newconfig.timezone.remote_tz_offset = 0;
-	} else if (params.hasOwnProperty("timezone")) {
-	    var timezone = params.timezone;
-	    // decodeURIComponent seems to have trouble with spaces,
-	    // leaving them as a plus. So we remove them here.
-	    if (timezone.hasOwnProperty("remote_tz_name")) {
-		var name = timezone.remote_tz_name.replace('+', ' ');
-		newconfig.timezone.remote_tz_name = name;
-	    }
-	    if (timezone.hasOwnProperty("adminname")) {
-		var adminname = timezone.adminname.replace('+', ' ');
-		newconfig.timezone.adminname = adminname;
-	    }
-	    if (timezone.hasOwnProperty("country")) {
-		var country = timezone.country.replace('+', ' ');
-		newconfig.timezone.country = country;
-	    }
-	    if (timezone.hasOwnProperty("tz")) {
-		var tz = timezone.tz.replace('+', ' ');
-		newconfig.timezone.tz = tz;
-	    }
-	    if (timezone.hasOwnProperty("remote_tz_offset")) {
-		newconfig.timezone.remote_tz_offset = timezone.remote_tz_offset;
-	    }
-	}
-	if (params.hasOwnProperty("bluetooth")) {
-	    var bluetooth = params.bluetooth;
-	    newconfig.bluetooth = bluetooth;
-	}
-	if (params.hasOwnProperty("lowbat")) {
-	    var lowbat = params.lowbat;
-	    newconfig.lowbat = lowbat;
-	}
-	console.log(JSON.stringify(newconfig));
-	console.log("saving config");
-	window.localStorage.setItem('config', JSON.stringify(newconfig));
+    if (e.response !== '') {
+        var params = JSON.parse(decodeURIComponent(e.response)),
+            newconfig = {};
+        newconfig.timezone = {};
+        if (params.hasOwnProperty("utc") && params.utc) {
+            newconfig.utc = params.utc;
+            newconfig.timezone.remote_tz_name = "UTC";
+            newconfig.timezone.remote_tz_offset = 0;
+        } else if (params.hasOwnProperty("timezone")) {
+            var timezone = params.timezone;
+            // decodeURIComponent seems to have trouble with spaces,
+            // leaving them as a plus. So we remove them here.
+            if (timezone.hasOwnProperty("remote_tz_name")) {
+                newconfig.timezone.remote_tz_name = timezone.remote_tz_name.replace('+', ' ');
+            }
+            if (timezone.hasOwnProperty("adminname")) {
+                newconfig.timezone.adminname = timezone.adminname.replace('+', ' ');
+            }
+            if (timezone.hasOwnProperty("country")) {
+                newconfig.timezone.country = timezone.country.replace('+', ' ');
+            }
+            if (timezone.hasOwnProperty("tz")) {
+                newconfig.timezone.tz = timezone.tz.replace('+', ' ');
+            }
+            if (timezone.hasOwnProperty("remote_tz_offset")) {
+                newconfig.timezone.remote_tz_offset = timezone.remote_tz_offset;
+            }
+        }
+        if (params.hasOwnProperty("bluetooth")) {
+            var bluetooth = params.bluetooth;
+            newconfig.bluetooth = bluetooth;
+        }
+        if (params.hasOwnProperty("lowbat")) {
+            var lowbat = params.lowbat;
+            newconfig.lowbat = lowbat;
+        }
+        console.log(JSON.stringify(newconfig));
+        console.log("saving config");
+        window.localStorage.setItem('config', JSON.stringify(newconfig));
 
-	sendConfigToWatch(newconfig);
-	Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
+        sendConfigToWatch(newconfig);
+        Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
     } else {
-	console.log('no options received');
+        console.log('no options received');
     }
 });
