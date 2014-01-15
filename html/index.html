@@ -95,7 +95,7 @@
 	zone that was last retrieved from the phone.</p>
       <p>In case of failure, ensure your phone is set to the correct time
 	zone, and then restart the watch app by entering the menu and
-	exiting again.</p>
+	exiting again.</p>   
     </div>
     <script>
       tzdata_javascript.settings.baseURL = 'http://hardy.dropbear.id.au/DualTZ/config/zoneinfo/';
@@ -218,10 +218,11 @@
             $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
             $ul.listview("refresh");
             $.ajax({
-                    url: "http://ws.geonames.org/searchJSON",
+                    url: "http://api.geonames.org/searchJSON",
                     dataType: "jsonp",
                     crossDomain: true,
                     data: {
+                      username: "dualtz",
                       featureClass: "P",
                       style: "full",
                       maxRows: 12,
