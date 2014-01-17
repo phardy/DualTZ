@@ -4,10 +4,6 @@
 #include "tz.h"
 #include "ui.h"
 
-#ifdef DEBUG
-#include "debug.h"
-#endif
-
 #define LOWBAT_LEVEL 20
 
 static TZInfo DisplayTZ;
