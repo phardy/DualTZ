@@ -1,3 +1,7 @@
+/*global console: false*/
+/*global localStorage: false*/
+/*global Pebble: false*/
+
 function appMessageAck() {
     "use strict";
     console.log('options sent to Pebble successfully');
@@ -10,7 +14,9 @@ function appMessageNack(e) {
 
 function sendConfigToWatch(config) {
     "use strict";
-    var watchconfig = {};
+    var watchconfig = {},
+        now = new Date(),
+        localtzoffset = now.getTimezoneOffset() * -60;
     watchconfig.remote_tz_name = config.timezone.remote_tz_name;
     watchconfig.remote_tz_offset = config.timezone.remote_tz_offset;
     // Booleans not supported in AppMessages
@@ -25,9 +31,6 @@ function sendConfigToWatch(config) {
         watchconfig.lowbat_notification = 0;
     }
 
-    var now = new Date();
-    // Wow, getTimezoneOffset() is the weirdest thing ever.
-    var localtzoffset = now.getTimezoneOffset() * -60;
     watchconfig.local_tz_offset = localtzoffset;
     console.log("local_tz_offset from phone: " + localtzoffset);
     console.log("sending config to watch");
@@ -37,7 +40,7 @@ function sendConfigToWatch(config) {
 Pebble.addEventListener("showConfiguration", function() {
     "use strict";
     console.log('showing configuration');
-    var currentconfig = window.localStorage.getItem("config"),
+    var currentconfig = localStorage.getItem("config"),
         URL = "http://hardy.dropbear.id.au/DualTZ/config/3-1.html";
     if (currentconfig === null) {
         console.log("no stored data found");
@@ -53,14 +56,15 @@ Pebble.addEventListener("webviewclosed", function(e) {
     console.log('configuration closed');
     if (e.response !== '') {
         var params = JSON.parse(decodeURIComponent(e.response)),
-            newconfig = {};
+            newconfig = {},
+            timezone = null;
         newconfig.timezone = {};
         if (params.hasOwnProperty("utc") && params.utc) {
             newconfig.utc = params.utc;
             newconfig.timezone.remote_tz_name = "UTC";
             newconfig.timezone.remote_tz_offset = 0;
         } else if (params.hasOwnProperty("timezone")) {
-            var timezone = params.timezone;
+            timezone = params.timezone;
             // decodeURIComponent seems to have trouble with spaces,
             // leaving them as a plus. So we remove them here.
             if (timezone.hasOwnProperty("remote_tz_name")) {
@@ -80,16 +84,14 @@ Pebble.addEventListener("webviewclosed", function(e) {
             }
         }
         if (params.hasOwnProperty("bluetooth")) {
-            var bluetooth = params.bluetooth;
-            newconfig.bluetooth = bluetooth;
+            newconfig.bluetooth = params.bluetooth;
         }
         if (params.hasOwnProperty("lowbat")) {
-            var lowbat = params.lowbat;
-            newconfig.lowbat = lowbat;
+            newconfig.lowbat = params.lowbat;
         }
         console.log(JSON.stringify(newconfig));
         console.log("saving config");
-        window.localStorage.setItem('config', JSON.stringify(newconfig));
+        localStorage.setItem('config', JSON.stringify(newconfig));
 
         sendConfigToWatch(newconfig);
         Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
