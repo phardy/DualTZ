@@ -34,7 +34,7 @@ function sendConfigToWatch(config) {
 Pebble.addEventListener("showConfiguration", function() {
     console.log('showing configuration');
     var currentconfig = window.localStorage.getItem("config");
-    var URL = "http://hardy.dropbear.id.au/DualTZ/config/3-0.html";
+    var URL = "http://hardy.dropbear.id.au/DualTZ/config/3-1.html";
     if (currentconfig == null) {
 	console.log("no stored data found");
     } else {
