@@ -110,6 +110,7 @@ void update_digital_digit(int slot, int digit) {
 }
 
 void digital_layer_update_callback(Layer *me, GContext* ctx) {
+  (void)me;
   graphics_draw_bitmap_in_rect(ctx, ColonBitmap, GRect(69, 13, 16, 26));
   // Splitting the seconds layer off is probably more efficient.
   int hour = DigitalTime->tm_hour;
@@ -206,7 +207,7 @@ void bluetooth_connection_handler(bool connected) {
   } else {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(BTDiscoLayer));
-    static const uint32_t const segments[] = { 200, 100, 200 };
+    static const uint32_t segments[] = { 200, 100, 200 };
     VibePattern blip = {
       .durations = segments,
       .num_segments = 3
@@ -291,7 +292,7 @@ void display_init() {
   if (!clock_is_24h_style()) {
     AmPm = text_layer_create(GRect(20, 153, 20, 20));
     text_layer_set_text_alignment(AmPm, GTextAlignmentLeft);
-    text_layer_set_text_color(AmPm, GTextAlignmentLeft);
+    text_layer_set_text_color(AmPm, GColorBlack);
     text_layer_set_font(AmPm, TZFont);
     text_layer_set_text(AmPm, "PM");
   }

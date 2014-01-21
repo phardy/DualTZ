@@ -1,3 +1,5 @@
+#include <pebble.h>
+
 void set_tzname_text(char *TZNameText);
 void set_tzoffset_text(char *TZOffsetText);
 void set_digital_time(struct tm *time);
