@@ -124,6 +124,7 @@ void update_digital_time(struct tm *time) {
 }
 
 void handle_second_tick(struct tm *now, TimeUnits units_changed) {
+  (void)units_changed;
   update_digital_time(now);
 
   if (now->tm_sec % 30 == 0) {
@@ -150,10 +151,13 @@ void handle_second_tick(struct tm *now, TimeUnits units_changed) {
 }
 
 void in_dropped_handler(AppMessageResult reason, void *context) {
+  (void)reason;
+  (void)context;
   APP_LOG(APP_LOG_LEVEL_ERROR, "Data from phone dropped");
 }
 
 void in_received_handler(DictionaryIterator *received, void *context) {
+  (void)context;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Data packet received");
   Tuple *remote_tz_name_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_NAME);
   Tuple *remote_tz_offset_tuple = dict_find(received, CONFIG_KEY_REMOTE_TZ_OFFSET);
