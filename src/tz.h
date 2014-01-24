@@ -1,3 +1,5 @@
+#include <pebble.h>
+
 #define TZ_NAME_LEN 15
 #define TZ_OFFSET_LEN 6
 typedef struct {

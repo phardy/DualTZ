@@ -2,15 +2,17 @@
 #include "ui.h"
 
 const int TINY_NUMS[10] = {
-  RESOURCE_ID_IMAGE_TINY_0, RESOURCE_ID_IMAGE_TINY_1, RESOURCE_ID_IMAGE_TINY_2,
-  RESOURCE_ID_IMAGE_TINY_3, RESOURCE_ID_IMAGE_TINY_4, RESOURCE_ID_IMAGE_TINY_5,
-  RESOURCE_ID_IMAGE_TINY_6, RESOURCE_ID_IMAGE_TINY_7, RESOURCE_ID_IMAGE_TINY_8,
-  RESOURCE_ID_IMAGE_TINY_9};
+  RESOURCE_ID_IMAGE_TINY_0, RESOURCE_ID_IMAGE_TINY_1,
+  RESOURCE_ID_IMAGE_TINY_2, RESOURCE_ID_IMAGE_TINY_3,
+  RESOURCE_ID_IMAGE_TINY_4, RESOURCE_ID_IMAGE_TINY_5,
+  RESOURCE_ID_IMAGE_TINY_6, RESOURCE_ID_IMAGE_TINY_7,
+  RESOURCE_ID_IMAGE_TINY_8, RESOURCE_ID_IMAGE_TINY_9};
 const int MID_NUMS[10] = {
-  RESOURCE_ID_IMAGE_MID_0, RESOURCE_ID_IMAGE_MID_1, RESOURCE_ID_IMAGE_MID_2,
-  RESOURCE_ID_IMAGE_MID_3, RESOURCE_ID_IMAGE_MID_4, RESOURCE_ID_IMAGE_MID_5,
-  RESOURCE_ID_IMAGE_MID_6, RESOURCE_ID_IMAGE_MID_7, RESOURCE_ID_IMAGE_MID_8,
-  RESOURCE_ID_IMAGE_MID_9};
+  RESOURCE_ID_IMAGE_MID_0, RESOURCE_ID_IMAGE_MID_1,
+  RESOURCE_ID_IMAGE_MID_2, RESOURCE_ID_IMAGE_MID_3,
+  RESOURCE_ID_IMAGE_MID_4, RESOURCE_ID_IMAGE_MID_5,
+  RESOURCE_ID_IMAGE_MID_6, RESOURCE_ID_IMAGE_MID_7,
+  RESOURCE_ID_IMAGE_MID_8, RESOURCE_ID_IMAGE_MID_9};
 const int LARGE_NUMS[10] = {
   RESOURCE_ID_IMAGE_LARGE_0, RESOURCE_ID_IMAGE_LARGE_1,
   RESOURCE_ID_IMAGE_LARGE_2, RESOURCE_ID_IMAGE_LARGE_3,
@@ -21,8 +23,8 @@ const int LARGE_NUMS[10] = {
 #define TOTAL_IMAGE_SLOTS 6
 #define EMPTY_SLOT -1
 static int image_slot_state[TOTAL_IMAGE_SLOTS] = {EMPTY_SLOT, EMPTY_SLOT,
-					      EMPTY_SLOT, EMPTY_SLOT,
-					      EMPTY_SLOT, EMPTY_SLOT};
+                                                  EMPTY_SLOT, EMPTY_SLOT,
+                                                  EMPTY_SLOT, EMPTY_SLOT};
 static GBitmap *DigitalTimeImages[TOTAL_IMAGE_SLOTS];
 static GBitmap *ColonBitmap;
 static GRect DigitalTimeDigits[TOTAL_IMAGE_SLOTS];
@@ -110,6 +112,7 @@ void update_digital_digit(int slot, int digit) {
 }
 
 void digital_layer_update_callback(Layer *me, GContext* ctx) {
+  (void)me;
   graphics_draw_bitmap_in_rect(ctx, ColonBitmap, GRect(69, 13, 16, 26));
   // Splitting the seconds layer off is probably more efficient.
   int hour = DigitalTime->tm_hour;
@@ -206,7 +209,7 @@ void bluetooth_connection_handler(bool connected) {
   } else {
     layer_add_child(window_get_root_layer(window),
 		    bitmap_layer_get_layer(BTDiscoLayer));
-    static const uint32_t const segments[] = { 200, 100, 200 };
+    static const uint32_t segments[] = { 200, 100, 200 };
     VibePattern blip = {
       .durations = segments,
       .num_segments = 3
@@ -236,7 +239,7 @@ void display_init() {
 
   // init root window
   window = window_create();
-  window_stack_push(window, true /* Animated */);
+  window_stack_push(window, true);
   GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
 
   // digital time display
@@ -251,8 +254,6 @@ void display_init() {
   DigitalTimeDigits[5] = GRect(125, 25, 8, 14);
 
   ColonBitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGE_COLON);
-  // TODO: Move to the update. But I want to remember this GRect
-  // ColonLayer = bitmap_layer_create(GRect(69, 141, 16, 26)); // TODO: Shrink this image
 
   // timezone name display
   TZName = text_layer_create(GRect(14, 125, 95, 15));
@@ -291,7 +292,7 @@ void display_init() {
   if (!clock_is_24h_style()) {
     AmPm = text_layer_create(GRect(20, 153, 20, 20));
     text_layer_set_text_alignment(AmPm, GTextAlignmentLeft);
-    text_layer_set_text_color(AmPm, GTextAlignmentLeft);
+    text_layer_set_text_color(AmPm, GColorBlack);
     text_layer_set_font(AmPm, TZFont);
     text_layer_set_text(AmPm, "PM");
   }
