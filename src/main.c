@@ -67,7 +67,7 @@ void request_config() {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "something bad happened");
     return;
   }
-  Tuplet req = TupletInteger(1, 1);
+  Tuplet req = TupletInteger(MESSAGE_KEY_CONFIG_REQUEST, 1);
   dict_write_tuplet(iter, &req);
   dict_write_end(iter);
   app_message_outbox_send();
