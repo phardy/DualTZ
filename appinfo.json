@@ -12,6 +12,7 @@
         "configurable"
     ],
     "appKeys": {
+        "config_request": 92,
         "remote_tz_name": 93,
         "remote_tz_offset": 94,
         "local_tz_offset": 95,

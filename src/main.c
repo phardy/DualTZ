@@ -10,6 +10,13 @@ static TZInfo DisplayTZ;
 
 static char DateText[] = "  ";
 static char TZOffset[] = "      ";
+
+uint8_t msg_retry_count = 0;
+#define MAX_MSG_RETRIES 5
+// Message keys
+enum {
+  MESSAGE_KEY_CONFIG_REQUEST = 0x5C
+};
 // data received from the config page
 enum {
   CONFIG_KEY_REMOTE_TZ_NAME = 0x5D,
@@ -50,6 +57,20 @@ void read_config(TZInfo *tzinfo) {
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "No lowbat_notification in storage");
   }
+}
+
+void request_config() {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending configuration request");
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  if (iter == NULL) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "something bad happened");
+    return;
+  }
+  Tuplet req = TupletInteger(1, 1);
+  dict_write_tuplet(iter, &req);
+  dict_write_end(iter);
+  app_message_outbox_send();
 }
 
 void write_config(TZInfo *tzinfo) {
@@ -207,9 +228,47 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   write_config(&DisplayTZ);
 }
 
+void out_sent_handler(DictionaryIterator *sent, void *context) {
+  (void)sent;
+  (void)context;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Message successfully sent");
+  msg_retry_count = 0;
+}
+
+static void out_failed_handler(DictionaryIterator *failed,
+                               AppMessageResult reason, void *context) {
+  (void)failed;
+  (void)context;
+  if (reason == APP_MSG_SEND_TIMEOUT) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Config request timed out");
+    if (!bluetooth_connection_service_peek()) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "No bluetooth connection; aborting");
+      return;
+    }
+    if (msg_retry_count < MAX_MSG_RETRIES) {
+      msg_retry_count++;
+      request_config();
+    } else {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Max retries reached; aborting");
+    }
+  }
+}
+
 void handle_init() {
+  app_message_register_inbox_received(in_received_handler);
+  app_message_register_inbox_dropped(in_dropped_handler);
+  app_message_register_outbox_sent(out_sent_handler);
+  app_message_register_outbox_failed(out_failed_handler);
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
+
   config_init();
   read_config(&DisplayTZ);
+  if (bluetooth_connection_service_peek()) {
+    msg_retry_count = 0;
+    request_config();
+  }
   display_init();
 
   set_tzname_text(DisplayTZ.tz_name);
@@ -223,12 +282,6 @@ void handle_init() {
   update_minute_hand();
   update_hour_hand();
   update_digital_time(now);
-
-  app_message_register_inbox_received(in_received_handler);
-  app_message_register_inbox_dropped(in_dropped_handler);
-  const uint32_t inbound_size = 64;
-  const uint32_t outbound_size = 64;
-  app_message_open(inbound_size, outbound_size);
 
   tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
 }
