@@ -17,8 +17,10 @@ function sendConfigToWatch(config) {
     var watchconfig = {},
         now = new Date(),
         localtzoffset = now.getTimezoneOffset() * -60;
+    console.log("remote_tz_name: " + config.timezone.remote_tz_name);
     watchconfig.remote_tz_name = config.timezone.remote_tz_name;
     watchconfig.remote_tz_offset = config.timezone.remote_tz_offset;
+
     // Booleans not supported in AppMessages
     if (config.bluetooth) {
         watchconfig.btdisco_notification = 1;
@@ -40,7 +42,7 @@ function sendConfigToWatch(config) {
 Pebble.addEventListener("showConfiguration", function() {
     "use strict";
     console.log('showing configuration');
-    var currentconfig = localStorage.getItem("config"),
+    var currentconfig = localStorage.getItem("DualTZ-config"),
         URL = "http://hardy.dropbear.id.au/DualTZ/config/3-1.html";
     if (currentconfig === null) {
         console.log("no stored data found");
@@ -91,11 +93,23 @@ Pebble.addEventListener("webviewclosed", function(e) {
         }
         console.log(JSON.stringify(newconfig));
         console.log("saving config");
-        localStorage.setItem('config', JSON.stringify(newconfig));
+        localStorage.setItem('DualTZ-config', JSON.stringify(newconfig));
 
         sendConfigToWatch(newconfig);
         Pebble.sendAppMessage(params, appMessageAck, appMessageNack);
     } else {
         console.log('no options received');
+    }
+});
+
+Pebble.addEventListener("appmessage", function(e) {
+    "use strict";
+    if (e.payload.config_request === 1) {
+        var currentconfig = localStorage.getItem('DualTZ-config');
+        if (currentconfig === null) {
+            console.log("no stored data found");
+        } else {
+            sendConfigToWatch(JSON.parse(currentconfig));
+        }
     }
 });
