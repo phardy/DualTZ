@@ -184,8 +184,10 @@
         function tzCallback(timezone, zoneinfo) {
           console.log('Got TZ info: ' + timezone);
           if (query_in_progress > 0 && timezone === query_timezone) {
-            var now = new Date();
-            configuration.timezone.remote_tz_offset = zoneinfo.localtime(now).ttinfo.offset/1000;
+            var ttinfo = zoneinfo.localtime(Date()).ttinfo;
+            configuration.timezone.remote_tz_offset = ttinfo.offset/1000;
+            configuration.timezone.remote_dst = ttinfo.isdst;
+            configuration.timezone.remote_dst_change = ttinfo.until/1000;
             console.log('Remote TZ: ' + configuration.timezone.remote_offset);
             query_in_progress = 0;
             $('#b-submit .ui-btn-text').text('Save');
