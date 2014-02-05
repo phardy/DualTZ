@@ -259,7 +259,7 @@ void handle_init() {
   app_message_register_inbox_dropped(in_dropped_handler);
   app_message_register_outbox_sent(out_sent_handler);
   app_message_register_outbox_failed(out_failed_handler);
-  const uint32_t inbound_size = 64;
+  const uint32_t inbound_size = 128;
   const uint32_t outbound_size = 64;
   app_message_open(inbound_size, outbound_size);
 
