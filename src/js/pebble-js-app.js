@@ -102,6 +102,11 @@ Pebble.addEventListener("webviewclosed", function(e) {
     }
 });
 
+Pebble.addEventListener("ready", function(e) {
+    "use strict";
+    console.log("Pebble JS ready");
+});
+
 Pebble.addEventListener("appmessage", function(e) {
     "use strict";
     if (e.payload.config_request === 1) {
