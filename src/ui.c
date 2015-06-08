@@ -285,7 +285,11 @@ void display_init() {
   // TODO: Make sure this resource is the actual GBitmap.
   Background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DIGITAL_BG);
   bitmap_layer_set_bitmap(DigitalWindow, Background);
+#ifdef PBL_COLOR
+  bitmap_layer_set_compositing_mode(DigitalWindow, GCompOpSet);
+#else
   bitmap_layer_set_compositing_mode(DigitalWindow, GCompOpAnd);
+#endif
   layer_add_child(window_get_root_layer(window),
 		  bitmap_layer_get_layer(DigitalWindow));
   // AM/PM display
